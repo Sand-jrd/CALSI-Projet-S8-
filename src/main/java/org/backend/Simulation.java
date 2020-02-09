@@ -95,20 +95,27 @@ public class Simulation {
 	}
 
 	private void initSimulation() throws BackEndException {
+		
+		//Lecture de source.txt (Le où est enregistrer le fichier qu'on à ouvert)
 		String sourceCode = readSourceCode();
+		
+		//Parcage du code
 		this.preTreatment = new PreTreatment(sourceCode);
 
+		//Copie des variables Shared et Local à prioris mais c'est un peu mysterieux.
 		Process.setSharedVars(preTreatment);
 
-		// TODO Scheduler needs to be chosen according to specified type
+		//Choix du type de Scheduler (Randome, Step_By_Step ect..)
 		scheduler = new Scheduler(this);
 
+		//La fonction juste en dessous
 		initProcesses();
 	}
 
 	private void initProcesses() throws BackEndException {
 		processes = new Process[numberOfProcesses];
 		for (int i = 0; i < numberOfProcesses; i++) {
+			//On re traite chaque process d'un step.
 			processes[i] = new Process(i, preTreatment);
 		}
 	}

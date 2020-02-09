@@ -66,10 +66,11 @@ import javafx.scene.control.Alert.AlertType;
  *
  */
 
-//-------------- Veleurs par default dans "Shared Variable" et "Local Variable" ---------//
 
 public class FXMLController {
 
+	
+//-------------- Veleurs par default dans "Shared Variable" et "Local Variable" ---------//
 	ObservableList<String> content1 = FXCollections.observableArrayList(
 			"e", "d","f","g","h","i","j","k","l");
 	ObservableList<String> content2 = FXCollections.observableArrayList(
@@ -146,29 +147,7 @@ public class FXMLController {
 	
 	boolean auto = false;
 	private static DecimalFormat df = new DecimalFormat("0.0");
-	private String code="import java.lang.Math; 	//	All import have to be made without any blank line\r\n" + 
-			"\r\n" + 
-			"// // Shared variables declaration		//	All declaration have to be made without any blank line\r\n" + 
-			"Integer shared1;\r\n" + 
-			"Boolean[] shared2;\r\n" + 
-			"\r\n" + 
-			"// // Shared variables initialization		//	All initialization have to be made without any blank line\r\n" + 
-			"flag[0] = false;\r\n" + 
-			"flag[1] = false;\r\n" + 
-			"\r\n" + 
-			"// // Local variables declaration		//	All declaration have to be made without any blank line\r\n" + 
-			"int j;\r\n" + 
-			"boolean a;\r\n" + 
-			"\r\n" + 
-			"// //Example algorithm		//	You can write your algorithm using Java Syntax, blank line are allowed\r\n" + 
-			"flag[i] = true;\r\n" + 
-			"while ( a == true && b == j) {		//	The opening accolade \"{\" have to be in the same line than the condition\r\n" + 
-			"	toto=test\r\n" + 
-			"}		//	The closing accolade \"}\" have to be alone on the line\r\n" + 
-			"// critical section \r\n" + 
-			"1\r\n" + 
-			"// end of critical section\r\n" + 
-			"flag[i] = false;";
+	private String code=" ";
 	private String fichiercode="";
 	private String cordo="";
 	private int numberOfProcesses;
@@ -189,7 +168,6 @@ public class FXMLController {
 	
 	//Initialisation 1er lancement 
 	public void initialize() {
-
 		choiceBoxLocalVariables.getSelectionModel().selectedItemProperty()
 	    .addListener((obs, oldV, newV) -> updateLocalVariables());
 		
@@ -202,7 +180,8 @@ public class FXMLController {
 		textAreaOriginalCode.setText(code);
 	}
 	
-	//---------- BARRE DE MENU_1 (File Edit Help) ----------//
+	//---------------------------------------------------------------------------------------------------------------------------//
+										//---------- BARRE DE MENU_1 (File Edit Help) ----------//
 	
 	//-> FILE <-//
 	
@@ -432,12 +411,15 @@ public class FXMLController {
         alert.showAndWait();
 	}
 	
+	//---------------------------------------------------------------------------------------------------------------------------//
+						//---------- BARRE DE MENU_2 (New execution et tous se qu'il y a derière) ----------//
 	
-	//---------- BARRE DE MENU_2 (New execution et tous se qu'il y a derière) ----------//
-	
-	// Bouton "NEW EXECUTION" //
+	// -- Bouton "NEW EXECUTION" --  //
 	public void newExecution() throws BackEndException {
+		
 		simulationBuilder = new SimulationBuilder();
+		
+		//Lecture de d code
 		File sourceFile = new File("/tests/source.txt");			
 		code=textAreaOriginalCode.getText();
 		try (FileWriter fw = new FileWriter("tests/source.txt")){
@@ -450,21 +432,25 @@ public class FXMLController {
 			e.printStackTrace();
 		}	
 		
+		//Simulation et récupérations des infos de la simulation
 		simulation = simulationBuilder
 				.withSourceCodeFromFile(fichiercode)
 				.withNumberOfProcesses(Integer.parseInt(textFieldNumberOfProcessesRandom.getText()))
 				.withScheduler("random")
-				.build();
-		infos = simulation.getInfos();
+				.build(); //Création de la simulation
+		//HELP: simulationBuilder class qui contient les paramètre de la simu, .build() retourne simulation, qui contient le résultat de la simu).
+		infos = simulation.getInfos();  //Récupération du résultat de la simu
 		System.out.print(infos.simulationIsDone());
-		initalizeProcess(Integer.parseInt(textFieldNumberOfProcessesRandom.getText()));
+		
+		//Updates de l'affichage
+		initalizeProcess(Integer.parseInt(textFieldNumberOfProcessesRandom.getText()));  //La fonction qui initialise le truc à gauche (avec les lignes)
 		updateChoiceBoxLocalVariables();
 		updateChoiceBoxStepByStep();
 		updateChoiceBoxProcessToCrash();
 		textAreaParsedCode.setText(infos.getNewSourceCode());
 	}
 	
-	// Bouton "SPEED" //
+	// -- Bouton "SPEED" -- //
 	
 	//Quand on écrit dans le texte
 	public void speedtex() {
@@ -480,22 +466,50 @@ public class FXMLController {
 	}
 	
 	
-	public void choiceordon() {
-		cordo=choiceBoxScheduling.getValue();
-		System.out.print(cordo+"\n");    	
+	// -- Bouton "START" -- //
+	public void startAuto() throws BackEndException, InterruptedException{
+		System.out.println( "Process starting ...");
+		if (!auto) {
+		auto = true;
+		timeline = new Timeline(new KeyFrame(Duration.millis(10000/s), new EventHandler<ActionEvent>() { 
+
+		    @Override
+		    public void handle(ActionEvent event) {
+		    	if (!infos.simulationIsDone() && auto) {
+		    		System.out.println( "youpi");
+		    		try {
+						controllerPlusStep();
+					} catch (BackEndException e) {
+						e.printStackTrace();
+					}
+		    	}
+		    }
+		}));
+		timeline.setCycleCount(10000000);
+		timeline.play();
+		}
+
 	}
+		
+
+	// -- Bouton "STOP" -- //
+	public void stopAuto(){
+		System.out.println( "Process Stop");
+		auto = false;
+		timeline.stop();
+	}	
 
 
-
-	
+	// -- Bouton "DO STEPS" -- //
 	public void controllerDoSteps() throws BackEndException{
 		int count = Integer.parseInt(textFieldNumberOfSteps.getText());
 		while (!infos.simulationIsDone() && count>0) {
 			count -= 1;
-			controllerPlusStep();
+			controllerPlusStep(); //Déclanche i fois la fonction PlusStep ci dessous
 		}
 	}
 	
+	// -- Bouton "+ step", ET EGALEMENT UTILISER DANS DO STEPS -- //
 	public void controllerPlusStep() throws BackEndException{
 		try {
 		if (!infos.simulationIsDone()) {
@@ -511,7 +525,42 @@ public class FXMLController {
 	      }
 	}
 	
+	//---------------------------------------------------------------------------------------------------------------------------//
+					//---------- ONLGETS (Random step_by_step crashes) ((fenêtre à droite)) ----------//
+
+
+	// ------- ONLGET STEp_BY_STEP ------- //
+	
+	//BOUTON CRASH
+	public void onClickedCrashProcess() throws RipException {
+	String currentProcess = choiceBoxProcessToCrash.getSelectionModel().getSelectedItem();
+	int currentProcessId = Character.getNumericValue(currentProcess.charAt(1));
+	simulation.crashProcess(currentProcessId);
+	choiceBoxProcessToCrash.getItems().remove(currentProcess);
+	choiceBoxStepByStep.getItems().remove(currentProcess);
+	System.out.println(currentProcess + " crashed");		
+	}
+	
+	// ------- ONLGET STEp_BY_STEP ------- //
+	
+	//BOUTON NEXT_STEP
+	public void onClickedStepByStepNextStep() throws BadSourceCodeException, RipException {
+	String processToExecute = choiceBoxStepByStep.getSelectionModel().getSelectedItem();
+	int processToExecuteId = Character.getNumericValue(processToExecute.charAt(1));
+	ArrayList<Integer> arrayExec = infos.getOriginalSourceLinesExecutedDuringLastStep(infos.getIdOfLastExecutedProcess());
+	simulation.nextStep(processToExecuteId);
+	updateProcess(infos.getIdOfLastExecutedProcess(),arrayExec.get(0));
+	updateSharedVariables();
+	updateLocalVariables();
+	}
+		
+	
+	//---------------------------------------------------------------------------------------------------------------------------//
+											//---------- JE SUIS PAS SUR DE A QUOI çA SERT ----------//
+	
+	
 	public void updateChoiceBoxLocalVariables() {
+		System.out.println( "updateChoiceBoxLocalVariables");
 		choiceBoxLocalVariables.getItems().clear();
 		for (int i = 0; i < numberOfProcesses; i++) {
 			choiceBoxLocalVariables.getItems().add("P"+ Integer.toString(i));
@@ -520,6 +569,7 @@ public class FXMLController {
 	}
 	
 	public void updateChoiceBoxStepByStep() {
+		System.out.println( "updateChoiceBoxStepByStep");
 		choiceBoxStepByStep.getItems().clear();
 		for (int i = 0; i < numberOfProcesses; i++) {
 			choiceBoxStepByStep.getItems().add("P"+ Integer.toString(i));
@@ -528,13 +578,25 @@ public class FXMLController {
 	}
 	
 	public void updateChoiceBoxProcessToCrash() {
+		System.out.println( "updateChoiceBoxProcessToCrash");
 		choiceBoxProcessToCrash.getItems().clear();
 		for (int i = 0; i < numberOfProcesses; i++) {
 			choiceBoxProcessToCrash.getItems().add("P"+ Integer.toString(i));
 		}
 		choiceBoxProcessToCrash.setValue("P0");
 	}
+	
+	public void choiceordon() {
+		System.out.println( "choiceordon ?wtf ");
+		cordo=choiceBoxScheduling.getValue();
+		System.out.print(cordo+"\n");    	
+	}
 
+	//---------------------------------------------------------------------------------------------------------------------------//
+									//---------- UPTADTES DES TABLEAU D'INFORMATION  ---------//
+	
+	
+	// Updates de Shared Variables
 	public void updateSharedVariables() {
 		content3.remove(0, content3.size());
 		content4.remove(0, content4.size());
@@ -552,8 +614,7 @@ public class FXMLController {
 		}
 	}
 	
-	
-	
+	// Updates de LocalVariables
 	public void updateLocalVariables() {
 		content1.remove(0, content1.size());
 		content2.remove(0, content2.size());
@@ -582,22 +643,28 @@ public class FXMLController {
 		}
 	}
 	
+	//---------------------------------------------------------------------------------------------------------------------------//
+													//  -- FONCTIONS TOOLS -- //
 	
 	
+	//Compteur de lignes d'un code
+	private static int countLines(String str){
+		   String[] lines = str.split("\r\n|\r|\n");
+		   return  lines.length;
+	}
+	
+	//La fonction qui réinitialise l'execution
 	public void initalizeProcess(int nbrp) throws RipException{
+		System.out.println( "\n Réinitialise l'execution");
 		numberOfProcesses=nbrp;
 		processline= new int[nbrp];
 		Arrays.fill(processline, 0);
 		updateProcess(0,0);
 	}
 	
-	
-	private static int countLines(String str){
-		   String[] lines = str.split("\r\n|\r|\n");
-		   return  lines.length;
-	}
-	
+	//Updates le truc de gauche (La où en sont les Processus) (Utiliser dans toute les fonctions qui gères l'execution du truc)
 	public void updateProcess(int nump,int linep) throws RipException{
+		
         lineProc.getChildren().clear();
 		processline[nump]=linep;
 
@@ -630,53 +697,5 @@ public class FXMLController {
 			lineProc.getChildren().add(textForProcess);
 		}
 	}
-	
-	public void onClickedCrashProcess() throws RipException {
-		String currentProcess = choiceBoxProcessToCrash.getSelectionModel().getSelectedItem();
-		int currentProcessId = Character.getNumericValue(currentProcess.charAt(1));
-		simulation.crashProcess(currentProcessId);
-		choiceBoxProcessToCrash.getItems().remove(currentProcess);
-		choiceBoxStepByStep.getItems().remove(currentProcess);
-		System.out.println(currentProcess + " crashed");		
-	}
-	
-	public void onClickedStepByStepNextStep() throws BadSourceCodeException, RipException {
-		String processToExecute = choiceBoxStepByStep.getSelectionModel().getSelectedItem();
-		int processToExecuteId = Character.getNumericValue(processToExecute.charAt(1));
-		ArrayList<Integer> arrayExec = infos.getOriginalSourceLinesExecutedDuringLastStep(infos.getIdOfLastExecutedProcess());
-		simulation.nextStep(processToExecuteId);
-		updateProcess(infos.getIdOfLastExecutedProcess(),arrayExec.get(0));
-		updateSharedVariables();
-		updateLocalVariables();
-	}
-	
-	public void startAuto() throws BackEndException, InterruptedException{
-		if (!auto) {
-		auto = true;
-		timeline = new Timeline(new KeyFrame(Duration.millis(10000/s), new EventHandler<ActionEvent>() { 
-
-		    @Override
-		    public void handle(ActionEvent event) {
-		    	if (!infos.simulationIsDone() && auto) {
-		    		System.out.println( "youpi");
-		    		try {
-						controllerPlusStep();
-					} catch (BackEndException e) {
-						e.printStackTrace();
-					}
-		    	}
-		    }
-		}));
-		timeline.setCycleCount(10000000);
-		timeline.play();
-		}
-
-	}
-		
-	public void stopAuto(){
-		auto = false;
-		timeline.stop();
-	}
-	
 	
 }

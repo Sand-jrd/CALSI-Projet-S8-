@@ -44,6 +44,7 @@ public class Process {
 		this.done = false;
 		this.crashed = false;
 		originalSourceLinesExecutedDuringLastStep = new ArrayList<Integer>();
+		
 		this.preTreatment = preTreatment;
 	}
 

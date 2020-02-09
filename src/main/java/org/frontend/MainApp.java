@@ -15,15 +15,29 @@ public class MainApp extends Application {
 	
     @Override
     public void start(Stage stage) throws Exception {
+    	
+    	
+    	//Affichage de la fenêtre principale
         Parent root = FXMLLoader.load(getClass().getResource("scene.fxml"));
-        
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         
         stage.setTitle("CALSI");
         stage.setScene(scene);
+        stage.sizeToScene();
         System.out.print("main class");
-        stage.show();        
+        stage.show();
+        
+        
+        //Affichage de la deuxième fenêtre d'info de départ
+        
+        Parent secondroot = FXMLLoader.load(getClass().getResource("welcome.fxml"));
+        Scene secondscene = new Scene(secondroot);
+        
+        Stage secondStage = new Stage();
+        secondStage.setTitle("Welcome !");
+        secondStage.setScene(secondscene);
+        secondStage.show();
     }
 
 

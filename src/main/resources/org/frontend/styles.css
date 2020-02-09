@@ -1,6 +1,12 @@
 .button {
-    -fx-text-fill: blue;
+     -fx-background-color: #8599ad;
+    -fx-text-fill: white;
 }
+
+MenuBar {
+     -fx-background-color: #8599ad;
+}
+
 .text-area .text {
      -fx-line-spacing: 0px;
 }
