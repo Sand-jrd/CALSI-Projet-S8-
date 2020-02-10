@@ -2,6 +2,8 @@ package org.frontend;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import java.text.DecimalFormat;
@@ -41,6 +43,7 @@ import org.backend.RipException;
 import org.backend.Simulation;
 import org.backend.SimulationBuilder;
 import org.backend.VariableInfo;
+import org.backend.History;
 
 import javafx.scene.control.TextArea;
 import java.io.*;
@@ -138,11 +141,9 @@ public class FXMLController {
 	@FXML
 	private TextField textFieldNumberOfSteps;
 	
-	private SimulationBuilder simulationBuilder;
-	private Simulation simulation;
-	private Infos infos;
 
-	//---------------------------- TEXT PAR DEFAULT DANS CODE ------- --------------------------------//
+
+	//---------------------------- VARIABLES GLOBALES --------------------------------------//
 	
 	
 	boolean auto = false;
@@ -155,9 +156,12 @@ public class FXMLController {
 	private Timeline timeline;
 	private double s=50.00;
 	
+	private SimulationBuilder simulationBuilder;
+	private Simulation simulation;
+	private Infos infos;
+	private	ArrayList<History> history;
 	
-	
-	
+	private int idStep;
 	
 	//---------------------------------------------------------------------------------------------------------------------------//
 	//---------------------------- FONCTIONS d'ACTION QUAND ON CLIQUE SUR UN BOUTON  --------------------------------------------//
@@ -338,6 +342,9 @@ public class FXMLController {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("samleScheduler");
         alert.setHeaderText(null);
+        Image image = new Image("https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Emojione_1F62D.svg/64px-Emojione_1F62D.svg.png");
+        ImageView imageView = new ImageView(image);
+        alert.setGraphic(imageView);
         alert.setContentText("5\r\n" + 
         		"1\r\n" + 
         		"1\r\n" + 
@@ -438,9 +445,13 @@ public class FXMLController {
 				.withNumberOfProcesses(Integer.parseInt(textFieldNumberOfProcessesRandom.getText()))
 				.withScheduler("random")
 				.build(); //Création de la simulation
-		//HELP: simulationBuilder class qui contient les paramètre de la simu, .build() retourne simulation, qui contient le résultat de la simu).
 		infos = simulation.getInfos();  //Récupération du résultat de la simu
 		System.out.print(infos.simulationIsDone());
+		idStep = 0;
+		
+		
+		//Nouvelle méthode, tous enregistrer dans History
+		history = new ArrayList<History>();
 		
 		//Updates de l'affichage
 		initalizeProcess(Integer.parseInt(textFieldNumberOfProcessesRandom.getText()));  //La fonction qui initialise le truc à gauche (avec les lignes)
@@ -448,6 +459,8 @@ public class FXMLController {
 		updateChoiceBoxStepByStep();
 		updateChoiceBoxProcessToCrash();
 		textAreaParsedCode.setText(infos.getNewSourceCode());
+		
+		
 	}
 	
 	// -- Bouton "SPEED" -- //
@@ -514,6 +527,7 @@ public class FXMLController {
 		try {
 		if (!infos.simulationIsDone()) {
 			simulation.nextStep();
+			idStep++;
 			System.out.println(infos.getIdOfLastExecutedProcess());
 			ArrayList<Integer> arrayExec = infos.getOriginalSourceLinesExecutedDuringLastStep(infos.getIdOfLastExecutedProcess());
 			updateProcess(infos.getIdOfLastExecutedProcess(),arrayExec.get(0));
@@ -523,6 +537,21 @@ public class FXMLController {
 	    } catch (Exception e) {
 	        System.out.println(e);
 	      }
+	}
+	
+	// -- Bouton "- step" -- //
+	public void controllerMinusStep() throws BackEndException{
+        if (idStep>=0) {
+            System.out.println("One step back");
+        }
+        
+        
+        
+		//ArrayList<Integer> arrayExec = infos.getOriginalSourceLinesExecutedDuringLastStep(infos.getIdOfLastExecutedProcess());
+		//updateProcess(infos.getIdOfLastExecutedProcess(),arrayExec.get(0));
+		
+		updateSharedVariables();
+		updateLocalVariables();
 	}
 	
 	//---------------------------------------------------------------------------------------------------------------------------//
@@ -655,7 +684,6 @@ public class FXMLController {
 	
 	//La fonction qui réinitialise l'execution
 	public void initalizeProcess(int nbrp) throws RipException{
-		System.out.println( "\n Réinitialise l'execution");
 		numberOfProcesses=nbrp;
 		processline= new int[nbrp];
 		Arrays.fill(processline, 0);
@@ -668,6 +696,8 @@ public class FXMLController {
         lineProc.getChildren().clear();
 		processline[nump]=linep;
 
+		ArrayList<Text> savedForHistory = new ArrayList<Text>();
+		
 		for (int l = 0; l < countLines(code) ; l++) {
 			Text textForProcess2 = new Text(Integer.toString(l)+")"); 
 			textForProcess2.setFont(Font.font("System", 18.9));
@@ -690,8 +720,14 @@ public class FXMLController {
 						textForProcess.setStyle("-fx-font-weight: bold");
 					}
 					lineProc.getChildren().add(textForProcess);
+					savedForHistory.add(textForProcess);
 				}
+				//histroy.addtohistory(l);
 			}
+			
+			//Comme leurs fonctions sont pas réversible, on enregistre au dernière niveau. A terme, on fait la simu au momant de new execution, puis, pour step+ step- etc, on ne fonctionnne que avec l'historique
+			history.add(new History(savedForHistory));
+			
 			Text textForProcess = new Text("\n"); 
 			textForProcess.setFont(Font.font("System", 18.9));
 			lineProc.getChildren().add(textForProcess);

@@ -21,6 +21,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
 
+
 <VBox prefHeight="720.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frontend.FXMLController">
   <children>
     <MenuBar fx:id="menuBar" VBox.vgrow="NEVER">
@@ -67,7 +68,7 @@
                   <Button fx:id="buttonStart" layoutX="665.0" layoutY="7.0" mnemonicParsing="false" onAction="#startAuto" text="Start" />
                   <Button fx:id="buttonStop" layoutX="712.0" layoutY="7.0" mnemonicParsing="false" onAction="#stopAuto" text="Stop" />
                   <Button fx:id="buttonPlusStep" layoutX="922.0" layoutY="7.0" mnemonicParsing="false" onAction="#controllerPlusStep" text="+ step" />
-                  <Button fx:id="buttonMinusStep" layoutX="979.0" layoutY="7.0" mnemonicParsing="false" text="- step" />
+                  <Button fx:id="buttonMinusStep" layoutX="979.0" layoutY="7.0" mnemonicParsing="false" onAction="#controllerMinusStep" text="- step" />
                </children>
             </Pane>
          </children>

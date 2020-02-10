@@ -26,6 +26,7 @@ public class Simulation {
 	private ArrayList<Integer> executionOrderHistory;
 
 	public Simulation(SimulationBuilder simulationBuilder) throws BackEndException {
+		
 		this.sourceCodeFileName = simulationBuilder.sourceCodeFileName;
 		this.numberOfProcesses = simulationBuilder.numberOfProcesses;
 		this.schedulerType = simulationBuilder.schedulerType;
@@ -80,6 +81,11 @@ public class Simulation {
 			throw new BadSourceCodeException("EvalError when executing next step ");
 		}
 		executionOrderHistory.add(processId);
+	}
+	
+	public void stepBack() throws BadSourceCodeException {
+		int i = scheduler.getStepBack();
+		nextStep(i);
 	}
 
 	/**

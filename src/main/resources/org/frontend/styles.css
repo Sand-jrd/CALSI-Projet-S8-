@@ -7,6 +7,12 @@ MenuBar {
      -fx-background-color: #8599ad;
 }
 
+#textAreaOriginalCode{
+     -fx-control-inner-background: #282c34;
+    -fx-text-fill: #bebfc2;
+     -fx-font: 18px Consolas;
+}
+
 .text-area .text {
      -fx-line-spacing: 0px;
 }

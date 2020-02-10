@@ -31,4 +31,13 @@ public class Scheduler {
 		
 		return next;
 	}
+	
+	public int getStepBack() {
+		Process procs[] = simulation.getProcesses();
+		boolean allDone = true;
+		
+		int prev = this.random.nextInt(procs.length);
+		
+		return prev;
+	}
 }
