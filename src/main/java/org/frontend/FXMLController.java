@@ -1,6 +1,11 @@
 package org.frontend;
 
 import javafx.fxml.FXML;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -100,7 +105,7 @@ public class FXMLController {
 	@FXML
 	private Button buttonProcessCrash;
 	@FXML
-	private ListView<String> listView1;
+	private ListView<String> listView1;   //Mdr on laisse pas de nom comme ça ptn
 	@FXML
 	private ListView<String> listView2;
 	@FXML
@@ -159,9 +164,8 @@ public class FXMLController {
 	private SimulationBuilder simulationBuilder;
 	private Simulation simulation;
 	private Infos infos;
-	private	ArrayList<History> history;
+	private	History history;
 	
-	private int idStep;
 	
 	//---------------------------------------------------------------------------------------------------------------------------//
 	//---------------------------- FONCTIONS d'ACTION QUAND ON CLIQUE SUR UN BOUTON  --------------------------------------------//
@@ -342,25 +346,11 @@ public class FXMLController {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("samleScheduler");
         alert.setHeaderText(null);
-        Image image = new Image("https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Emojione_1F62D.svg/64px-Emojione_1F62D.svg.png");
+        Image image = new Image("file:1.png", true);
         ImageView imageView = new ImageView(image);
-        alert.setGraphic(imageView);
-        alert.setContentText("5\r\n" + 
-        		"1\r\n" + 
-        		"1\r\n" + 
-        		"2\r\n" + 
-        		"1\r\n" + 
-        		"5\r\n" + 
-        		"4\r\n" + 
-        		"4\r\n" + 
-        		"3\r\n" + 
-        		"2\r\n" + 
-        		"1\r\n" + 
-        		"3\r\n" + 
-        		"5\r\n" + 
-        		"4");
         alert.setResizable(true);
-        alert.getDialogPane().setPrefSize(500, 500);
+        alert.getDialogPane().setPrefSize(800, 800);
+        alert.setGraphic(imageView);
         alert.showAndWait();
 	}
 	
@@ -418,6 +408,19 @@ public class FXMLController {
         alert.showAndWait();
 	}
 	
+	//-> Teaching <-//
+	
+		// Bouton Splitter
+		public void splitter()throws Exception {
+			Parent secondroot = FXMLLoader.load(getClass().getResource("welcome.fxml"));
+	        Scene secondscene = new Scene(secondroot);
+	        
+	        Stage secondStage = new Stage();
+	        secondStage.setTitle("Welcome !");
+	        secondStage.setScene(secondscene);
+	        secondStage.showAndWait();
+		}
+	
 	//---------------------------------------------------------------------------------------------------------------------------//
 						//---------- BARRE DE MENU_2 (New execution et tous se qu'il y a derière) ----------//
 	
@@ -436,9 +439,9 @@ public class FXMLController {
 			bw.close();
 			System.out.print("saved\n");
 		}catch (IOException e) {
-			e.printStackTrace();
-		}	
-		
+			customeAlert("Vous n'avez aucun code !");
+		}
+
 		//Simulation et récupérations des infos de la simulation
 		simulation = simulationBuilder
 				.withSourceCodeFromFile(fichiercode)
@@ -447,11 +450,9 @@ public class FXMLController {
 				.build(); //Création de la simulation
 		infos = simulation.getInfos();  //Récupération du résultat de la simu
 		System.out.print(infos.simulationIsDone());
-		idStep = 0;
-		
 		
 		//Nouvelle méthode, tous enregistrer dans History
-		history = new ArrayList<History>();
+		history = new History();
 		
 		//Updates de l'affichage
 		initalizeProcess(Integer.parseInt(textFieldNumberOfProcessesRandom.getText()));  //La fonction qui initialise le truc à gauche (avec les lignes)
@@ -459,7 +460,6 @@ public class FXMLController {
 		updateChoiceBoxStepByStep();
 		updateChoiceBoxProcessToCrash();
 		textAreaParsedCode.setText(infos.getNewSourceCode());
-		
 		
 	}
 	
@@ -489,7 +489,7 @@ public class FXMLController {
 		    @Override
 		    public void handle(ActionEvent event) {
 		    	if (!infos.simulationIsDone() && auto) {
-		    		System.out.println( "youpi");
+		    		System.out.println( "Simulation is done");
 		    		try {
 						controllerPlusStep();
 					} catch (BackEndException e) {
@@ -526,32 +526,42 @@ public class FXMLController {
 	public void controllerPlusStep() throws BackEndException{
 		try {
 		if (!infos.simulationIsDone()) {
+			
+			history.addStep(infos,simulation,processline);
+			
 			simulation.nextStep();
-			idStep++;
-			System.out.println(infos.getIdOfLastExecutedProcess());
 			ArrayList<Integer> arrayExec = infos.getOriginalSourceLinesExecutedDuringLastStep(infos.getIdOfLastExecutedProcess());
+			
 			updateProcess(infos.getIdOfLastExecutedProcess(),arrayExec.get(0));
 			updateSharedVariables();
 			updateLocalVariables();
 		}
 	    } catch (Exception e) {
+	    	customeAlert("La simulation est terminé !");
 	        System.out.println(e);
 	      }
 	}
 	
 	// -- Bouton "- step" -- //
 	public void controllerMinusStep() throws BackEndException{
-        if (idStep>=0) {
-            System.out.println("One step back");
-        }
-        
-        
-        
-		//ArrayList<Integer> arrayExec = infos.getOriginalSourceLinesExecutedDuringLastStep(infos.getIdOfLastExecutedProcess());
-		//updateProcess(infos.getIdOfLastExecutedProcess(),arrayExec.get(0));
 		
-		updateSharedVariables();
-		updateLocalVariables();
+		try {
+			System.out.println("Step Back");
+			simulation = history.getBackInTime(simulation);
+			processline = history.getBackInTime(processline);
+			infos = history.getBackInTime(infos);
+
+			history.getBackInTime();
+			
+	        ArrayList<Integer> arrayExec = infos.getOriginalSourceLinesExecutedDuringLastStep(infos.getIdOfLastExecutedProcess());
+	        updateProcess(infos.getIdOfLastExecutedProcess(),arrayExec.get(0));
+			updateSharedVariables();
+			updateLocalVariables();
+			
+		}catch(Exception e) {
+			System.out.println("New Exe");
+			newExecution();
+		}        
 	}
 	
 	//---------------------------------------------------------------------------------------------------------------------------//
@@ -690,13 +700,26 @@ public class FXMLController {
 		updateProcess(0,0);
 	}
 	
+	//La fonction qui réinitialise l'execution
+	public void customeAlert(String alertText) {
+
+	 Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(alertText);
+        alert.setResizable(true);
+        alert.getDialogPane().setPrefSize(400, 100);
+        alert.showAndWait();
+	        
+	}
+	
 	//Updates le truc de gauche (La où en sont les Processus) (Utiliser dans toute les fonctions qui gères l'execution du truc)
 	public void updateProcess(int nump,int linep) throws RipException{
 		
         lineProc.getChildren().clear();
 		processline[nump]=linep;
+		System.out.println("addr dans updateProc"+processline);
 
-		ArrayList<Text> savedForHistory = new ArrayList<Text>();
 		
 		for (int l = 0; l < countLines(code) ; l++) {
 			Text textForProcess2 = new Text(Integer.toString(l)+")"); 
@@ -720,18 +743,12 @@ public class FXMLController {
 						textForProcess.setStyle("-fx-font-weight: bold");
 					}
 					lineProc.getChildren().add(textForProcess);
-					savedForHistory.add(textForProcess);
 				}
-				//histroy.addtohistory(l);
 			}
-			
-			//Comme leurs fonctions sont pas réversible, on enregistre au dernière niveau. A terme, on fait la simu au momant de new execution, puis, pour step+ step- etc, on ne fonctionnne que avec l'historique
-			history.add(new History(savedForHistory));
 			
 			Text textForProcess = new Text("\n"); 
 			textForProcess.setFont(Font.font("System", 18.9));
 			lineProc.getChildren().add(textForProcess);
 		}
 	}
-	
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.canvas.*?>
+<?import fxmlsvg.*?>
+
+<VBox prefHeight="720.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frontend.CrashTestSeneController">
+
+  <ScrollPane fx:id="img_pane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+          <content>
+             <Canvas fx:id="img" height="286.0" width="355.0" />
+          </content>
+ </ScrollPane>
+
+</VBox>

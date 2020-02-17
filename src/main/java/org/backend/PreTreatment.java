@@ -19,11 +19,28 @@ public class PreTreatment {
 	static String[] blocks = { "while", "if", "for", "do" }; // possible blocks
 	static Transformation trans;
 
+	//Contructeur classique
 	public PreTreatment(String source) throws BackEndException {
 		this.source = source;
 		preTreat();
 	}
 
+	//Constructeur Copie
+	public PreTreatment(PreTreatment preTreatOld){
+		
+		this.source = new String(preTreatOld.getSource());
+		this.preTreatedSource = preTreatOld.getPreTreatedSource().clone();
+		this.initialisationBlock = new String(preTreatOld.getInitialisationBlock());
+		this.endOfInitBlocks = preTreatOld.getEndOfInitBlocks();
+		this.blocksConversion = new BlocksConversion(preTreatOld.getBlocksConversion());
+		
+		this.sharedVars = preTreatOld.getSharedVars();
+		this.localVars = preTreatOld.getLocalVars();
+		
+		this.trans = new Transformation();
+		
+	}
+	
 	private void preTreat() throws BackEndException {
 		String lines[] = source.split("\\r?\\n");
 		removeComments(lines); // If the code contains '// ...' comments, they are removed
@@ -230,6 +247,28 @@ public class PreTreatment {
 		return line.split("\\s+")[1];
 	}
 
+	public static Integer indexOf(Integer[] tab, Integer a) throws BadSourceCodeException {
+		for (int i = 0; i < tab.length; ++i) {
+			if (tab[i] == a)
+				return i;
+		}
+		throw new BadSourceCodeException("Badly formated source code.");
+	}
+	
+	public int getOriginalLineNumber(int lineNumber) {
+		return blocksConversion.originalLineNumber(lineNumber);
+	}
+	
+	public String getNewSourceCode() throws BackEndException {
+		return blocksConversion.getNewSourceCode();
+	}
+	
+	// -- Getters -- //
+	
+	public String getSource() {
+		return source;
+	}
+	
 	public String[] getPreTreatedSource() {
 		return preTreatedSource;
 	}
@@ -238,8 +277,20 @@ public class PreTreatment {
 		return initialisationBlock;
 	}
 
+	public int getEndOfInitBlocks() {
+		return endOfInitBlocks;
+	}
+	
+	public BlocksConversion getBlocksConversion() {
+		return blocksConversion;
+	}
+	
 	public Variable[] getSharedVars() {
-		return sharedVars;
+		Variable[]  sharedVarsDeepCopy = new Variable[sharedVars.length];
+		for (int i = 0; i <  sharedVars.length; i++) {
+			sharedVarsDeepCopy[i] = new Variable( sharedVars[i].getName());
+		}
+		return sharedVarsDeepCopy;
 	}
 
 	public Variable[] getLocalVars() {
@@ -249,25 +300,9 @@ public class PreTreatment {
 		}
 		return localVarsDeepCopy;
 	}
-
-	public static Integer indexOf(Integer[] tab, Integer a) throws BadSourceCodeException {
-		for (int i = 0; i < tab.length; ++i) {
-			if (tab[i] == a)
-				return i;
-		}
-		throw new BadSourceCodeException("Badly formated source code.");
-	}
 	
-	public int getEndOfInitBlocks() {
-		return endOfInitBlocks;
-	}
-	
-	public int getOriginalLineNumber(int lineNumber) {
-		return blocksConversion.originalLineNumber(lineNumber);
-	}
-	
-	public String getNewSourceCode() throws BackEndException {
-		return blocksConversion.getNewSourceCode();
+	public Transformation getTrans() {
+		return trans;
 	}
 
 }

@@ -1,16 +1,7 @@
-package org.tools;
+package org.frontend;
 
-import java.io.FileNotFoundException;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import java.text.DecimalFormat;
@@ -50,7 +41,6 @@ import org.backend.RipException;
 import org.backend.Simulation;
 import org.backend.SimulationBuilder;
 import org.backend.VariableInfo;
-import org.backend.History;
 
 import javafx.scene.control.TextArea;
 import java.io.*;
@@ -66,29 +56,36 @@ import javafx.scene.control.ListView;
 import javafx.scene.text.TextFlow;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.shape.*;
+import javafx.scene.text.*;
+import javafx.scene.paint.*;
+import javafx.scene.canvas.*;
+import javafx.geometry.Insets;
+import javafx.scene.canvas.GraphicsContext;
 
-public class Tools implements Cloneable {
-	
-	public static String getContentOfFile(String fileName) throws IOException,FileNotFoundException {
-		StringBuilder contentBuilder = new StringBuilder();
-	    try (Stream<String> stream = Files.lines( Paths.get(fileName), StandardCharsets.UTF_8)) 
-	    {
-	        stream.forEach(s -> contentBuilder.append(s).append("\n"));
-	    }
-	    return contentBuilder.toString();
-	}
-	
-	//La fonction qui réinitialise l'execution
-	public void customeAlertTool(String alertText) {
+/**
+ * @author renon
+ *
+ */
+/**
+ * @author renon
+ *
+ */
 
-	 Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(alertText);
-        alert.setResizable(true);
-        alert.getDialogPane().setPrefSize(400, 100);
-        alert.showAndWait();
-	        
-	}
+public class CrashTestSeneController {
+
+    @FXML private Canvas img ;
+    
+    private GraphicsContext gc ;
+    
+    @FXML private void drawCanvas(ActionEvent event) {
+
+    }
+    
+    public void initialize() {
+        gc = img.getGraphicsContext2D();
+        gc.setFill(Color.BLUE);
+        gc.fillRect(50, 50, 100, 100);
+    }
 	
 }

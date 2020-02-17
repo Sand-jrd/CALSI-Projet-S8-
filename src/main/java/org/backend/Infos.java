@@ -1,6 +1,7 @@
 package org.backend;
 
 import java.util.ArrayList;
+import org.tools.Tools;
 
 /**
  * Class with several method giving various information on the
@@ -11,21 +12,31 @@ import java.util.ArrayList;
  * @author Hugo
  *
  */
-public class Infos {
+public class Infos extends Tools{
 	private Simulation simulation;
 
+	// Classic Builder
 	public Infos(Simulation simulation) {
 		this.simulation = simulation;
 	}
 
+	//Builder for a copie
+	public Infos(Infos infosOld) {
+		this.simulation = new Simulation(infosOld); //ON fait une copie de la simu qui était à l'interieur
+	}
 	/**
 	 * Get the id of the last process that was executed.
 	 * 
 	 * @return an int corresponding to the id of the last executed process
 	 */
 	public int getIdOfLastExecutedProcess() {
-		ArrayList<Integer> executionOrderHistory = simulation.getExecutionOrderHistory();
-		return executionOrderHistory.get(executionOrderHistory.size() - 1);
+		try{
+			ArrayList<Integer> executionOrderHistory = simulation.getExecutionOrderHistory();
+			return executionOrderHistory.get(executionOrderHistory.size() - 1);
+		}catch(Exception e) {
+			customeAlertTool("There is no previous step ! ");
+			return -1;
+		}
 	}
 
 	/**
@@ -137,5 +148,9 @@ public class Infos {
 			variablesInfos[i] = new VariableInfo(sharedVar.getName(), sharedVar.getValue(), sharedVar.getType());
 		}
 		return variablesInfos;
+	}
+	
+	public Simulation getSimulation() {
+		return simulation;
 	}
 }

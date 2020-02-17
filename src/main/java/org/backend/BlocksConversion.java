@@ -16,11 +16,19 @@ public class BlocksConversion {
 	// the actual code composed of ordered line ids
 	ArrayList<Integer> code;
 
+	// Normal constructor
 	public BlocksConversion(String[] sourceCode) throws BackEndException {
 		this.lines = new ArrayList<Line>();
 		this.code = new ArrayList<Integer>();
 		preTreat(sourceCode);
 	}
+	
+	//Constructor for DeepCopy
+	public BlocksConversion(BlocksConversion blocksConversionOld){
+		this.lines = blocksConversionOld.getLines();
+		this.code = blocksConversionOld.getCode();
+	}
+
 
 	public int getNumberOfLines() {
 		return code.size();
@@ -276,6 +284,16 @@ public class BlocksConversion {
 		code.add(startLine + 1, startLineGoto.id);
 		code.add(endLine + 1, inst2.id);
 
+	}
+	
+	// -- Getters -- //
+	
+	public ArrayList<Line> getLines() {
+		return  (ArrayList<Line>)lines.clone();
+	}
+	
+	public ArrayList<Integer> getCode() {
+		return (ArrayList<Integer>)code.clone();
 	}
 
 }

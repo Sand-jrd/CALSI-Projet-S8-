@@ -29,7 +29,7 @@ public class MainApp extends Application {
         stage.show();
         
         
-        //Affichage de la deuxième fenêtre d'info de départ
+        //Affichage de la fenêtre Welcome
         
         Parent secondroot = FXMLLoader.load(getClass().getResource("welcome.fxml"));
         Scene secondscene = new Scene(secondroot);
@@ -38,6 +38,16 @@ public class MainApp extends Application {
         secondStage.setTitle("Welcome !");
         secondStage.setScene(secondscene);
         secondStage.show();
+        
+        //Affichage fenetre CrashTest. Mettre en commentaire if not used
+        
+        Parent crashroot = FXMLLoader.load(getClass().getResource("crashTestSene.fxml"));
+        Scene crashscene = new Scene(crashroot);
+
+        Stage crashStage = new Stage();
+        crashStage.setTitle("Crash Test !");
+        crashStage.setScene(crashscene);
+        crashStage.show();
     }
 
 

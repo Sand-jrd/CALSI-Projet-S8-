@@ -7,6 +7,7 @@ public class Scheduler {
 	
 	public Scheduler(Simulation simulation) {
 		this.simulation = simulation;
+		if(simulation.getSchedulerType() == "random")
 		this.random = new Random();
 	}
 	

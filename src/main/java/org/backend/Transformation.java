@@ -5,9 +5,15 @@ public class Transformation {
 	String[] code;
 	Integer[] mapping;
 	
-	
+	//Classique Builder
 	public Transformation() {
 		
+	}
+	
+	//Builder for deepCopie
+	public Transformation(Transformation transOld) {
+		this.code = transOld.getCode();
+		this.mapping = transOld.getMapping();
 	}
 	
 	public Transformation(String[] c, int n) {
@@ -20,6 +26,16 @@ public class Transformation {
 		}
 		
 		this.mapping = tab;
+	}
+	
+	// -- Getters -- //
+	
+	public String[] getCode() {
+		return this.code;
+	}
+	
+	public Integer[] getMapping() {
+		return this.mapping;
 	}
 	
 }

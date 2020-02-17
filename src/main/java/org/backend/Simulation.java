@@ -1,6 +1,7 @@
 package org.backend;
 
 import java.io.FileNotFoundException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -12,8 +13,8 @@ import bsh.EvalError;
  * @author Hugo
  *
  */
-public class Simulation {
-	private Infos infos;
+public class Simulation extends Tools{
+	private Infos infos; //Infos ça correspond contient la simu à l'étape d'avant. 
 
 	// Simulation initialization parameters
 	private String sourceCodeFileName;
@@ -21,10 +22,11 @@ public class Simulation {
 	private String schedulerType;
 
 	private Process processes[];
-	private Scheduler scheduler;
+	private Scheduler scheduler; // Dans un Scheduler y'a une simu, dans une simu y'a un scheduler... mdr
 	private PreTreatment preTreatment;
 	private ArrayList<Integer> executionOrderHistory;
 
+	//Builder classique
 	public Simulation(SimulationBuilder simulationBuilder) throws BackEndException {
 		
 		this.sourceCodeFileName = simulationBuilder.sourceCodeFileName;
@@ -39,6 +41,40 @@ public class Simulation {
 		this.infos = new Infos(this);
 	}
 
+	//Builder Quand on fait une copie d'une autre simu (pour History)
+	public Simulation(Simulation simulationOld){
+		
+		this.infos = new Infos(simulationOld.getInfos());
+
+		// Simulation initialization parameters
+		this.sourceCodeFileName = new String(simulationOld.getSourceCodeFileName());
+		this.numberOfProcesses = simulationOld.getNumberOfProcesses();
+		this.schedulerType = simulationOld.getSchedulerType();
+
+		this.processes = simulationOld.getProcesses();
+		this.scheduler = simulationOld.getScheduler();
+		this.preTreatment = new PreTreatment(simulationOld.getPreTreatment());
+		this.executionOrderHistory = (ArrayList<Integer>)simulationOld.getExecutionOrderHistory().clone();
+		
+	}
+	
+	//Builder Quand on fait une copie d'une autre avec des info (Ou on ne update pas Info du coup !) (pour History)
+		public Simulation(Infos infosOld){
+
+			Simulation simulationOld = infosOld.getSimulation();
+			
+			// Simulation initialization parameters
+			this.sourceCodeFileName = new String(simulationOld.getSourceCodeFileName());
+			this.numberOfProcesses = simulationOld.getNumberOfProcesses();
+			this.schedulerType = simulationOld.getSchedulerType();
+
+			this.processes = simulationOld.getProcesses();
+			this.scheduler = simulationOld.getScheduler();
+			this.preTreatment = new PreTreatment(simulationOld.getPreTreatment());
+			this.executionOrderHistory = (ArrayList<Integer>)simulationOld.getExecutionOrderHistory().clone();
+			
+		}
+	
 	public void changeScheduler(String newSchedulerType) {
 		// TODO
 	}
@@ -64,6 +100,8 @@ public class Simulation {
 	public void nextStep() throws BadSourceCodeException {
 		int i = scheduler.getNext();
 		nextStep(i);
+		System.out.println("Next Step !"+i);
+
 	}
 
 	/**
@@ -86,18 +124,6 @@ public class Simulation {
 	public void stepBack() throws BadSourceCodeException {
 		int i = scheduler.getStepBack();
 		nextStep(i);
-	}
-
-	/**
-	 * Get an Infos instance, which has several method giving various information on
-	 * the current and past state of the simulation. Mainly for use by the GUI/front
-	 * end, and intended as the only interface between the front end and back end
-	 * data.
-	 * 
-	 * @return the infos
-	 */
-	public Infos getInfos() {
-		return infos;
 	}
 
 	private void initSimulation() throws BackEndException {
@@ -130,23 +156,56 @@ public class Simulation {
 		try {
 			return Tools.getContentOfFile(sourceCodeFileName);
 		} catch (FileNotFoundException e) {
+			customeAlertTool("File specified for source code not found.");
 			throw new BadSimulationParametersException("File specified for source code not found.");
 		} catch (IOException e) {
-			e.printStackTrace();
+			customeAlertTool("IO error while attempting to read from source code file \n your code might contain a mistake.");
 			throw new RipException("IO error while attempting to read from source code file.");
 		}
 	}
 
-	public ArrayList<Integer> getExecutionOrderHistory() {
-		return executionOrderHistory;
+	// -- Getters -- //
+	
+	public Infos getInfos() {
+		return infos;
 	}
-
+	
+	public String getSourceCodeFileName() {
+		return sourceCodeFileName;
+	}
+	
+	public int  getNumberOfProcesses() {
+		return numberOfProcesses;
+	}
+	
+	public String  getSchedulerType() {
+		return schedulerType;
+	}
+	
 	public Process[] getProcesses() {
 		return processes;
+	}
+	
+	public Scheduler getScheduler() {
+		return scheduler;
 	}
 	
 	public PreTreatment getPreTreatment() {
 		return preTreatment;
 	}
+	
+	public ArrayList<Integer> getExecutionOrderHistory() {
+		return executionOrderHistory;
+	}
+	
+	/**
+	 * Get an Infos instance, which has several method giving various information on
+	 * the current and past state of the simulation. Mainly for use by the GUI/front
+	 * end, and intended as the only interface between the front end and back end
+	 * data.
+	 * 
+	 * @return the infos
+	 */
+
 
 }
