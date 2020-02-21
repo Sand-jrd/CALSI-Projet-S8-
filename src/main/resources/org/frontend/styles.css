@@ -3,6 +3,11 @@
     -fx-text-fill: white;
 }
 
+.help {
+     -fx-background-color: #8599ad;
+    -fx-text-fill: white;
+}
+
 MenuBar {
      -fx-background-color: #8599ad;
 }

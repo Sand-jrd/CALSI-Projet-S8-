@@ -156,7 +156,7 @@ public class Simulation extends Tools{
 		try {
 			return Tools.getContentOfFile(sourceCodeFileName);
 		} catch (FileNotFoundException e) {
-			customeAlertTool("File specified for source code not found.");
+			//customeAlertTool("File specified for source code not found.");
 			throw new BadSimulationParametersException("File specified for source code not found.");
 		} catch (IOException e) {
 			customeAlertTool("IO error while attempting to read from source code file \n your code might contain a mistake.");

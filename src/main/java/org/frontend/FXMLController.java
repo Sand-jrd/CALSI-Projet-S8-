@@ -103,6 +103,8 @@ public class FXMLController {
 	@FXML
 	private Button buttonMinusStep;
 	@FXML
+	private Button ChooseScheduler;
+	@FXML
 	private Button buttonProcessCrash;
 	@FXML
 	private ListView<String> listView1;   //Mdr on laisse pas de nom comme ça ptn
@@ -439,7 +441,7 @@ public class FXMLController {
 			bw.close();
 			System.out.print("saved\n");
 		}catch (IOException e) {
-			customeAlert("Vous n'avez aucun code !");
+			//customeAlert("Vous n'avez aucun code !");
 		}
 
 		//Simulation et récupérations des infos de la simulation
@@ -461,6 +463,11 @@ public class FXMLController {
 		updateChoiceBoxProcessToCrash();
 		textAreaParsedCode.setText(infos.getNewSourceCode());
 		
+	}
+	
+	// -- Bouton "Choose Sheduler" -- //
+	public void chooseSched() throws BackEndException{
+		        
 	}
 	
 	// -- Bouton "SPEED" -- //
@@ -626,7 +633,7 @@ public class FXMLController {
 	}
 	
 	public void choiceordon() {
-		System.out.println( "choiceordon ?wtf ");
+		System.out.println( "choiceordon ?wtf");
 		cordo=choiceBoxScheduling.getValue();
 		System.out.print(cordo+"\n");    	
 	}

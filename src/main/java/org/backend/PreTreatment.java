@@ -2,10 +2,12 @@ package org.backend;
 
 import java.util.Arrays;
 
+import org.tools.Tools;
+
 import bsh.EvalError;
 import bsh.Interpreter;
 
-public class PreTreatment {
+public class PreTreatment extends Tools{
 	private String source;
 	private String[] preTreatedSource;
 	private String initialisationBlock;

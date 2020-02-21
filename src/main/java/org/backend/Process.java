@@ -2,10 +2,12 @@ package org.backend;
 
 import java.util.ArrayList;
 
+import org.tools.Tools;
+
 import bsh.EvalError;
 import bsh.Interpreter;
 
-public class Process {
+public class Process extends Tools{
 	private static Variable[] sharedVars;
 	private Variable[] localVars;
 	private String[] sourceCode;
@@ -84,8 +86,12 @@ public class Process {
 		if (this.sourceCode[this.currentLine].indexOf("goto") >= 0) {
 			this.treatGoto();
 		} else {
+			try {
 			this.inter.eval(this.sourceCode[this.currentLine]);
 			this.currentLine++;
+			}catch (EvalError e) {
+				customeAlertTool("There is an error in your code");
+			}
 		}
 
 		// After the step, the shared variables are updated so their value can be shared between the processes
