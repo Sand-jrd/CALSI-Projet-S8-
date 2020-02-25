@@ -16,6 +16,12 @@ javafx {
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
+jar {
+    manifest {
+        attributes 'MainApp': 'org.frontend.MainApp'
+    }
+}
+
 run {
     if (javafx.platform.classifier == 'win') {
         // Temporal fix for Eclipse with JDK 1.8 and Windows 

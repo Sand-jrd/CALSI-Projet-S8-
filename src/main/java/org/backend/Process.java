@@ -18,6 +18,7 @@ public class Process extends Tools{
 	private ArrayList<Integer> originalSourceLinesExecutedDuringLastStep;
 	private PreTreatment preTreatment;
 
+	//Normal builder
 	public Process(int index, PreTreatment preTreatment) throws BackEndException {
 		this.inter = new Interpreter();
 

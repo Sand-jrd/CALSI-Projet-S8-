@@ -151,6 +151,6 @@ public class Infos extends Tools{
 	}
 	
 	public Simulation getSimulation() {
-		return simulation;
+		return this.simulation;
 	}
 }

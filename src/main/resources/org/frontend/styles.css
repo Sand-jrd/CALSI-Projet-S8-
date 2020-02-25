@@ -1,15 +1,18 @@
 .button {
      -fx-background-color: #8599ad;
     -fx-text-fill: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 1, 0, 0, 0);
 }
 
 .help {
      -fx-background-color: #8599ad;
     -fx-text-fill: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 1, 0, 0, 0);
 }
 
 MenuBar {
      -fx-background-color: #8599ad;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 #textAreaOriginalCode{
@@ -20,4 +23,8 @@ MenuBar {
 
 .text-area .text {
      -fx-line-spacing: 0px;
+}
+
+VBox{
+       -fx-background-color: #c3c3c3;
 }

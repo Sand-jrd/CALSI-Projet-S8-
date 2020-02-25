@@ -1,0 +1,19 @@
+import java.lang.Math; 
+import java.lang.String;
+// Shared variables declaration
+Boolean[] Flag;
+Integer[] Turns;
+// Shared variables initialization
+Turns = new Integer[4];
+Flag = new Boolean[4];
+// Local variables declaration
+Integer end;
+// Bakery Algorithm
+end = 0;
+Turns[i] = max(i);
+Flag = false;
+for(int j=1; j<4; j++){
+if(Flag[j] == false){
+	
+}
+}

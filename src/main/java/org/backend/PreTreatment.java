@@ -147,8 +147,10 @@ public class PreTreatment extends Tools{
 				break;
 			}
 		}
-		if (blockNumber < 4)
+		if (blockNumber < 4) {
+			customeAlertTool("Source code does not contain 4 distinct init blocks");
 			throw new BadSourceCodeException("Source code does not contain 4 distinct init blocks");
+		}
 		return blockIndexes;
 	}
 	
@@ -184,6 +186,7 @@ public class PreTreatment extends Tools{
 				// Bsh interpreter is used to parse the line for us and init the variable
 				interpreter.eval(line);
 			} catch (EvalError e) {
+				customeAlertTool("Error in the initialisation of the shared variable on line " + (startOfBlock + i));
 				e.printStackTrace();
 				throw new BadSourceCodeException(
 						"Error in the initialisation of the shared variable on line " + (startOfBlock + i));
@@ -195,6 +198,7 @@ public class PreTreatment extends Tools{
 				// interpreter
 				sharedVars[i].update(interpreter.get(sharedVars[i].getName()));
 			} catch (EvalError e) {
+				customeAlertTool("Shared variable " + sharedVars[i].getName() + " not initialised");
 				e.printStackTrace();
 				throw new BadSourceCodeException("Shared variable " + sharedVars[i].getName() + " not initialised");
 			}
@@ -223,6 +227,8 @@ public class PreTreatment extends Tools{
 				sharedVars[i] = new Variable(varName);
 			} catch (EvalError e) {
 				e.printStackTrace();
+				customeAlertTool("Error in the declaration of the shared variable " + varName
+						+ " on line " + (startOfBlock + i));
 				throw new BadSourceCodeException("Error in the declaration of the shared variable " + varName
 						+ " on line " + (startOfBlock + i));
 			}
@@ -240,12 +246,16 @@ public class PreTreatment extends Tools{
 		// Eventual leading and trailing whitespaces are removed, in addition to the
 		// ';'.
 		line = line.trim();
-		if (!line.substring(line.length() - 1).equals(";"))
+		if (!line.substring(line.length() - 1).equals(";")) {
+			customeAlertTool("Missing ';' in variable declaration on line " + lineNumber);
 			throw new BadSourceCodeException("Missing ';' in variable declaration on line " + lineNumber);
+		}
 		line = line.substring(0, line.length() - 1);
 		// We assume a format of "variableType variableName;"
-		if (line.split("\\s+").length != 2)
+		if (line.split("\\s+").length != 2) {
+			customeAlertTool("Invalid variable declaration on line " + lineNumber);
 			throw new BadSourceCodeException("Invalid variable declaration on line " + lineNumber);
+		}
 		return line.split("\\s+")[1];
 	}
 
@@ -254,6 +264,7 @@ public class PreTreatment extends Tools{
 			if (tab[i] == a)
 				return i;
 		}
+		//customeAlertTool("Badly formated source code.");
 		throw new BadSourceCodeException("Badly formated source code.");
 	}
 	

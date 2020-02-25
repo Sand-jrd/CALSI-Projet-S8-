@@ -51,7 +51,8 @@ public class Simulation extends Tools{
 		this.numberOfProcesses = simulationOld.getNumberOfProcesses();
 		this.schedulerType = simulationOld.getSchedulerType();
 
-		this.processes = simulationOld.getProcesses();
+		this.processes = simulationOld.getProcesses().clone();
+		
 		this.scheduler = simulationOld.getScheduler();
 		this.preTreatment = new PreTreatment(simulationOld.getPreTreatment());
 		this.executionOrderHistory = (ArrayList<Integer>)simulationOld.getExecutionOrderHistory().clone();
@@ -64,14 +65,18 @@ public class Simulation extends Tools{
 			Simulation simulationOld = infosOld.getSimulation();
 			
 			// Simulation initialization parameters
+			//this.infos = new Infos(simulationOld.getInfos());
+
 			this.sourceCodeFileName = new String(simulationOld.getSourceCodeFileName());
 			this.numberOfProcesses = simulationOld.getNumberOfProcesses();
 			this.schedulerType = simulationOld.getSchedulerType();
 
-			this.processes = simulationOld.getProcesses();
+			this.processes = simulationOld.getProcesses().clone();
+			
 			this.scheduler = simulationOld.getScheduler();
 			this.preTreatment = new PreTreatment(simulationOld.getPreTreatment());
 			this.executionOrderHistory = (ArrayList<Integer>)simulationOld.getExecutionOrderHistory().clone();
+			
 			
 		}
 	
@@ -167,7 +172,7 @@ public class Simulation extends Tools{
 	// -- Getters -- //
 	
 	public Infos getInfos() {
-		return infos;
+		return this.infos;
 	}
 	
 	public String getSourceCodeFileName() {

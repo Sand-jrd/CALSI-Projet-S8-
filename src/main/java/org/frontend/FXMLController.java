@@ -222,9 +222,12 @@ public class FXMLController {
 	
 	// Bouton "SAVE"
 	public void saveFile() {
-		System.out.print("A File Will Be Saved\n");
-		code=textAreaOriginalCode.getText();
-		try (FileWriter fw = new FileWriter(fichiercode)){
+		
+	    FileChooser fileChooser = new FileChooser();
+	    File selectedFile = fileChooser.showSaveDialog(null);
+	    code=textAreaOriginalCode.getText();
+	    
+		try (FileWriter fw = new FileWriter(selectedFile.getAbsolutePath())){
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(code);
 			bw.flush();
@@ -348,7 +351,8 @@ public class FXMLController {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("samleScheduler");
         alert.setHeaderText(null);
-        Image image = new Image("file:1.png", true);
+  		
+        Image image = new Image("file:Images/1.png", true);
         ImageView imageView = new ImageView(image);
         alert.setResizable(true);
         alert.getDialogPane().setPrefSize(800, 800);
@@ -431,10 +435,19 @@ public class FXMLController {
 		
 		simulationBuilder = new SimulationBuilder();
 		
-		//Lecture de d code
-		File sourceFile = new File("/tests/source.txt");			
+		//Print du répertoire courant
+		String currentDir = System.getProperty("user.dir");
+        System.out.println("Current dir using System:" +currentDir);
+        
+		//Path to test/sources.txt
+		String sourcecode = currentDir + "\\src\\main\\resources\\org\\tests\\source.txt";
+		System.out.println("Path to source code :" +sourcecode);
+		
+		// On copie le code du 'shell' dans sources.txt
+		File sourceFile = new File(sourcecode);			
 		code=textAreaOriginalCode.getText();
-		try (FileWriter fw = new FileWriter("tests/source.txt")){
+
+		try (FileWriter fw = new FileWriter(sourcecode)){
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(code);
 			bw.flush();
@@ -443,10 +456,10 @@ public class FXMLController {
 		}catch (IOException e) {
 			//customeAlert("Vous n'avez aucun code !");
 		}
-
+				
 		//Simulation et récupérations des infos de la simulation
 		simulation = simulationBuilder
-				.withSourceCodeFromFile(fichiercode)
+				.withSourceCodeFromFile(sourcecode)
 				.withNumberOfProcesses(Integer.parseInt(textFieldNumberOfProcessesRandom.getText()))
 				.withScheduler("random")
 				.build(); //Création de la simulation
@@ -725,7 +738,8 @@ public class FXMLController {
 		
         lineProc.getChildren().clear();
 		processline[nump]=linep;
-		System.out.println("addr dans updateProc"+processline);
+		
+		//System.out.println("addr dans updateProc"+processline);
 
 		
 		for (int l = 0; l < countLines(code) ; l++) {

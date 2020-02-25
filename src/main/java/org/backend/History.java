@@ -71,14 +71,12 @@ public class History {
 	}
 	
 	public Simulation getBackInTime(Simulation simulationvide) {
-			System.out.println("Simulation is set !");
 			Simulation simulationsOld = simulationvide.getInfos().getSimulation();
 			return simulationsOld;
 	}
 	
 	public Infos getBackInTime(Infos infosvide) {
 		if(this.weAreHere>=0) {
-			System.out.println("Info is set !");
 			Infos infosOld = this.infoss.get(weAreHere);
 			this.infoss.remove( this.infoss.size() - 1 );
 			return infosOld;

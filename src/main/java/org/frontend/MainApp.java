@@ -41,13 +41,13 @@ public class MainApp extends Application {
         
         //Affichage fenetre CrashTest. Mettre en commentaire if not used
         
-        Parent crashroot = FXMLLoader.load(getClass().getResource("crashTestSene.fxml"));
-        Scene crashscene = new Scene(crashroot);
-
-        Stage crashStage = new Stage();
-        crashStage.setTitle("Crash Test !");
-        crashStage.setScene(crashscene);
-        crashStage.show();
+//        Parent crashroot = FXMLLoader.load(getClass().getResource("crashTestSene.fxml"));
+//        Scene crashscene = new Scene(crashroot);
+//
+//        Stage crashStage = new Stage();
+//        crashStage.setTitle("Crash Test !");
+//        crashStage.setScene(crashscene);
+//        crashStage.show();
     }
 
 

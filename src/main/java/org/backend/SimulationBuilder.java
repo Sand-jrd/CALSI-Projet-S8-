@@ -21,7 +21,6 @@ public class SimulationBuilder {
 	 */
 	public SimulationBuilder withSourceCodeFromFile(String sourceCodeFileName) {
 		this.sourceCodeFileName = sourceCodeFileName;
-
 		return this;
 	}
 
