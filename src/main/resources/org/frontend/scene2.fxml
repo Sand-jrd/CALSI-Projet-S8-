@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- INCLUDES  -->
+
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
@@ -11,7 +14,8 @@
 <?import javafx.geometry.Insets?>
 
 <!-- APP -->
-<VBox prefHeight="720.0" prefWidth="1080.0" fillWidth="true" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frontend.FXMLController">
+
+<VBox fillWidth="true" prefHeight="720.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frontend.FXMLController">
   <children>
 
     <!-- ___________________________________________ Barre de Menu (File Edit Help teaching) _________________________________________________________________________________-->
@@ -28,17 +32,16 @@
           </items>
         </Menu>
 
-        <!-- _______ Edit ________ 
+        <!-- _______ Edit ________ -->
         <Menu mnemonicParsing="false" text="Edit">
           <items>
             <MenuItem mnemonicParsing="false" text="Cut" />
             <MenuItem mnemonicParsing="false" text="Copy" />
             <MenuItem mnemonicParsing="false" text="Paste" />
           </items>
-          </Menu>
-          -->
 
         <!-- _______ Help ________ -->
+        </Menu>
             <Menu mnemonicParsing="false" text="Help">
                <items>
                   <MenuItem mnemonicParsing="false" onAction="#help1" text="AtomicOperation" />
@@ -55,15 +58,12 @@
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#splitter" text="Splitter" />
               </items>
-              <items>
-                <MenuItem mnemonicParsing="false" onAction="#bakery" text="Bakery" />
-              </items>
             </Menu>
       </menus>
     </MenuBar>
 
-      <!-- ___________________________________________________________ Deuxième barres (New Execution .... ) ___________________________________________________________________-->
-      <HBox prefHeight="37.0" prefWidth="1080.0" >
+      <!-- ___________________________________________________________ DeuxiÃ¨me barres (New Execution .... ) ___________________________________________________________________-->
+      <HBox prefHeight="37.0" prefWidth="1080.0">
          <children>
             <Pane prefHeight="38.0" prefWidth="1071.0">
                <children>
@@ -157,10 +157,13 @@
                                                <Button fx:id="buttonPlusStep" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#controllerPlusStep" text="+ step" />
                                                <Button fx:id="buttonMinusStep" layoutX="70.0" layoutY="14.0" mnemonicParsing="false" onAction="#controllerMinusStep" text="- step" />
                                                <Button fx:id="buttonDoSteps" layoutX="14.0" layoutY="60.0" mnemonicParsing="false" onAction="#controllerDoSteps" text="Do steps" />
-                                               <TextField fx:id="textFieldNumberOfSteps" layoutX="80.0" layoutY="60.0" prefHeight="25.0" prefWidth="86.0" text="10" />
+                                               <TextField fx:id="textFieldNumberOfSteps" layoutX="94.0" layoutY="60.0" prefHeight="25.0" prefWidth="86.0" text="10" />
                                              </children>
                                           </AnchorPane>
                                     </content>
+                                       <tooltip>
+                                          <Tooltip text="Empty Tooltip" />
+                                       </tooltip>
                                   </Tab>
 
                                   <!-- _______ Onglet Random ________ -->
@@ -168,15 +171,24 @@
                                     <content>
                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
-                                               <Button styleClass="help" text="?" prefHeight="7.0" prefWidth="7.0"/>
-                                               <Slider fx:id="sliderSpeed" layoutX="14.0" layoutY="14.0" onMouseClicked="#slidert" onMouseDragged="#slidert" prefHeight="14.0" prefWidth="89.0" value="50.0" />
-                                               <TextField fx:id="textFieldSpeed" layoutX="114.0" layoutY="14.0" prefHeight="25.0" prefWidth="51.0" text="50" />
-                                               <Label layoutX="180.0" layoutY="14.0" text="steps per second" />
+                                               <Button ellipsisString="?" layoutX="3.0" layoutY="13.0" prefHeight="17.0" prefWidth="22.0" styleClass="help" text="Panneau de trucs" textAlignment="CENTER" AnchorPane.rightAnchor="246.0" AnchorPane.topAnchor="13.0">
+                                                   <tooltip>
+                                                      <Tooltip text="Empty Tooltip" />
+                                                   </tooltip>
+                                                   <effect>
+                                                      <Blend />
+                                                   </effect></Button>
+                                               <Slider fx:id="sliderSpeed" layoutX="26.0" layoutY="18.0" onMouseClicked="#slidert" onMouseDragged="#slidert" prefHeight="14.0" prefWidth="89.0" value="50.0" />
+                                               <TextField fx:id="textFieldSpeed" layoutX="124.0" layoutY="16.0" prefHeight="25.0" prefWidth="51.0" text="50" />
+                                               <Label layoutX="183.0" layoutY="20.0" text="steps per second" />
                                                <Button fx:id="buttonStart" layoutX="14.0" layoutY="60.0" mnemonicParsing="false" onAction="#startAuto" text="Start" />
                                                <Button fx:id="buttonStop" layoutX="70.0" layoutY="60.0" mnemonicParsing="false" onAction="#stopAuto" text="Stop" />
                                              </children>
                                           </AnchorPane>
                                     </content>
+                                       <tooltip>
+                                          <Tooltip text="Empty Tooltip" />
+                                       </tooltip>
                                   </Tab>
 
                                   <!-- _______ Onglet Next process ________ -->

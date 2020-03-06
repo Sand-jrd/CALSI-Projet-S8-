@@ -5,8 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.backend.exceptions.*;
 import org.tools.Tools;
 import bsh.EvalError;
+
 
 /**
  * Manager class for the simulation.
@@ -14,13 +16,18 @@ import bsh.EvalError;
  *
  */
 public class Simulation extends Tools{
-	private Infos infos; //Infos ça correspond contient la simu à l'étape d'avant. 
-
-	// Simulation initialization parameters
+	
+	//Infos ça correspond contient la simu à l'étape d'avant.
+	private Infos infos;  
+	
+	// Simulation initialization parameters 
+	
+	//Same as simulationBuilder
 	private String sourceCodeFileName;
 	private int numberOfProcesses;
 	private String schedulerType;
-
+	
+	//Les paramètres de la simulation 
 	private Process processes[];
 	private Scheduler scheduler; // Dans un Scheduler y'a une simu, dans une simu y'a un scheduler... mdr
 	private PreTreatment preTreatment;
@@ -44,46 +51,53 @@ public class Simulation extends Tools{
 	//Builder Quand on fait une copie d'une autre simu (pour History)
 	public Simulation(Simulation simulationOld){
 		
-		this.infos = new Infos(simulationOld.getInfos());
+		//this.infos = new Infos(simulationOld.getInfos());
 
 		// Simulation initialization parameters
 		this.sourceCodeFileName = new String(simulationOld.getSourceCodeFileName());
 		this.numberOfProcesses = simulationOld.getNumberOfProcesses();
 		this.schedulerType = simulationOld.getSchedulerType();
 
-		this.processes = simulationOld.getProcesses().clone();
+		this.processes = new Process[numberOfProcesses];
+		for(int i = 0;i<numberOfProcesses;i++) {
+			this.processes[i] = new Process(simulationOld.getProcesse(i));
+		}
 		
 		this.scheduler = simulationOld.getScheduler();
 		this.preTreatment = new PreTreatment(simulationOld.getPreTreatment());
-		this.executionOrderHistory = (ArrayList<Integer>)simulationOld.getExecutionOrderHistory().clone();
+		this.executionOrderHistory = (ArrayList<Integer>)((simulationOld.getExecutionOrderHistory()).clone());
 		
 	}
 	
 	//Builder Quand on fait une copie d'une autre avec des info (Ou on ne update pas Info du coup !) (pour History)
-		public Simulation(Infos infosOld){
+		public Simulation(Infos infosOld,Simulation simulationLinked){
 
 			Simulation simulationOld = infosOld.getSimulation();
 			
 			// Simulation initialization parameters
 			//this.infos = new Infos(simulationOld.getInfos());
 
-			this.sourceCodeFileName = new String(simulationOld.getSourceCodeFileName());
-			this.numberOfProcesses = simulationOld.getNumberOfProcesses();
-			this.schedulerType = simulationOld.getSchedulerType();
+			this.sourceCodeFileName = simulationLinked.getSourceCodeFileName();
+			this.numberOfProcesses = simulationLinked.getNumberOfProcesses();
+			this.schedulerType = simulationLinked.getSchedulerType();
 
-			this.processes = simulationOld.getProcesses().clone();
+
+			this.processes = simulationLinked.getProcesses();
 			
-			this.scheduler = simulationOld.getScheduler();
-			this.preTreatment = new PreTreatment(simulationOld.getPreTreatment());
-			this.executionOrderHistory = (ArrayList<Integer>)simulationOld.getExecutionOrderHistory().clone();
+			
+			this.scheduler = simulationLinked.getScheduler();
+			this.preTreatment = simulationLinked.getPreTreatment();
+			this.executionOrderHistory = simulationLinked.getExecutionOrderHistory();
 			
 			
 		}
 	
+	//Pour changer de Scheduler mais c'est pas encore implémenté. 
 	public void changeScheduler(String newSchedulerType) {
 		// TODO
 	}
 
+	
 	/**
 	 * Crashes specified process
 	 * @param processId of the process to crash
@@ -124,11 +138,7 @@ public class Simulation extends Tools{
 			throw new BadSourceCodeException("EvalError when executing next step ");
 		}
 		executionOrderHistory.add(processId);
-	}
-	
-	public void stepBack() throws BadSourceCodeException {
-		int i = scheduler.getStepBack();
-		nextStep(i);
+		System.out.println("On a ajouté "+processId);
 	}
 
 	private void initSimulation() throws BackEndException {
@@ -139,7 +149,7 @@ public class Simulation extends Tools{
 		//Parcage du code
 		this.preTreatment = new PreTreatment(sourceCode);
 
-		//Copie des variables Shared et Local à prioris mais c'est un peu mysterieux.
+		//Inisialisation des variables Shared et Local dans l'interpréteur
 		Process.setSharedVars(preTreatment);
 
 		//Choix du type de Scheduler (Randome, Step_By_Step ect..)
@@ -152,8 +162,7 @@ public class Simulation extends Tools{
 	private void initProcesses() throws BackEndException {
 		processes = new Process[numberOfProcesses];
 		for (int i = 0; i < numberOfProcesses; i++) {
-			//On re traite chaque process d'un step.
-			processes[i] = new Process(i, preTreatment);
+			processes[i] = new Process(i,numberOfProcesses, preTreatment);
 		}
 	}
 
@@ -191,6 +200,10 @@ public class Simulation extends Tools{
 		return processes;
 	}
 	
+	public Process getProcesse(int i) {
+		return processes[i];
+	}
+	
 	public Scheduler getScheduler() {
 		return scheduler;
 	}
@@ -201,6 +214,15 @@ public class Simulation extends Tools{
 	
 	public ArrayList<Integer> getExecutionOrderHistory() {
 		return executionOrderHistory;
+	}
+
+	public void setInfos(Infos oldInfos) {
+		this.infos = oldInfos;
+	}
+
+	public void setProcess(Process[] processes) {
+		this.processes = processes;
+		
 	}
 	
 	/**

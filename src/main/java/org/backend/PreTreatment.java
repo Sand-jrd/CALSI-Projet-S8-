@@ -2,10 +2,15 @@ package org.backend;
 
 import java.util.Arrays;
 
+import org.backend.parceTools.BlocksConversion;
+import org.backend.varStorage.Variable;
+import org.backend.exceptions.BackEndException;
+import org.backend.exceptions.BadSourceCodeException;
 import org.tools.Tools;
 
 import bsh.EvalError;
 import bsh.Interpreter;
+
 
 public class PreTreatment extends Tools{
 	private String source;
@@ -18,7 +23,8 @@ public class PreTreatment extends Tools{
 	private Variable[] localVars;
 	
 
-	static String[] blocks = { "while", "if", "for", "do" }; // possible blocks
+	static String[] blocks = { "while", "if", "for", "do"}; // possible blocks
+	static String[] conds = { "&&", "||"}; // possible conditions
 	static Transformation trans;
 
 	//Contructeur classique
@@ -39,7 +45,7 @@ public class PreTreatment extends Tools{
 		this.sharedVars = preTreatOld.getSharedVars();
 		this.localVars = preTreatOld.getLocalVars();
 		
-		this.trans = new Transformation();
+		PreTreatment.trans = new Transformation();
 		
 	}
 	

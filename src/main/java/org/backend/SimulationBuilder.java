@@ -1,5 +1,7 @@
 package org.backend;
 
+import org.backend.exceptions.BackEndException;
+
 /**
  * Builder pattern for creating a new simulation.
  * @author Hugo

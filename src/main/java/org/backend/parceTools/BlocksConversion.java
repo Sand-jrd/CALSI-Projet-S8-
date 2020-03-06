@@ -1,6 +1,8 @@
-package org.backend;
+package org.backend.parceTools;
 
 import java.util.ArrayList;
+
+import org.backend.exceptions.BackEndException;
 
 /**
  * @author Chaimaa & Issam
@@ -196,12 +198,21 @@ public class BlocksConversion {
 
 		String whileLineString = lines.get(code.get(whileLine)).getLineCode(code);
 		String cond = whileLineString.substring(whileLineString.indexOf('(') + 1, whileLineString.lastIndexOf(')'));
-		String notCond = "!(" + cond + ")";
-
+		
 		int startToId = closeLine + 1 < code.size() ? code.get(closeLine + 1) : Line.ID_END;
 		int closeToId = code.get(whileLine);
+		
+		ArrayList<String> conds = dividConds(cond);
+		int nbConds = conds.size()-1;
 
+		String notCond = "!(" + conds.get(0) + ")"; 
 		lines.set(code.get(whileLine), new LineGoto(code.get(whileLine), notCond, startToId));
+		
+		for(int i = 1;i<=nbConds;i++) {
+			notCond = "!(" + conds.get(i) + ")"; 
+			lines.add(code.get(whileLine)+i, new LineGoto(code.get(whileLine)+i, notCond, startToId));
+		}
+
 		lines.set(code.get(closeLine), new LineGoto(code.get(closeLine), "true", closeToId));
 
 	}
@@ -217,14 +228,24 @@ public class BlocksConversion {
 
 		String ifLineString = lines.get(ifLineId).getLineCode(code);
 		String cond = ifLineString.substring(ifLineString.indexOf('(') + 1, ifLineString.lastIndexOf(')'));
-		String notCond = "!(" + cond + ")";
+		//String notCond = "!(" + cond + ")";
 
 		code.remove(closeLine);
-
 		int ifToId = elseLine + 1 < code.size() ? code.get(elseLine + 1) : Line.ID_END;
 		int elseToId = closeLine < code.size() ? code.get(closeLine) : Line.ID_END;
+		
+		ArrayList<String> conds = dividConds(cond);
+		int nbConds = conds.size()-1;
 
+		String notCond = "!(" + conds.get(0) + ")"; 
 		lines.set(ifLineId, new LineGoto(ifLineId, notCond, ifToId));
+		
+		for(int i = 1;i<=nbConds;i++) {
+			//System.out.print(conds.get(i));
+			notCond = "!(" + conds.get(i) + ")"; 
+			lines.add(ifLineId+i, new LineGoto(ifLineId+i, notCond, ifToId));
+		}
+		
 		lines.set(elseLineId, new LineGoto(elseLineId, "true", elseToId));
 
 	}
@@ -284,6 +305,57 @@ public class BlocksConversion {
 		code.add(startLine + 1, startLineGoto.id);
 		code.add(endLine + 1, inst2.id);
 
+	}
+	
+	private ArrayList<String> dividConds(String cond) {
+		
+		// Divid conditions which are in the same line
+		ArrayList<String> conds = new ArrayList<String>();
+		
+		String gluedConds = new String(cond);
+		
+		int indexEt;
+		int indexOu;
+
+
+			indexEt = gluedConds.indexOf("&&");
+			if(indexEt==-1) {
+				indexEt = gluedConds.length()-1;
+			}
+			
+			indexOu = gluedConds.indexOf("||");
+			if(indexOu==-1) {
+				indexOu = gluedConds.length()-1;
+			}
+		
+		//Cette condition est vérifié ssi indexOu=IndexEt=End. Soit on a attient la fin
+		while(indexOu!=indexEt){
+			
+			if(indexOu>indexEt) {
+				//System.out.print(gluedConds.substring(0,indexEt));
+				conds.add(gluedConds.substring(0,indexEt));
+				gluedConds = gluedConds.substring(indexEt+2,gluedConds.length()-1);
+				//System.out.print(gluedConds);
+			}
+			else {
+				conds.add(gluedConds.substring(1,indexOu));
+				gluedConds = gluedConds.substring(indexOu+2,gluedConds.length()-1);
+			}
+			
+			indexEt = gluedConds.indexOf("&&");
+			if(indexEt==-1) {
+				indexEt = gluedConds.length()-1;
+			}
+			
+			indexOu = gluedConds.indexOf("||");
+			if(indexOu==-1) {
+				indexOu = gluedConds.length()-1;
+			}
+			
+		}
+		//System.out.print(gluedConds);
+		conds.add(gluedConds);
+		return conds;
 	}
 	
 	// -- Getters -- //

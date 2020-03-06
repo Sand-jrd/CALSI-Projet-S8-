@@ -1,11 +1,21 @@
 package org.backend;
 
+
 import java.util.ArrayList;
 
+import org.backend.exceptions.BackEndException;
+import org.backend.exceptions.BadSourceCodeException;
+import org.backend.exceptions.RipException;
+import org.backend.varStorage.Variable;
 import org.tools.Tools;
 
 import bsh.EvalError;
 import bsh.Interpreter;
+
+//import bsh.BshClassManager;
+//import java.net.URL;
+
+
 
 public class Process extends Tools{
 	private static Variable[] sharedVars;
@@ -19,10 +29,19 @@ public class Process extends Tools{
 	private PreTreatment preTreatment;
 
 	//Normal builder
-	public Process(int index, PreTreatment preTreatment) throws BackEndException {
+	public Process(int index,int numberOfProcesses, PreTreatment preTreatment) throws BackEndException {
 		this.inter = new Interpreter();
-
-		// Reserved variables
+		
+		/*
+		BshClassManager manag  = new BshClassManager();
+		//On ajoute le package Object à ClassPath pour qu'il puisse être importer: 
+		String currentDir = System.getProperty("user.dir");
+		String sourcecode = currentDir + "\\src\\main\\java\\org\\objets";
+		URL myURL = new URL(sourcecode);
+		BshClassManager.addClassPath(sourcecode);
+		*/
+		
+		// Reserved variables index et numberOfProcesses
 		try {
 			this.inter.set("i", index);
 		} catch (EvalError e1) {
@@ -30,6 +49,13 @@ public class Process extends Tools{
 			throw new RipException("EvalError when setting index variable (i).");
 		}
 		
+		try {
+			this.inter.set("nbProc", numberOfProcesses);
+		} catch (EvalError e1) {
+			e1.printStackTrace();
+			throw new RipException("EvalError when setting index variable (NbProc).");
+		}
+	
 		// Execution of the initialization block (imports, and variable declarations)
 		try {
 			this.inter.eval(preTreatment.getInitialisationBlock());
@@ -51,6 +77,20 @@ public class Process extends Tools{
 		this.preTreatment = preTreatment;
 	}
 
+	//Builder for deep copy
+	public Process(Process processe) {
+		
+		this.setSharedVars(processe.getSharedVars().clone());
+		this.localVars = processe.getLocalVars().clone();
+		this.sourceCode = processe.getSourceCode().clone() ;
+		this.currentLine = processe.getCurrentLine();
+		this.inter = processe.getInter();
+		this.done = processe.isDone();
+		this.crashed = processe.isCrashed();
+		this.originalSourceLinesExecutedDuringLastStep = (ArrayList<Integer>) processe.getOriginalSourceLinesExecutedDuringLastStep().clone();
+		this.preTreatment = processe.getPreTreatment();
+	}
+
 	public void treatGoto() throws EvalError {
 		// currentLine is a goto
 		String instruction = this.sourceCode[this.currentLine];
@@ -68,6 +108,8 @@ public class Process extends Tools{
 
 	}
 
+	// --------------  ICI on utilise l'interpréteur ------------------- //
+	
 	public void oneStep() throws EvalError {
 		if (this.done)
 			return;
@@ -78,7 +120,7 @@ public class Process extends Tools{
 		// The shared variables in the interpreter (which might have been modified in an other process since) are 
 		// updated from the array of shared variables.
 		for (int i = 0; i < Process.sharedVars.length; ++i) {
-			this.inter.set(Process.sharedVars[i].getName(), Process.sharedVars[i].getObj());
+			this.inter.set(Process.getSharedVars()[i].getName(), Process.getSharedVars()[i].getObj());
 		}
 
 		// System.out.println(this.sourceCode[this.currentLine]);
@@ -91,13 +133,13 @@ public class Process extends Tools{
 			this.inter.eval(this.sourceCode[this.currentLine]);
 			this.currentLine++;
 			}catch (EvalError e) {
-				customeAlertTool("There is an error in your code");
+				customeAlertTool("An error occured when eval this line :" + e.getErrorText());
 			}
 		}
 
 		// After the step, the shared variables are updated so their value can be shared between the processes
 		for (int i = 0; i < Process.sharedVars.length; ++i) {
-			Process.sharedVars[i].update(this.inter.get(Process.sharedVars[i].getName()));
+			Process.getSharedVars()[i].update(this.inter.get(Process.getSharedVars()[i].getName()));
 		}
 		
 		// Local variables are also updated for the GUI
@@ -143,7 +185,19 @@ public class Process extends Tools{
 		return sourceCode;
 	}
 	
+	public Interpreter getInter() {
+		return inter;
+	}
+	
+	private PreTreatment getPreTreatment() {
+		return preTreatment;
+	}
+	
 	public ArrayList<Integer> getOriginalSourceLinesExecutedDuringLastStep() {
 		return originalSourceLinesExecutedDuringLastStep;
+	}
+
+	public void setSharedVars(Variable[] sharedVars) {
+		this.sharedVars = sharedVars;
 	}
 }

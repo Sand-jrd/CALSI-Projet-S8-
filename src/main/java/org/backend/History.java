@@ -1,28 +1,9 @@
 package org.backend;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.io.*;
-import java.lang.String;
-import java.math.RoundingMode;
-
-import org.backend.BackEndException;
-import org.backend.BadSourceCodeException;
 import org.backend.Infos;
-import org.backend.RipException;
 import org.backend.Simulation;
-import org.backend.SimulationBuilder;
-import org.backend.VariableInfo;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javafx.scene.text.Text;
-
-import org.tools.Tools;
-import bsh.EvalError;
 
 /**
  * This class will saved all the states simulation will come true. Hence, We will be able to StepBack and Save a simulation.
@@ -31,7 +12,7 @@ import bsh.EvalError;
  */
 public class History {
 	
-	private	ArrayList<ArrayList<Text>> textForProcess;
+	//private	ArrayList<ArrayList<Text>> textForProcess;
 	int weAreHere;
 	private ArrayList<Simulation> simulations;
 	private ArrayList<Infos> infoss;
@@ -39,7 +20,7 @@ public class History {
 	
 	//-- Historique vide
 	public History() {
-		this.textForProcess = new ArrayList<ArrayList<Text>>();
+		//this.textForProcess = new ArrayList<ArrayList<Text>>();
 		this.simulations = new ArrayList<Simulation>();
 		this.infoss = new  ArrayList<Infos>();
 		this.processline = new  ArrayList<int []>();
@@ -49,29 +30,21 @@ public class History {
 	// -- Les addStep pour enregistrer les différente information qui se trouve un peu partout dans le code (ça sera optimisable plus tard pour la qualité du code)
 	public void addStep(Infos infos,Simulation simulation,int [] processline) {
 		this.simulations.add(new Simulation(simulation));
-		this.infoss.add(new Infos(infos));
+		this.infoss.add(new Infos(infos,this.simulations.get(weAreHere+1)));
+		this.simulations.get(weAreHere+1).setInfos(this.infoss.get(weAreHere+1));
+		
+		System.out.println("Check if Sim/Info are linked : "+(this.simulations.get(weAreHere+1).getInfos())+" == "+this.infoss.get(weAreHere+1));
+		System.out.println(this.simulations.get(weAreHere+1).getProcesse(1));
+		System.out.println(this.infoss.get(weAreHere+1).getSimulation().getProcesse(1));
+		
 		this.processline.add(processline.clone());
 		this.weAreHere++;
 	}
 	
-	public void addStep(ArrayList<Text> textForProcess) {
-		this.textForProcess.add(textForProcess);
-	}
-	
-	
-	//Les GetBackInTime pour revenir en arrière
-	public ArrayList<Text> getBackInTime(ArrayList<Text> textForProcessvide) {
-		if(this.weAreHere>=0) {
-			System.out.println("Text is set !");
-			ArrayList<Text> textForProcessOld = this.textForProcess.get(weAreHere);
-			this.textForProcess.remove( this.textForProcess.size() - 1 );
-			return textForProcessOld;
-		}
-		return textForProcessvide;
-	}
-	
 	public Simulation getBackInTime(Simulation simulationvide) {
-			Simulation simulationsOld = simulationvide.getInfos().getSimulation();
+			//Simulation simulationsOld = simulationvide.getInfos().getSimulation();
+			Simulation simulationsOld = this.simulations.get(weAreHere);
+			this.simulations.remove( this.simulations.size() - 1 );
 			return simulationsOld;
 	}
 	

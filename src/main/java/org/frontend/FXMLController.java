@@ -1,7 +1,6 @@
 package org.frontend;
 
 import javafx.fxml.FXML;
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
@@ -9,45 +8,26 @@ import javafx.scene.Parent;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
 import java.text.DecimalFormat;
-import java.math.RoundingMode;
 import javafx.stage.FileChooser;
-import javafx.scene.control.MenuItem;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Application;
-import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
-import javafx.scene.control.Label;
 import javafx.scene.control.Button;
-import javafx.geometry.Pos;
-import javafx.geometry.Insets;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import javafx.scene.text.*;
 
-import org.backend.BackEndException;
-import org.backend.BadSourceCodeException;
 import org.backend.Infos;
-import org.backend.RipException;
 import org.backend.Simulation;
 import org.backend.SimulationBuilder;
-import org.backend.VariableInfo;
+import org.backend.varStorage.VariableInfo;
+import org.backend.exceptions.*;
 import org.backend.History;
 
 import javafx.scene.control.TextArea;
@@ -56,10 +36,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.text.TextFlow;
 import javafx.scene.control.Alert;
@@ -159,13 +135,14 @@ public class FXMLController {
 	private String fichiercode="";
 	private String cordo="";
 	private int numberOfProcesses;
-	private int [] processline;
 	private Timeline timeline;
 	private double s=50.00;
 	
+	private int [] processline;
 	private SimulationBuilder simulationBuilder;
 	private Simulation simulation;
 	private Infos infos;
+	private boolean ignorAlert;
 	private	History history;
 	
 	
@@ -188,6 +165,7 @@ public class FXMLController {
 		listView3.setItems(content3);
 		listView4.setItems(content4);
 		textAreaOriginalCode.setText(code);
+
 	}
 	
 	//---------------------------------------------------------------------------------------------------------------------------//
@@ -417,14 +395,12 @@ public class FXMLController {
 	//-> Teaching <-//
 	
 		// Bouton Splitter
-		public void splitter()throws Exception {
-			Parent secondroot = FXMLLoader.load(getClass().getResource("welcome.fxml"));
-	        Scene secondscene = new Scene(secondroot);
-	        
-	        Stage secondStage = new Stage();
-	        secondStage.setTitle("Welcome !");
-	        secondStage.setScene(secondscene);
-	        secondStage.showAndWait();
+		public void splitter(){
+			openTeachingWin("splitter");
+		}
+		// Bouton Bakery
+		public void bakery(){
+			openTeachingWin("bakery");
 		}
 	
 	//---------------------------------------------------------------------------------------------------------------------------//
@@ -432,6 +408,9 @@ public class FXMLController {
 	
 	// -- Bouton "NEW EXECUTION" --  //
 	public void newExecution() throws BackEndException {
+        
+		flushall();
+		ignorAlert = false;
 		
 		simulationBuilder = new SimulationBuilder();
 		
@@ -440,11 +419,10 @@ public class FXMLController {
         System.out.println("Current dir using System:" +currentDir);
         
 		//Path to test/sources.txt
-		String sourcecode = currentDir + "\\src\\main\\resources\\org\\tests\\source.txt";
+		String sourcecode = currentDir + "\\src\\main\\resources\\org\\Algorithmes\\source.txt";
 		System.out.println("Path to source code :" +sourcecode);
 		
-		// On copie le code du 'shell' dans sources.txt
-		File sourceFile = new File(sourcecode);			
+		// On copie le code du 'shell' dans sources.txt			
 		code=textAreaOriginalCode.getText();
 
 		try (FileWriter fw = new FileWriter(sourcecode)){
@@ -456,7 +434,8 @@ public class FXMLController {
 		}catch (IOException e) {
 			//customeAlert("Vous n'avez aucun code !");
 		}
-				
+		
+		try {
 		//Simulation et récupérations des infos de la simulation
 		simulation = simulationBuilder
 				.withSourceCodeFromFile(sourcecode)
@@ -475,6 +454,12 @@ public class FXMLController {
 		updateChoiceBoxStepByStep();
 		updateChoiceBoxProcessToCrash();
 		textAreaParsedCode.setText(infos.getNewSourceCode());
+		
+		}catch (Exception e) {
+			System.out.print(e);
+			customeAlert("Echec de l'execution");
+			flushall();
+		}
 		
 	}
 	
@@ -501,6 +486,7 @@ public class FXMLController {
 	
 	// -- Bouton "START" -- //
 	public void startAuto() throws BackEndException, InterruptedException{
+		if(simulation != null) {
 		System.out.println( "Process starting ...");
 		if (!auto) {
 		auto = true;
@@ -509,57 +495,97 @@ public class FXMLController {
 		    @Override
 		    public void handle(ActionEvent event) {
 		    	if (!infos.simulationIsDone() && auto) {
-		    		System.out.println( "Simulation is done");
 		    		try {
 						controllerPlusStep();
 					} catch (BackEndException e) {
 						e.printStackTrace();
 					}
 		    	}
+		    	if(infos.simulationIsDone()) {
+					stopAuto();
+				}
+		    	
 		    }
 		}));
 		timeline.setCycleCount(10000000);
 		timeline.play();
 		}
-
+		}
+		else if(simulation == null) {
+	    	customeAlert("You must start a new execution");
+    	}
 	}
 		
 
 	// -- Bouton "STOP" -- //
 	public void stopAuto(){
-		System.out.println( "Process Stop");
-		auto = false;
-		timeline.stop();
+		if(auto != false) {
+			System.out.println( "Process Stop");
+			auto = false;
+			timeline.stop();
+			if(simulation != null && infos.simulationIsDone()) {
+				customeAlert("Simulation is done !");
+			}
+		}
+		else {
+			customeAlert("No auto-simaltion is in process");
+		}
 	}	
 
 
 	// -- Bouton "DO STEPS" -- //
 	public void controllerDoSteps() throws BackEndException{
-		int count = Integer.parseInt(textFieldNumberOfSteps.getText());
-		while (!infos.simulationIsDone() && count>0) {
-			count -= 1;
-			controllerPlusStep(); //Déclanche i fois la fonction PlusStep ci dessous
+		try {
+			int count = Integer.parseInt(textFieldNumberOfSteps.getText());
+			while (!infos.simulationIsDone() && count>0) {
+				count -= 1;
+				controllerPlusStep(); //Déclanche i fois la fonction PlusStep ci dessous
+			}
+			if(infos.simulationIsDone()) {
+				customeAlert("Simulation is done !");
+			}
+		}catch(Exception e) {
+	    	if(simulation == null) {
+		    	customeAlert("You must start a new execution");
+	    	}
 		}
 	}
 	
 	// -- Bouton "+ step", ET EGALEMENT UTILISER DANS DO STEPS -- //
 	public void controllerPlusStep() throws BackEndException{
+		
+		if(ignorAlert == false && checkCodeChange() == true) {
+			ignorAlert = true;
+	    	customeAlert("Beware ! \nYou made some modification in your code.\nThis will NOT apply for this simulation.\nStart a new execution if you want to test your new code.\nOtherwise, juste ignor this message. ");
+		}
+		
 		try {
 		if (!infos.simulationIsDone()) {
 			
 			history.addStep(infos,simulation,processline);
 			
 			simulation.nextStep();
+			
 			ArrayList<Integer> arrayExec = infos.getOriginalSourceLinesExecutedDuringLastStep(infos.getIdOfLastExecutedProcess());
+
 			
 			updateProcess(infos.getIdOfLastExecutedProcess(),arrayExec.get(0));
 			updateSharedVariables();
 			updateLocalVariables();
 		}
+		else {
+	    	customeAlert("Simulation is done !");
+		}
 	    } catch (Exception e) {
-	    	customeAlert("La simulation est terminé !");
+	    	if(simulation == null) {
+		    	customeAlert("You must start a new execution");
+	    	}
+	    	else {
+	    	customeAlert("An unknown probleme have occured, try to restart your app");
 	        System.out.println(e);
-	      }
+	    	}
+	    }
+
 	}
 	
 	// -- Bouton "- step" -- //
@@ -570,7 +596,7 @@ public class FXMLController {
 			simulation = history.getBackInTime(simulation);
 			processline = history.getBackInTime(processline);
 			infos = history.getBackInTime(infos);
-
+			
 			history.getBackInTime();
 			
 	        ArrayList<Integer> arrayExec = infos.getOriginalSourceLinesExecutedDuringLastStep(infos.getIdOfLastExecutedProcess());
@@ -592,25 +618,39 @@ public class FXMLController {
 	
 	//BOUTON CRASH
 	public void onClickedCrashProcess() throws RipException {
-	String currentProcess = choiceBoxProcessToCrash.getSelectionModel().getSelectedItem();
-	int currentProcessId = Character.getNumericValue(currentProcess.charAt(1));
-	simulation.crashProcess(currentProcessId);
-	choiceBoxProcessToCrash.getItems().remove(currentProcess);
-	choiceBoxStepByStep.getItems().remove(currentProcess);
-	System.out.println(currentProcess + " crashed");		
+		
+	try {
+		String currentProcess = choiceBoxProcessToCrash.getSelectionModel().getSelectedItem();
+		int currentProcessId = Character.getNumericValue(currentProcess.charAt(1));
+		simulation.crashProcess(currentProcessId);
+		choiceBoxProcessToCrash.getItems().remove(currentProcess);
+		choiceBoxStepByStep.getItems().remove(currentProcess);
+		System.out.println(currentProcess + " crashed");
+	}catch(Exception e){
+		if(simulation == null) {
+	    	customeAlert("You must start a new execution");
+    	}
+	}
 	}
 	
 	// ------- ONLGET STEp_BY_STEP ------- //
 	
 	//BOUTON NEXT_STEP
 	public void onClickedStepByStepNextStep() throws BadSourceCodeException, RipException {
-	String processToExecute = choiceBoxStepByStep.getSelectionModel().getSelectedItem();
-	int processToExecuteId = Character.getNumericValue(processToExecute.charAt(1));
-	ArrayList<Integer> arrayExec = infos.getOriginalSourceLinesExecutedDuringLastStep(infos.getIdOfLastExecutedProcess());
-	simulation.nextStep(processToExecuteId);
-	updateProcess(infos.getIdOfLastExecutedProcess(),arrayExec.get(0));
-	updateSharedVariables();
-	updateLocalVariables();
+		
+	try {
+		String processToExecute = choiceBoxStepByStep.getSelectionModel().getSelectedItem();
+		int processToExecuteId = Character.getNumericValue(processToExecute.charAt(1));
+		ArrayList<Integer> arrayExec = infos.getOriginalSourceLinesExecutedDuringLastStep(infos.getIdOfLastExecutedProcess());
+		simulation.nextStep(processToExecuteId);
+		updateProcess(infos.getIdOfLastExecutedProcess(),arrayExec.get(0));
+		updateSharedVariables();
+		updateLocalVariables();
+	}catch(Exception e){
+		if(simulation == null) {
+	    	customeAlert("You must start a new execution");
+    	}
+	}
 	}
 		
 	
@@ -728,9 +768,85 @@ public class FXMLController {
         alert.setHeaderText(null);
         alert.setContentText(alertText);
         alert.setResizable(true);
-        alert.getDialogPane().setPrefSize(400, 100);
-        alert.showAndWait();
+        alert.getDialogPane().setPrefSize(400, 150);
+        alert.show();
 	        
+	}
+	
+	// Vide toute les initialisation, les variable de l'app sont comme si elle venait juste de démarrer. 
+	public void flushall() {
+		processline = null;
+		simulationBuilder = null;
+		simulation= null;
+		infos = null;
+		history = null;
+		listView1.setItems(content1);
+		listView2.setItems(content2);
+		listView3.setItems(content3);
+		listView4.setItems(content4);
+		System.out.print(simulation = null);    	
+		lineProc.getChildren().clear();
+		
+	}
+	
+	// Charge un code depuis teaching 
+	public void loadFromTeaching() {
+		
+    	String currentDir = System.getProperty("user.dir");
+		String sourcecode = currentDir + "\\src\\main\\resources\\org\\Algorithmes\\source.txt";
+		
+		try (BufferedReader reader = new BufferedReader(new FileReader(new File(sourcecode)))) {
+
+			String line;
+			code="";
+			while ((line = reader.readLine()) != null)
+				code=code+line+"\n";
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		textAreaOriginalCode.setText(code);
+	
+	}
+	
+	// Pour vérifié si le code à été modifié ou pas
+	public boolean checkCodeChange() {
+		if(textAreaOriginalCode.getText().equals(code)) {
+			return false;
+		}
+		return true;
+	}
+	
+	public void openTeachingWin(String algo) {
+		
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("teaching.fxml"));
+		
+        Parent secondroot;
+
+        try {
+		
+		secondroot = loader.load();
+
+        Scene secondscene = new Scene(secondroot);
+        secondscene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+
+        TeachingController controller = loader.getController();
+        
+        // capitalize first letter
+        String Algo = algo.substring(0, 1).toUpperCase() + algo.substring(1);
+        
+        Stage secondStage = new Stage();
+        secondStage.setTitle(Algo);
+        secondStage.setScene(secondscene);
+        controller.initialize(algo);
+        secondStage.showAndWait();
+        
+		} catch (IOException e) {
+			// Auto-generated catch block
+			e.printStackTrace();
+		}
+        //Load le splitter (Si "test it!" a été actionné, réinitialise tous sinon )
+        flushall();
+        loadFromTeaching();
 	}
 	
 	//Updates le truc de gauche (La où en sont les Processus) (Utiliser dans toute les fonctions qui gères l'execution du truc)

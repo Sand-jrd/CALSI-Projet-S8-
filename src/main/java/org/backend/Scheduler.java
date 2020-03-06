@@ -3,7 +3,7 @@ import java.util.Random;
 
 public class Scheduler {
 	private Simulation simulation;
-	public Random random;
+	public Random random; //La méthode nextInt() de la classe Random permet de générer un entier aléatoire compris entre 0 inclus et l'entier passé en paramètre exclus
 	
 	public Scheduler(Simulation simulation) {
 		this.simulation = simulation;
@@ -32,13 +32,5 @@ public class Scheduler {
 		
 		return next;
 	}
-	
-	public int getStepBack() {
-		Process procs[] = simulation.getProcesses();
-		boolean allDone = true;
-		
-		int prev = this.random.nextInt(procs.length);
-		
-		return prev;
-	}
+
 }

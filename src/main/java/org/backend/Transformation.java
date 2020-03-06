@@ -5,7 +5,7 @@ public class Transformation {
 	String[] code;
 	Integer[] mapping;
 	
-	//Classique Builder
+	//Classic Builder
 	public Transformation() {
 		
 	}

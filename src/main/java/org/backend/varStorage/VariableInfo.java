@@ -1,4 +1,4 @@
-package org.backend;
+package org.backend.varStorage;
 
 /**
  * Data class storing information about a variable in easy to use formats.

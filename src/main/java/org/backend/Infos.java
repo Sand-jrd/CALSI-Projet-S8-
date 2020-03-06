@@ -1,7 +1,13 @@
 package org.backend;
 
 import java.util.ArrayList;
+
+import org.backend.exceptions.BackEndException;
+import org.backend.exceptions.RipException;
+import org.backend.varStorage.Variable;
+import org.backend.varStorage.VariableInfo;
 import org.tools.Tools;
+
 
 /**
  * Class with several method giving various information on the
@@ -21,8 +27,8 @@ public class Infos extends Tools{
 	}
 
 	//Builder for a copie
-	public Infos(Infos infosOld) {
-		this.simulation = new Simulation(infosOld); //ON fait une copie de la simu qui était à l'interieur
+	public Infos(Infos infosOld,Simulation simulationOld) {
+		this.simulation = new Simulation(infosOld,simulationOld); //ON fait une copie de la simu qui était à l'interieur (On prend aussi simu car certain paramètre doivet être commun).
 	}
 	/**
 	 * Get the id of the last process that was executed.
@@ -132,7 +138,7 @@ public class Infos extends Tools{
 		return preTreatment.getNewSourceCode();
 	}
 	
-	private Process getProcess(int processId) throws RipException {
+	public Process getProcess(int processId) throws RipException {
 		Process processes[] = simulation.getProcesses();
 		if (processId >= processes.length) {
 			throw new RipException("Can't get termination status for process " + processId + " as it does not exist.");
