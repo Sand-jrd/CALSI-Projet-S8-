@@ -1,48 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.canvas.*?>
-<?import javafx.scene.media.*?>
-<?import fxmlsvg.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.media.Media?>
+<?import javafx.scene.media.MediaPlayer?>
+<?import javafx.scene.media.MediaView?>
 
-<VBox prefHeight="710.0" prefWidth="490.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frontend.TeachingController">
+<VBox prefHeight="710.0" prefWidth="490.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frontend.TeachingController">
    <children>
-   
-      <VBox prefHeight="299.0" prefWidth="490.0">
-        <MediaView >
+
+      <VBox prefHeight="240.0" prefWidth="490.0">
+        <MediaView>
             <mediaPlayer>
                 <MediaPlayer autoPlay="true">
                     <media>
                         <Media fx:id="video" source="http://download.oracle.com/otndocs/products/javafx/oow2010-2.flv" />
                     </media>
                 </MediaPlayer>
-            </mediaPlayer>    
+            </mediaPlayer>
         </MediaView>
       </VBox>
-      
-	   <VBox prefHeight="299.0" prefWidth="490.0">
+
+	   <VBox prefHeight="387.0" prefWidth="490.0">
          <children>
- 			<Button layoutX="190.0" layoutY="6.0" mnemonicParsing="false" onAction="#loadCode" prefHeight="25.0" prefWidth="96.0" text="Test it !" />
-         	<Label fx:id="AlgoTexts" layoutX="90.0" layoutY="60.0" text="insert AlgoTexts here" />
+            <TextArea fx:id="algoTxt" editable="false" prefHeight="375.0" prefWidth="490.0" />
          </children>
       </VBox>
-      
-	   <VBox prefHeight="299.0" prefWidth="490.0">
+
+      	   <VBox prefHeight="170.0" prefWidth="490.0">
          <children>
-     		 <Button fx:id="closeButton" cancelButton="true" layoutX="680" layoutY="460" mnemonicParsing="false" onAction="#handleCloseButtonAction" prefWidth="100.0" text="Let's code it" />
+            <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+               <children>
+           		 <Button fx:id="closeButton" cancelButton="true" mnemonicParsing="false" onAction="#handleCloseButtonAction" prefWidth="100.0" text="Let's code it" translateX="200.0" translateY="60.0" />
+       			<Button layoutX="780.0" layoutY="500.0" lineSpacing="5.0" mnemonicParsing="false" onAction="#loadCode" prefHeight="25.0" prefWidth="96.0" text="Test it !" translateX="250.0" translateY="60.0" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
          </children>
       </VBox>
-      
+
    </children>
-   
+
 
 </VBox>

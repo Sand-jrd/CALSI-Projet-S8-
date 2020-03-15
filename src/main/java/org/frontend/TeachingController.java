@@ -3,6 +3,7 @@ package org.frontend;
 import javafx.fxml.FXML;
 //import javafx.scene.media.Media;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 import javafx.scene.control.Button;
@@ -35,7 +36,7 @@ public class TeachingController{
 	public Button closeButton;
 	
 	@FXML
-	public Label AlgoTexts;
+	public TextArea algoTxt;
 	
 	//---------------------------- VARIABLES GLOBALES --------------------------------------//
 
@@ -49,10 +50,10 @@ public class TeachingController{
     	System.out.print("\n Initialization " + algo+"\n");
     	//Initialise la fenêtre avec la bonne explication.
     	if(algo == "splitter") {
-    		AlgoTexts.setText("Explication du splitter ici !");
+    		algoTxt.setText("Explication du splitter ici !");
     	}
     	else if(algo == "bakery") {
-    		AlgoTexts.setText("Explication du bakery ici !");
+    		algoTxt.setText("Explication du bakery ici !");
     	}
     	
     	//Flush source code

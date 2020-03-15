@@ -26,6 +26,7 @@ public class Simulation extends Tools{
 	private String sourceCodeFileName;
 	private int numberOfProcesses;
 	private String schedulerType;
+	private String SchedString;
 	
 	//Les paramètres de la simulation 
 	private Process processes[];
@@ -39,6 +40,7 @@ public class Simulation extends Tools{
 		this.sourceCodeFileName = simulationBuilder.sourceCodeFileName;
 		this.numberOfProcesses = simulationBuilder.numberOfProcesses;
 		this.schedulerType = simulationBuilder.schedulerType;
+		this.SchedString = simulationBuilder.SchedString;
 
 		this.executionOrderHistory = new ArrayList<Integer>();
 

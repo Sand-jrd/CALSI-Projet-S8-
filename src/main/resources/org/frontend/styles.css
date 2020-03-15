@@ -27,3 +27,6 @@ MenuBar {
 VBox{
        -fx-background-color: #c3c3c3;
 }
+#lineProcCanvas{
+    -fx-float:left;
+}

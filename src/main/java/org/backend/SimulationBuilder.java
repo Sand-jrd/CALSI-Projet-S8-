@@ -11,6 +11,7 @@ public class SimulationBuilder {
 	String sourceCodeFileName;
 	int numberOfProcesses;
 	String schedulerType;
+	String SchedString;
 
 	public SimulationBuilder() {
 	}
@@ -44,7 +45,8 @@ public class SimulationBuilder {
 	 * @param schedulerType the type of scheduler to use
 	 * @return itself
 	 */
-	public SimulationBuilder withScheduler(String schedulerType) {
+	public SimulationBuilder withScheduler(String schedulerType,String SchedString) {
+		this.SchedString = SchedString;
 		this.schedulerType = schedulerType;
 
 		return this;

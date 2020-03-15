@@ -16,9 +16,16 @@ import javafx.util.Duration;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
+import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+
+import javafx.scene.paint.*;
+import javafx.scene.canvas.*;
+import javafx.geometry.Insets;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.shape.SVGPath;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,7 +86,7 @@ public class FXMLController {
 	@FXML
 	private Button buttonMinusStep;
 	@FXML
-	private Button ChooseScheduler;
+	private Label SchedName;
 	@FXML
 	private Button buttonProcessCrash;
 	@FXML
@@ -124,6 +131,8 @@ public class FXMLController {
 	@FXML
 	private TextField textFieldNumberOfSteps;
 	
+	 @FXML 
+	 private Canvas lineProcCanvas;
 
 
 	//---------------------------- VARIABLES GLOBALES --------------------------------------//
@@ -138,12 +147,16 @@ public class FXMLController {
 	private Timeline timeline;
 	private double s=50.00;
 	
+	private String fichierShed=""; // Chemain absolu du fichier
+	private String ShedString="";  // Contenu du fichier.
+	
 	private int [] processline;
 	private SimulationBuilder simulationBuilder;
 	private Simulation simulation;
 	private Infos infos;
 	private boolean ignorAlert;
 	private	History history;
+	private GraphicsContext gc;
 	
 	
 	//---------------------------------------------------------------------------------------------------------------------------//
@@ -158,12 +171,13 @@ public class FXMLController {
 		choiceBoxLocalVariables.getSelectionModel().selectedItemProperty()
 	    .addListener((obs, oldV, newV) -> updateLocalVariables());
 		
-		choiceBoxScheduling.getItems().addAll("Step-by-step", "Random" , "With File");
-		choiceBoxScheduling.setValue("Step-by-step");
+		choiceBoxScheduling.getItems().addAll("Random");
+		choiceBoxScheduling.setValue("Random");
 		listView1.setItems(content1);
 		listView2.setItems(content2);
 		listView3.setItems(content3);
-		listView4.setItems(content4);
+		listView4.setItems(content4); 
+		gc = lineProcCanvas.getGraphicsContext2D();
 		textAreaOriginalCode.setText(code);
 
 	}
@@ -217,6 +231,61 @@ public class FXMLController {
 
 	}
 	
+	
+	// Bouton "OPEN Sheduler"
+	public void openSched() {
+		System.out.print("File will be open"+"\n");
+
+		// Fenêtre qui permet de naviger dans les fichiers et faire ouvrir
+		FileChooser fileChooser = new FileChooser();
+		File selectedFile = fileChooser.showOpenDialog(null);
+		
+		// LECTURE DU FICHIER
+		if (selectedFile != null) {
+			fichierShed= selectedFile.getAbsolutePath(); //Récupération du chemain absolu
+			try (BufferedReader reader = new BufferedReader(new FileReader(new File(fichierShed)))) {
+				
+				String line;
+				ShedString="";
+				
+				//On lit ligne par ligne, ici. 
+				while ((line = reader.readLine()) != null) {
+					
+					// On concactène les lignes pour les enregsitrer dans un long string.
+					//Si tu péfère une liste ou autre chose tu peu changer ça.
+					ShedString=ShedString+line+"\n"; 
+				}
+			
+			// Truc pour le font.
+			SchedName.setText(selectedFile.getName()); 
+			choiceBoxScheduling.getItems().addAll("With File");
+			choiceBoxScheduling.setValue("With File");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			System.out.print("cancel"+"\n");
+		}
+	}
+	
+	// Bouton "SAVE SCheduler"
+	public void saveSched() {
+		
+	    FileChooser fileChooser = new FileChooser();
+	    File selectedFile = fileChooser.showSaveDialog(null);
+	    
+		try (FileWriter fw = new FileWriter(selectedFile.getAbsolutePath())){
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(ShedString);
+			bw.flush();
+			bw.close();
+			System.out.print("saved\n");
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
 	
 	//-> HELP <-//
 	
@@ -437,10 +506,12 @@ public class FXMLController {
 		
 		try {
 		//Simulation et récupérations des infos de la simulation
+		String schedChoice = choiceBoxScheduling.getValue().toLowerCase();
+		
 		simulation = simulationBuilder
 				.withSourceCodeFromFile(sourcecode)
 				.withNumberOfProcesses(Integer.parseInt(textFieldNumberOfProcessesRandom.getText()))
-				.withScheduler("random")
+				.withScheduler(schedChoice,ShedString)
 				.build(); //Création de la simulation
 		infos = simulation.getInfos();  //Récupération du résultat de la simu
 		System.out.print(infos.simulationIsDone());
@@ -600,6 +671,7 @@ public class FXMLController {
 			history.getBackInTime();
 			
 	        ArrayList<Integer> arrayExec = infos.getOriginalSourceLinesExecutedDuringLastStep(infos.getIdOfLastExecutedProcess());
+			
 	        updateProcess(infos.getIdOfLastExecutedProcess(),arrayExec.get(0));
 			updateSharedVariables();
 			updateLocalVariables();
@@ -849,9 +921,20 @@ public class FXMLController {
         loadFromTeaching();
 	}
 	
+	// Dessiser l'animation. 
+	@FXML private void drawCanvas(ActionEvent event) {
+
+    }
+
+	
 	//Updates le truc de gauche (La où en sont les Processus) (Utiliser dans toute les fonctions qui gères l'execution du truc)
 	public void updateProcess(int nump,int linep) throws RipException{
 		
+         gc.setFill(Color.BLACK);
+         gc.fillOval(0, 0, 17, 17); // fillOval(int x, int y, int width, int height)
+         gc.setFill(Color.RED);
+         gc.fillText("P0", 2, 10);
+ 	 	         
         lineProc.getChildren().clear();
 		processline[nump]=linep;
 		
