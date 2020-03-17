@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 //import javafx.scene.media.Media;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.stage.Stage;
 
 import javafx.scene.control.Button;
@@ -34,7 +35,10 @@ public class TeachingController{
 	
 	@FXML
 	public Button closeButton;
-	
+
+	@FXML
+	public Button labeldetest;
+
 	@FXML
 	public TextArea algoTxt;
 	
@@ -42,13 +46,15 @@ public class TeachingController{
 
 	public String algo;
 	
-	//---------------------------- Initialisation de la fenêtre --------------------------------------//
+	//---------------------------- Initialisation de la fenï¿½tre --------------------------------------//
 
     public void initialize(String str) {
-   
+
+        labeldetest.setTooltip(new Tooltip("Tooltip for Button"));
+
     	algo = str;
     	System.out.print("\n Initialization " + algo+"\n");
-    	//Initialise la fenêtre avec la bonne explication.
+    	//Initialise la fenï¿½tre avec la bonne explication.
     	if(algo == "splitter") {
     		algoTxt.setText("Explication du splitter ici !");
     	}

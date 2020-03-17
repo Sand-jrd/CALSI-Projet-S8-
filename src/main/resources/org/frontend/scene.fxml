@@ -82,13 +82,23 @@
     </MenuBar>
 
       <!-- ___________________________________________________________ Deuxi�me barres (New Execution .... ) ___________________________________________________________________-->
+<<<<<<< Updated upstream
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="37.0" minWidth="1080.0" HBox.hgrow="ALWAYS">
+=======
+      <HBox prefHeight="37.0" prefWidth="1080.0" >
+>>>>>>> Stashed changes
          <children>
             <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="38.0" prefWidth="1205.0" HBox.hgrow="ALWAYS">
                <children>
                   <Button fx:id="buttonNewExecution" layoutX="14.0" layoutY="6.0" mnemonicParsing="false" onAction="#newExecution" prefHeight="25.0" prefWidth="96.0" text="New Execution" />
+<<<<<<< Updated upstream
                   <TextField fx:id="textFieldNumberOfProcessesRandom" layoutX="259.0" layoutY="8.0" prefWidth="65.0" text="5" />
                   <Label layoutX="129.0" layoutY="10.0" prefHeight="17.0" prefWidth="172.0" text="Number of processes" />
+=======
+                  <TextField fx:id="textFieldNumberOfProcessesRandom" layoutX="379.0" layoutY="10.0" prefWidth="65.0" text="5" />
+                  <Label fx:id="labeldetest" layoutX="450.0" layoutY="10.0" text="Number of processes" />
+                  <Button fx:id="ChooseScheduler" layoutX="570.0" layoutY="6.0" mnemonicParsing="false" onAction="#chooseSched" prefHeight="25.0" prefWidth="96.0" text="Scheduler" />
+>>>>>>> Stashed changes
                </children>
             </Pane>
             <Pane prefHeight="40.0" prefWidth="1280.0">
