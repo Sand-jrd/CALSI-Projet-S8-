@@ -2,12 +2,8 @@ package org.frontend;
  
 import javafx.fxml.FXML;
 //import javafx.scene.media.Media;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
-
-import javafx.scene.control.Button;
 
 import javafx.event.ActionEvent;
 
@@ -37,9 +33,6 @@ public class TeachingController{
 	public Button closeButton;
 
 	@FXML
-	public Button labeldetest;
-
-	@FXML
 	public TextArea algoTxt;
 	
 	//---------------------------- VARIABLES GLOBALES --------------------------------------//
@@ -49,11 +42,10 @@ public class TeachingController{
 	//---------------------------- Initialisation de la fen�tre --------------------------------------//
 
     public void initialize(String str) {
+        System.out.print("\n Initialization " + algo+"\n");
 
-        labeldetest.setTooltip(new Tooltip("Tooltip for Button"));
 
     	algo = str;
-    	System.out.print("\n Initialization " + algo+"\n");
     	//Initialise la fen�tre avec la bonne explication.
     	if(algo == "splitter") {
     		algoTxt.setText("Explication du splitter ici !");

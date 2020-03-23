@@ -2,10 +2,10 @@ package org.frontend;
 
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.text.DecimalFormat;
@@ -16,8 +16,6 @@ import javafx.util.Duration;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
-import javafx.scene.control.Label;
-import javafx.scene.control.Button;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
@@ -37,15 +35,11 @@ import org.backend.varStorage.VariableInfo;
 import org.backend.exceptions.*;
 import org.backend.History;
 
-import javafx.scene.control.TextArea;
 import java.io.*;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ListView;
 import javafx.scene.text.TextFlow;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
 /**
@@ -134,9 +128,7 @@ public class FXMLController {
 	 @FXML 
 	 private Canvas lineProcCanvas;
 
-
 	//---------------------------- VARIABLES GLOBALES --------------------------------------//
-	
 	
 	boolean auto = false;
 	private static DecimalFormat df = new DecimalFormat("0.0");
@@ -168,6 +160,10 @@ public class FXMLController {
 	
 	//Initialisation 1er lancement 
 	public void initialize() {
+
+        Tooltip tooltipdetest = new Tooltip("This is the way the scheduler will decide about the next processus to run");
+        choiceBoxScheduling.setTooltip(tooltipdetest);
+
 		choiceBoxLocalVariables.getSelectionModel().selectedItemProperty()
 	    .addListener((obs, oldV, newV) -> updateLocalVariables());
 		
@@ -865,8 +861,9 @@ public class FXMLController {
 	public void loadFromTeaching() {
 		
     	String currentDir = System.getProperty("user.dir");
-		String sourcecode = currentDir + "\\src\\main\\resources\\org\\Algorithmes\\source.txt";
-		
+        System.out.println(currentDir);
+    	String sourcecode = currentDir + "\\src\\main\\resources\\org\\Algorithmes\\source.txt";
+
 		try (BufferedReader reader = new BufferedReader(new FileReader(new File(sourcecode)))) {
 
 			String line;
@@ -934,7 +931,8 @@ public class FXMLController {
          gc.fillOval(0, 0, 17, 17); // fillOval(int x, int y, int width, int height)
          gc.setFill(Color.RED);
          gc.fillText("P0", 2, 10);
- 	 	         
+ 	 	
+         
         lineProc.getChildren().clear();
 		processline[nump]=linep;
 		
