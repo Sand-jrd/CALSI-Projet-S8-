@@ -91,7 +91,11 @@
                <children>
                   <Pane prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <TextFlow fx:id="lineProc" layoutY="32.0" prefHeight="618.0" prefWidth="143.0" />
+                        <TextFlow fx:id="lineProc" layoutY="32.0" prefHeight="618.0" prefWidth="143.0" >
+                        <font>
+                          <font-weight />
+                        </font>
+                      </TextFlow>
                      </children>
                   </Pane>
                </children>

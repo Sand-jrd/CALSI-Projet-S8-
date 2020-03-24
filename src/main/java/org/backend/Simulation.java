@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
+import org.backend.parceTools.blockType.Blocks;
 import org.backend.exceptions.*;
 import org.tools.Tools;
 import bsh.EvalError;
@@ -137,6 +137,7 @@ public class Simulation extends Tools{
 			processes[processId].oneStep();
 		} catch (EvalError e) {
 			e.printStackTrace();
+			customeAlertTool(e.getMessage());
 			throw new BadSourceCodeException("EvalError when executing next step ");
 		}
 		executionOrderHistory.add(processId);
@@ -225,6 +226,10 @@ public class Simulation extends Tools{
 	public void setProcess(Process[] processes) {
 		this.processes = processes;
 		
+	}
+	
+	public ArrayList<Blocks> getBlockStruct() {
+		return this.preTreatment.getBlockStruct();
 	}
 	
 	/**

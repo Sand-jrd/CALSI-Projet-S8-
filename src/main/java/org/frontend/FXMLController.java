@@ -14,12 +14,14 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.TextArea;
 
 import javafx.scene.paint.*;
 import javafx.scene.canvas.*;
@@ -36,8 +38,9 @@ import org.backend.SimulationBuilder;
 import org.backend.varStorage.VariableInfo;
 import org.backend.exceptions.*;
 import org.backend.History;
+import org.backend.parceTools.blockType.Blocks;
 
-import javafx.scene.control.TextArea;
+
 import java.io.*;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
@@ -85,6 +88,8 @@ public class FXMLController {
 	private Button buttonPlusStep;
 	@FXML
 	private Button buttonMinusStep;
+	@FXML
+	private Button EditShed;
 	@FXML
 	private Label SchedName;
 	@FXML
@@ -682,6 +687,38 @@ public class FXMLController {
 		}        
 	}
 	
+	//Edit shed
+	public void EditShed(){
+		
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("editShed.fxml"));
+			
+	        Parent secondroot;
+
+	        try {
+			
+			secondroot = loader.load();
+
+	        Scene secondscene = new Scene(secondroot);
+	        secondscene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+	        
+	        EditController controller = loader.getController();
+	        
+	        
+	        Stage secondStage = new Stage();
+	        secondStage.setTitle("Sheduler Editor");
+	        secondStage.setScene(secondscene);
+	        controller.initialize(ShedString);
+	        secondStage.showAndWait();
+	        
+	        ShedString = controller.getShed();
+	        
+			} catch (IOException e) {
+				// Auto-generated catch block
+				e.printStackTrace();
+			}
+
+	}
+	
 	//---------------------------------------------------------------------------------------------------------------------------//
 					//---------- ONLGETS (Random step_by_step crashes) ((fenêtre à droite)) ----------//
 
@@ -902,7 +939,7 @@ public class FXMLController {
         secondscene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
 
         TeachingController controller = loader.getController();
-        
+
         // capitalize first letter
         String Algo = algo.substring(0, 1).toUpperCase() + algo.substring(1);
         
@@ -929,12 +966,8 @@ public class FXMLController {
 	
 	//Updates le truc de gauche (La où en sont les Processus) (Utiliser dans toute les fonctions qui gères l'execution du truc)
 	public void updateProcess(int nump,int linep) throws RipException{
-		
-         gc.setFill(Color.BLACK);
-         gc.fillOval(0, 0, 17, 17); // fillOval(int x, int y, int width, int height)
-         gc.setFill(Color.RED);
-         gc.fillText("P0", 2, 10);
- 	 	         
+ 	 	
+		ArrayList<Blocks> BlockStruct = simulation.getBlockStruct();         
         lineProc.getChildren().clear();
 		processline[nump]=linep;
 		
@@ -944,14 +977,14 @@ public class FXMLController {
 		for (int l = 0; l < countLines(code) ; l++) {
 			Text textForProcess2 = new Text(Integer.toString(l)+")"); 
 			textForProcess2.setFont(Font.font("System", 18.9));
-			textForProcess2.setStyle("-fx-font-weight: regular");
+			textForProcess2.setStyle("-fx-font-weight: normal");
 			textForProcess2.setFill(Color.BLACK);
 			lineProc.getChildren().add(textForProcess2);
 			for (int i = 0; i < numberOfProcesses; i++) {
 				if (l==processline[i]) {
 					Text textForProcess = new Text("P"+Integer.toString(i)+","); 
 					textForProcess.setFont(Font.font("System", 18.9));
-					textForProcess.setStyle("-fx-font-weight: regular");
+					textForProcess.setStyle("-fx-font-weight: normal");
 					textForProcess.setFill(Color.BLACK);
 					if(infos.processIsDone(i)) {
 						textForProcess.setFill(Color.BLUE);
@@ -965,7 +998,7 @@ public class FXMLController {
 					lineProc.getChildren().add(textForProcess);
 				}
 			}
-			
+
 			Text textForProcess = new Text("\n"); 
 			textForProcess.setFont(Font.font("System", 18.9));
 			lineProc.getChildren().add(textForProcess);
