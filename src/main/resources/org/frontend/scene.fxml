@@ -31,11 +31,11 @@
 <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="719.0" minWidth="1080.0" prefHeight="719.0" prefWidth="1204.0" stylesheets="@styles.css" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frontend.FXMLController">
   <children>
 
-    <!-- ___________________________________________ Barre de Menu (File Edit Help teaching) _________________________________________________________________________________-->
+                <!-- ___________________________________________ Barre de Menu (File Edit Help teaching) _________________________________________________________________________________-->
 
-    <MenuBar fx:id="menuBar" prefHeight="25.0" prefWidth="1256.0">
+                <MenuBar fx:id="menuBar" prefHeight="25.0" prefWidth="1256.0">
 
-      <!-- _______ FILE ________ -->
+                  <!-- _______ FILE ________ -->
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
@@ -47,17 +47,17 @@
           </items>
         </Menu>
 
-        <!-- _______ Edit ________
+                    <!-- _______ Edit ________
         <Menu mnemonicParsing="false" text="Edit">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Cut" />
-            <MenuItem mnemonicParsing="false" text="Copy" />
-            <MenuItem mnemonicParsing="false" text="Paste" />
-          </items>
-          </Menu>
-          -->
+                      <items>
+                        <MenuItem mnemonicParsing="false" text="Cut" />
+                        <MenuItem mnemonicParsing="false" text="Copy" />
+                        <MenuItem mnemonicParsing="false" text="Paste" />
+                      </items>
+                      </Menu>
+                      -->
 
-        <!-- _______ Help ________ -->
+                    <!-- _______ Help ________ -->
             <Menu mnemonicParsing="false" text="Help">
                <items>
                   <MenuItem mnemonicParsing="false" onAction="#help1" text="AtomicOperation" />
@@ -69,7 +69,7 @@
                </items>
             </Menu>
 
-            <!-- _______ Teaching ________ -->
+                        <!-- _______ Teaching ________ -->
             <Menu mnemonicParsing="false" text="Teaching">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#splitter" text="Splitter" />
@@ -81,21 +81,22 @@
       </menus>
     </MenuBar>
 
-      <!-- ___________________________________________________________ Deuxi�me barres (New Execution .... ) ___________________________________________________________________-->
+                  <!-- ___________________________________________________________ Deuxi�me barres (New Execution .... ) ___________________________________________________________________-->
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="37.0" minWidth="1080.0" HBox.hgrow="ALWAYS">
-         <children>
-            <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="38.0" prefWidth="1205.0" HBox.hgrow="ALWAYS">
+
+                     <children>
+            <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="100.0" prefHeight="38.0" prefWidth="1205.0" HBox.hgrow="ALWAYS">
                <children>
                   <Button fx:id="buttonNewExecution" layoutX="14.0" layoutY="6.0" mnemonicParsing="false" onAction="#newExecution" prefHeight="25.0" prefWidth="96.0" text="New Execution" />
-                  <TextField fx:id="textFieldNumberOfProcessesRandom" layoutX="259.0" layoutY="8.0" prefWidth="65.0" text="5" />
-                  <Label layoutX="129.0" layoutY="10.0" prefHeight="17.0" prefWidth="172.0" text="Number of processes" />
+                  <TextField fx:id="textFieldNumberOfProcessesRandom" layoutX="259.0" layoutY="8.0" prefHeight="25.0" prefWidth="49.0" text="5" />
+                  <Label layoutX="136.0" layoutY="12.0" prefHeight="17.0" prefWidth="123.0" text="Number of processes :" />
                </children>
             </Pane>
-            <Pane prefHeight="40.0" prefWidth="1280.0">
+            <Pane minWidth="100.0" prefHeight="40.0" prefWidth="1280.0">
                <children>
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#a6b1bff8" height="25.0" layoutX="360.0" layoutY="8.0" stroke="#909eab" strokeType="INSIDE" width="266.0" />
-                  <Label layoutX="14.0" layoutY="12.0" text="Scheduling Policy " />
-                  <ChoiceBox fx:id="choiceBoxScheduling" layoutX="110.0" layoutY="8.0" prefWidth="150.0" />
+                  <Label layoutX="104.0" layoutY="12.0" text="Scheduling Policy " />
+                  <ChoiceBox fx:id="choiceBoxScheduling" layoutX="200.0" layoutY="8.0" minWidth="100.0" prefWidth="150.0" />
                   <Label layoutX="362.0" layoutY="12.0" prefHeight="17.0" prefWidth="131.0" text="Current Sheduler File : ">
                      <font>
                         <Font name="System Bold" size="12.0" />
@@ -105,37 +106,37 @@
                   <Button fx:id="EditShed" layoutX="590.0" layoutY="8.0" mnemonicParsing="false" onAction="#EditShed" text="Edit" />
                </children>
             </Pane>
-            <Pane prefHeight="200.0" prefWidth="200.0" />
          </children>
       </HBox>
 
 
-    <!-- ________________________________________________________ Corps de l'application  __________________________________________________________-->
+                <!-- ________________________________________________________ Corps de l'application  __________________________________________________________-->
     <HBox id="HBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="654.0" minWidth="1080.0" spacing="5.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
       <padding>
         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
       </padding>
          <children>
 
-           <!-- _____________________________ Animations  _______________________________________-->
+                       <!-- _____________________________ Animations  _______________________________________-->
             <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="574.0" minWidth="13.0" prefHeight="650.0" prefWidth="13.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                <children>
-                  <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" minWidth="86.0" prefHeight="650.0" prefWidth="230.0">
+                  <Pane maxWidth="-Infinity" minHeight="200.0" minWidth="86.0" prefHeight="648.0" prefWidth="204.0">
                      <children>
-                        <TextFlow fx:id="lineProc" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" prefWidth="230.0">
+                        <TextFlow fx:id="lineProc" maxHeight="1.7976931348623157E308" maxWidth="250.0" prefHeight="650.0" prefWidth="199.0">
                            <children>
-                              <Canvas fx:id="lineProcCanvas" Height="650.0" Width="236.0" />
-                           </children></TextFlow>
+                              <Canvas fx:id="lineProcCanvas" Height="650.0" Width="236.0" width="199.0" />
+                           </children>
+                        </TextFlow>
                      </children>
                   </Pane>
                </children>
             </HBox>
 
-            <!-- _____________________________ Code et parcesed code  _______________________________________-->
+                        <!-- _____________________________ Code et parcesed code  _______________________________________-->
 
             <HBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="648.0" minWidth="297.0" prefHeight="650.0" prefWidth="488.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                <children>
-                  <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" prefWidth="690.0" tabClosingPolicy="UNAVAILABLE">
+                  <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="400.0" prefHeight="650.0" prefWidth="1000.0" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                       <Tab text="Original Code">
                         <content>
@@ -163,17 +164,17 @@
             <!-- _____________________________ Onglet (Random, step by step , crash)  _______________________________________-->
             <HBox alignment="TOP_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="604.0" prefWidth="128.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                <children>
-                  <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="452.0" prefWidth="226.0" HBox.hgrow="ALWAYS">
+                  <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="110.0" prefHeight="689.0" prefWidth="314.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="190.0" prefWidth="317.0" VBox.vgrow="ALWAYS">
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="155.0" prefWidth="317.0" VBox.vgrow="ALWAYS">
                            <children>
-                              <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="202.0" prefWidth="274.0" tabClosingPolicy="UNAVAILABLE">
+                              <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="164.0" prefWidth="317.0" tabClosingPolicy="UNAVAILABLE">
                                 <tabs>
 
-                                  <!-- _______ Onglet Step by Step ________ -->
+                                              <!-- _______ Onglet Step by Step ________ -->
                                   <Tab text="Step by Step">
                                     <content>
-                                      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="161.0" prefWidth="378.0">
+                                      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="143.0" prefWidth="317.0">
                                              <children>
                                                <Button fx:id="buttonPlusStep" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#controllerPlusStep" text="+ step" />
                                                <Button fx:id="buttonMinusStep" layoutX="70.0" layoutY="14.0" mnemonicParsing="false" onAction="#controllerMinusStep" text="- step" />
@@ -184,7 +185,7 @@
                                     </content>
                                   </Tab>
 
-                                  <!-- _______ Onglet Random ________ -->
+                                              <!-- _______ Onglet Random ________ -->
                                   <Tab text="Auto-Step">
                                     <content>
                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
@@ -204,7 +205,7 @@
                                     </content>
                                   </Tab>
 
-                                  <!-- _______ Onglet Next process ________ -->
+                                              <!-- _______ Onglet Next process ________ -->
                                   <Tab text="Next process">
                                     <content>
                                       <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
@@ -213,12 +214,12 @@
                                                 <ChoiceBox fx:id="choiceBoxStepByStep" layoutX="14.0" layoutY="41.0" prefWidth="150.0" />
                                                 <Button layoutX="14.0" layoutY="80.0" mnemonicParsing="false" onMouseClicked="#onClickedStepByStepNextStep" text="Next Step" />
 
-                                             </children>
+                                                         </children>
                                           </AnchorPane>
                                     </content>
                                   </Tab>
 
-                                  <!-- _______ Onglet Crashes ________ -->
+                                              <!-- _______ Onglet Crashes ________ -->
                                   <Tab text="Crashes">
                                     <content>
                                       <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
@@ -232,23 +233,23 @@
                                   </Tab>
 
 
-                                </tabs>
+                                            </tabs>
                               </TabPane>
                            </children>
                         </VBox>
 
 
-                        <!-- _______ Tableaux Shared Variables et Local Variables ________ -->
-                        <VBox layoutY="178.0" prefHeight="470.0" prefWidth="266.0" VBox.vgrow="ALWAYS">
+                                    <!-- _______ Tableaux Shared Variables et Local Variables ________ -->
+                        <VBox layoutY="209.0" prefHeight="440.0" prefWidth="314.0" VBox.vgrow="ALWAYS">
                            <children>
-                              <Pane prefHeight="430.0" prefWidth="266.0" VBox.vgrow="ALWAYS">
+                              <Pane prefHeight="491.0" prefWidth="314.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <ChoiceBox fx:id="choiceBoxLocalVariables" layoutX="4.0" layoutY="274.0" onDragDone="#updateLocalVariables" prefWidth="150.0" />
-                                    <ListView fx:id="listView1" layoutX="4.0" layoutY="311.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="155.0" prefWidth="131.0" />
-                                    <Label layoutX="4.0" layoutY="250.0" text="Local Variables" />
-                                    <ListView fx:id="listView2" layoutX="135.0" layoutY="311.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="155.0" prefWidth="131.0" />
-                                    <ListView fx:id="listView3" layoutX="4.0" layoutY="39.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="190.0" prefWidth="131.0" />
-                                    <ListView fx:id="listView4" layoutX="135.0" layoutY="39.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="190.0" prefWidth="131.0" />
+                                    <ChoiceBox fx:id="choiceBoxLocalVariables" layoutX="8.0" layoutY="250.0" onDragDone="#updateLocalVariables" prefWidth="150.0" />
+                                    <ListView fx:id="listView1" layoutX="4.0" layoutY="286.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="137.0" prefWidth="131.0" />
+                                    <Label layoutX="4.0" layoutY="227.0" text="Local Variables" />
+                                    <ListView fx:id="listView2" layoutX="135.0" layoutY="286.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="137.0" prefWidth="131.0" />
+                                    <ListView fx:id="listView3" layoutX="4.0" layoutY="39.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="178.0" prefWidth="131.0" />
+                                    <ListView fx:id="listView4" layoutX="135.0" layoutY="39.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="178.0" prefWidth="131.0" />
                                     <Label layoutX="9.0" layoutY="14.0" text="Shared Variables" textFill="#280e0e" />
                                  </children>
                               </Pane>
@@ -256,13 +257,13 @@
                         </VBox>
 
 
-                     </children>
+                                 </children>
                   </Pane>
                </children>
             </HBox>
 
-         </children>
+                     </children>
     </HBox>
 
-  </children>
+              </children>
 </VBox>

@@ -2,10 +2,10 @@ package org.frontend;
 
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.text.DecimalFormat;
@@ -17,8 +17,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
-import javafx.scene.control.Label;
-import javafx.scene.control.Button;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextArea;
@@ -42,13 +40,10 @@ import org.backend.parceTools.blockType.Blocks;
 
 
 import java.io.*;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ListView;
 import javafx.scene.text.TextFlow;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
 /**
@@ -63,7 +58,7 @@ import javafx.scene.control.Alert.AlertType;
 
 public class FXMLController {
 
-	
+
 //-------------- Veleurs par default dans "Shared Variable" et "Local Variable" ---------//
 	ObservableList<String> content1 = FXCollections.observableArrayList(
 			"e", "d","f","g","h","i","j","k","l");
@@ -75,7 +70,7 @@ public class FXMLController {
 			"1", "2" , "3", "4");
 
 //---------------------------- DECLARATION des BOUTTONS --------------------------------//
-	
+
 	@FXML
 	private Button buttonStart;
 	@FXML
@@ -95,7 +90,7 @@ public class FXMLController {
 	@FXML
 	private Button buttonProcessCrash;
 	@FXML
-	private ListView<String> listView1;   //Mdr on laisse pas de nom comme ça ptn
+	private ListView<String> listView1;   //Mdr on laisse pas de nom comme ï¿½a ptn
 	@FXML
 	private ListView<String> listView2;
 	@FXML
@@ -108,10 +103,10 @@ public class FXMLController {
 
 	@FXML
 	private ChoiceBox<String> choiceBoxScheduling;
-	
+
 	@FXML
 	private ChoiceBox<String> choiceBoxProcessToCrash;
-	
+
 	@FXML
 	private ChoiceBox<String> choiceBoxStepByStep;
 
@@ -120,29 +115,27 @@ public class FXMLController {
 
 	@FXML
 	private TextArea textAreaOriginalCode;
-	
+
 	@FXML
 	private TextArea textAreaParsedCode;
-	
+
 	@FXML
 	private TextFlow lineProc;
 
 	@FXML
-	private TextField textFieldSpeed; 
+	private TextField textFieldSpeed;
 
 	@FXML
 	private TextField textFieldNumberOfProcessesRandom;
 
 	@FXML
 	private TextField textFieldNumberOfSteps;
-	
-	 @FXML 
+
+	 @FXML
 	 private Canvas lineProcCanvas;
 
-
 	//---------------------------- VARIABLES GLOBALES --------------------------------------//
-	
-	
+
 	boolean auto = false;
 	private static DecimalFormat df = new DecimalFormat("0.0");
 	private String code=" ";
@@ -151,10 +144,10 @@ public class FXMLController {
 	private int numberOfProcesses;
 	private Timeline timeline;
 	private double s=50.00;
-	
+
 	private String fichierShed=""; // Chemain absolu du fichier
 	private String ShedString="";  // Contenu du fichier.
-	
+
 	private int [] processline;
 	private SimulationBuilder simulationBuilder;
 	private Simulation simulation;
@@ -162,36 +155,40 @@ public class FXMLController {
 	private boolean ignorAlert;
 	private	History history;
 	private GraphicsContext gc;
-	
-	
+
+
 	//---------------------------------------------------------------------------------------------------------------------------//
 	//---------------------------- FONCTIONS d'ACTION QUAND ON CLIQUE SUR UN BOUTON  --------------------------------------------//
 	//---------------------------------------------------------------------------------------------------------------------------//
 
-	
-	
-	
-	//Initialisation 1er lancement 
+
+
+
+	//Initialisation 1er lancement
 	public void initialize() {
+
+        Tooltip tooltipdetest = new Tooltip("This is the way the scheduler will decide about the next processus to run");
+        choiceBoxScheduling.setTooltip(tooltipdetest);
+
 		choiceBoxLocalVariables.getSelectionModel().selectedItemProperty()
 	    .addListener((obs, oldV, newV) -> updateLocalVariables());
-		
+
 		choiceBoxScheduling.getItems().addAll("Random");
 		choiceBoxScheduling.setValue("Random");
 		listView1.setItems(content1);
 		listView2.setItems(content2);
 		listView3.setItems(content3);
-		listView4.setItems(content4); 
+		listView4.setItems(content4);
 		gc = lineProcCanvas.getGraphicsContext2D();
 		textAreaOriginalCode.setText(code);
 
 	}
-	
+
 	//---------------------------------------------------------------------------------------------------------------------------//
 										//---------- BARRE DE MENU_1 (File Edit Help) ----------//
-	
+
 	//-> FILE <-//
-	
+
 	// Bouton "OPEN"
 	public void openFile() {
 		System.out.print("File will be open"+"\n");
@@ -216,14 +213,14 @@ public class FXMLController {
 			System.out.print("cancel"+"\n");
 		}
 	}
-	
+
 	// Bouton "SAVE"
 	public void saveFile() {
-		
+
 	    FileChooser fileChooser = new FileChooser();
 	    File selectedFile = fileChooser.showSaveDialog(null);
 	    code=textAreaOriginalCode.getText();
-	    
+
 		try (FileWriter fw = new FileWriter(selectedFile.getAbsolutePath())){
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(code);
@@ -235,34 +232,34 @@ public class FXMLController {
 		}
 
 	}
-	
-	
+
+
 	// Bouton "OPEN Sheduler"
 	public void openSched() {
 		System.out.print("File will be open"+"\n");
 
-		// Fenêtre qui permet de naviger dans les fichiers et faire ouvrir
+		// Fenï¿½tre qui permet de naviger dans les fichiers et faire ouvrir
 		FileChooser fileChooser = new FileChooser();
 		File selectedFile = fileChooser.showOpenDialog(null);
-		
+
 		// LECTURE DU FICHIER
 		if (selectedFile != null) {
-			fichierShed= selectedFile.getAbsolutePath(); //Récupération du chemain absolu
+			fichierShed= selectedFile.getAbsolutePath(); //Rï¿½cupï¿½ration du chemain absolu
 			try (BufferedReader reader = new BufferedReader(new FileReader(new File(fichierShed)))) {
-				
+
 				String line;
 				ShedString="";
-				
-				//On lit ligne par ligne, ici. 
+
+				//On lit ligne par ligne, ici.
 				while ((line = reader.readLine()) != null) {
-					
-					// On concactène les lignes pour les enregsitrer dans un long string.
-					//Si tu péfère une liste ou autre chose tu peu changer ça.
-					ShedString=ShedString+line+"\n"; 
+
+					// On concactï¿½ne les lignes pour les enregsitrer dans un long string.
+					//Si tu pï¿½fï¿½re une liste ou autre chose tu peu changer ï¿½a.
+					ShedString=ShedString+line+"\n";
 				}
-			
+
 			// Truc pour le font.
-			SchedName.setText(selectedFile.getName()); 
+			SchedName.setText(selectedFile.getName());
 			choiceBoxScheduling.getItems().addAll("With File");
 			choiceBoxScheduling.setValue("With File");
 			} catch (IOException e) {
@@ -273,13 +270,13 @@ public class FXMLController {
 			System.out.print("cancel"+"\n");
 		}
 	}
-	
+
 	// Bouton "SAVE SCheduler"
 	public void saveSched() {
-		
+
 	    FileChooser fileChooser = new FileChooser();
 	    File selectedFile = fileChooser.showSaveDialog(null);
-	    
+
 		try (FileWriter fw = new FileWriter(selectedFile.getAbsolutePath())){
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(ShedString);
@@ -291,119 +288,119 @@ public class FXMLController {
 		}
 
 	}
-	
+
 	//-> HELP <-//
-	
+
 	// Bouton AtomicOperation
 	public void help1(){
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("AtomicOperation");
         alert.setHeaderText(null);
-        alert.setContentText("This is a list of operation that you can made** on shared variable. \r\n" + 
-        		"This list is exhaustive of what our program can made and you cannot do any other atomic operation with shared variable.***\r\n" + 
-        		"\r\n" + 
-        		"	1) .read()			: Return the value of the shared register\r\n" + 
-        		"	2) .write(x)		: Write x in the shared register\r\n" + 
-        		"	\r\n" + 
-        		"	3) .update(x)		: Write x in the shared array at the position i (i=index of the process)\r\n" + 
-        		"	4) .snapshot()		: Return the value of the shared array\r\n" + 
-        		"	\r\n" + 
-        		"	5) .enqueue(x)		: Add the value x on queue of the shared queue\r\n" + 
-        		"	6) .dequeue()		: Return and removed the value at the tail of the shared queue\r\n" + 
-        		"\r\n" + 
+        alert.setContentText("This is a list of operation that you can made** on shared variable. \r\n" +
+        		"This list is exhaustive of what our program can made and you cannot do any other atomic operation with shared variable.***\r\n" +
+        		"\r\n" +
+        		"	1) .read()			: Return the value of the shared register\r\n" +
+        		"	2) .write(x)		: Write x in the shared register\r\n" +
+        		"	\r\n" +
+        		"	3) .update(x)		: Write x in the shared array at the position i (i=index of the process)\r\n" +
+        		"	4) .snapshot()		: Return the value of the shared array\r\n" +
+        		"	\r\n" +
+        		"	5) .enqueue(x)		: Add the value x on queue of the shared queue\r\n" +
+        		"	6) .dequeue()		: Return and removed the value at the tail of the shared queue\r\n" +
+        		"\r\n" +
         		"**	All those operations are not yet available. ");
         alert.setResizable(true);
         alert.getDialogPane().setPrefSize(500, 500);
         alert.showAndWait();
 	}
-	
+
 	// Bouton HowToLaunchYourSimulation
 	public void help2(){
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("HowToLaunchYourSimulation");
         alert.setHeaderText(null);
-        alert.setContentText("How To Launch Your Simulation.\r\n" + 
-        		"\r\n" + 
-        		"To launch the execution, first load (or write) your algorithm on the tab \"Original Code\". To load your algorithm, use the tab \"File->Open...\"\r\n" + 
-        		"Make sure this file respect the rules describe in HowToWriteYourCode. \r\n" + 
-        		"Then you have to choose your scheduler policy with \"Scheduling Policy\". You have the choice between \"Random, StepByStep and with File\".\r\n" + 
-        		"Unless you choose \"With file\", you have then to specify the number of process in your simulation in \"Number of processes\" at the right of the Window. \r\n" + 
-        		"\r\n" + 
-        		"After those settings, you can launch the simulation clicking on \"New Execution\".\r\n" + 
-        		"Once launch, you can use the button \"+step\" to execute one step. \r\n" + 
-        		"The scheduler will then choose a process and execute a step, all the value of local and shared variables will be updated.\r\n" + 
-        		"The button \"-step\" allow you to go back one step before.**\r\n" + 
-        		"\r\n" + 
-        		"At the end of the simulation you can then save the last execution, \"Scheduler->Save last execution\". To know more about the format of those file read HowToWriteYourScheduler\r\n" + 
-        		"\r\n" + 
+        alert.setContentText("How To Launch Your Simulation.\r\n" +
+        		"\r\n" +
+        		"To launch the execution, first load (or write) your algorithm on the tab \"Original Code\". To load your algorithm, use the tab \"File->Open...\"\r\n" +
+        		"Make sure this file respect the rules describe in HowToWriteYourCode. \r\n" +
+        		"Then you have to choose your scheduler policy with \"Scheduling Policy\". You have the choice between \"Random, StepByStep and with File\".\r\n" +
+        		"Unless you choose \"With file\", you have then to specify the number of process in your simulation in \"Number of processes\" at the right of the Window. \r\n" +
+        		"\r\n" +
+        		"After those settings, you can launch the simulation clicking on \"New Execution\".\r\n" +
+        		"Once launch, you can use the button \"+step\" to execute one step. \r\n" +
+        		"The scheduler will then choose a process and execute a step, all the value of local and shared variables will be updated.\r\n" +
+        		"The button \"-step\" allow you to go back one step before.**\r\n" +
+        		"\r\n" +
+        		"At the end of the simulation you can then save the last execution, \"Scheduler->Save last execution\". To know more about the format of those file read HowToWriteYourScheduler\r\n" +
+        		"\r\n" +
         		"** The feature \"-step\" is not yet implemented");
         alert.setResizable(true);
         alert.getDialogPane().setPrefSize(500, 500);
         alert.showAndWait();
 	}
-	
+
 	// Bouton HowToWriteYourCode
 	public void help3(){
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("HowToWriteYourCode");
         alert.setHeaderText(null);
-        alert.setContentText("When you write your code you have to respect the following syntax, you can find an example in the file sampleCode.txt\r\n" + 
-        		"Before your code, your text file must be compose of three compact blocks without any blank line.**\r\n" + 
-        		"The different block must be separated from each other and from the code of your algorithm with a blank line.\r\n" + 
-        		"	1)	Import are done in the beginning of the file, before the first block, without any blank line between the different import\r\n" + 
-        		"	2)	The first block is there for the Shared Variable declaration, without any blank line between the different declaration\r\n" + 
-        		"	3)	The second block is there for the Shared Variable initialization, without any blank line between the different initialization\r\n" + 
-        		"	4)	The third block is there for Local Variable declaration, without any blank line between the different declaration\r\n" + 
-        		"	5)	Then you can write the code of your concurrent algorithm*\r\n" + 
-        		"** The initialization of the simulation may change in the future, and the usage of block may be outdated soon.***\r\n" + 
-        		"*** This is still how you have to write your code for now.\r\n" + 
-        		"\r\n" + 
-        		"\r\n" + 
-        		"\r\n" + 
-        		"* When you write your code you have to respect the following rules:\r\n" + 
-        		"	1)	The code of your algorithm should be written respecting the Java syntax\r\n" + 
-        		"	2)	You only can made 1 atomic operation per line (without what your severals operation will be done atomicly, which may change the way your algorithm work)\r\n" + 
-        		"	\r\n" + 
-        		"What is important to notice is that all operation made in one line are done atomicly.\r\n" + 
-        		"We know that the second rule is restrictive for the user and that it asks him to assure that every line don't contain more than 1 atomic operation.\r\n" + 
+        alert.setContentText("When you write your code you have to respect the following syntax, you can find an example in the file sampleCode.txt\r\n" +
+        		"Before your code, your text file must be compose of three compact blocks without any blank line.**\r\n" +
+        		"The different block must be separated from each other and from the code of your algorithm with a blank line.\r\n" +
+        		"	1)	Import are done in the beginning of the file, before the first block, without any blank line between the different import\r\n" +
+        		"	2)	The first block is there for the Shared Variable declaration, without any blank line between the different declaration\r\n" +
+        		"	3)	The second block is there for the Shared Variable initialization, without any blank line between the different initialization\r\n" +
+        		"	4)	The third block is there for Local Variable declaration, without any blank line between the different declaration\r\n" +
+        		"	5)	Then you can write the code of your concurrent algorithm*\r\n" +
+        		"** The initialization of the simulation may change in the future, and the usage of block may be outdated soon.***\r\n" +
+        		"*** This is still how you have to write your code for now.\r\n" +
+        		"\r\n" +
+        		"\r\n" +
+        		"\r\n" +
+        		"* When you write your code you have to respect the following rules:\r\n" +
+        		"	1)	The code of your algorithm should be written respecting the Java syntax\r\n" +
+        		"	2)	You only can made 1 atomic operation per line (without what your severals operation will be done atomicly, which may change the way your algorithm work)\r\n" +
+        		"	\r\n" +
+        		"What is important to notice is that all operation made in one line are done atomicly.\r\n" +
+        		"We know that the second rule is restrictive for the user and that it asks him to assure that every line don't contain more than 1 atomic operation.\r\n" +
         		"That why this implementation should be changed in the future.");
         alert.setResizable(true);
         alert.getDialogPane().setPrefSize(500, 500);
         alert.showAndWait();
 	}
-	
+
 	// Bouton HowToWriteYourScheduler
 	public void help4(){
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("HowToWriteYourScheduler");
         alert.setHeaderText(null);
-        alert.setContentText("// Scheduler Syntax.**\r\n" + 
-        		"When you want to use your own scheduler policy*, you have to specify at every step which process has the hand.\r\n" + 
-        		"So if you want to load a scheduler you have to write a text file with the following syntax :\r\n" + 
-        		"	1)	In the first line you write the number of process which are running you algorithm\r\n" + 
-        		"	2)	At every line you write the ID of the process that has the hand\r\n" + 
-        		"	3) 	To simulate a crash, use \"!\" before the number of the process.\r\n" + 
-        		"\r\n" + 
-        		"If at the end of the file all the processes have not finished the execution (or are crashed), a loop is made.\r\n" + 
-        		"It is important to note nothing guaranteed that the simulation will finish. \r\n" + 
-        		"\r\n" + 
-        		"You can see an example of the scheduler format, in the text file sampleScheduler.txt\r\n" + 
-        		"\r\n" + 
-        		"To generate those files, you can at the end of the simulation save the last execution, \"Scheduler->Save last execution\".\r\n" + 
-        		"	\r\n" + 
-        		"* ie. not random\r\n" + 
+        alert.setContentText("// Scheduler Syntax.**\r\n" +
+        		"When you want to use your own scheduler policy*, you have to specify at every step which process has the hand.\r\n" +
+        		"So if you want to load a scheduler you have to write a text file with the following syntax :\r\n" +
+        		"	1)	In the first line you write the number of process which are running you algorithm\r\n" +
+        		"	2)	At every line you write the ID of the process that has the hand\r\n" +
+        		"	3) 	To simulate a crash, use \"!\" before the number of the process.\r\n" +
+        		"\r\n" +
+        		"If at the end of the file all the processes have not finished the execution (or are crashed), a loop is made.\r\n" +
+        		"It is important to note nothing guaranteed that the simulation will finish. \r\n" +
+        		"\r\n" +
+        		"You can see an example of the scheduler format, in the text file sampleScheduler.txt\r\n" +
+        		"\r\n" +
+        		"To generate those files, you can at the end of the simulation save the last execution, \"Scheduler->Save last execution\".\r\n" +
+        		"	\r\n" +
+        		"* ie. not random\r\n" +
         		"** Feature not implemented yet");
         alert.setResizable(true);
         alert.getDialogPane().setPrefSize(500, 500);
         alert.showAndWait();
 	}
-	
+
 	// Bouton samleScheduler
 	public void help5(){
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("samleScheduler");
         alert.setHeaderText(null);
-  		
+
         Image image = new Image("file:Images/1.png", true);
         ImageView imageView = new ImageView(image);
         alert.setResizable(true);
@@ -411,63 +408,63 @@ public class FXMLController {
         alert.setGraphic(imageView);
         alert.showAndWait();
 	}
-	
+
 	// Bouton sampleCode
 	public void help6(){
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("sampleCode");
         alert.setHeaderText(null);
-        alert.setContentText("import java.lang.Math; 						//	All import have to be made without any blank line\r\n" + 
-        		"\r\n" + 
-        		"// // Shared variables declaration			//	All declaration have to be made without any blank line\r\n" + 
-        		"Integer turn;\r\n" + 
-        		"Boolean[] flag;\r\n" + 
-        		"\r\n" + 
-        		"// // Shared variables initialization		//	All initialization have to be made without any blank line\r\n" + 
-        		"turn = new Integer(0);\r\n" + 
-        		"flag = new Boolean[2];\r\n" + 
-        		"flag[0] = false;\r\n" + 
-        		"flag[1] = false;\r\n" + 
-        		"\r\n" + 
-        		"// // Local variables declaration			//	All declaration have to be made without any blank line\r\n" + 
-        		"int j;\r\n" + 
-        		"boolean a;\r\n" + 
-        		"int b;\r\n" + 
-        		"\r\n" + 
-        		"// // Algorithm								//	You can write your algorithm using Java Syntax, blank line are allowed\r\n" + 
-        		"// 											//	You only can access one variable operation at a time\r\n" + 
-        		"// \r\n" + 
-        		"\r\n" + 
-        		"// // There for example, Petreson algorithm \r\n" + 
-        		"j = (i+1) % 2;\r\n" + 
-        		"flag[i] = true;\r\n" + 
-        		"turn = j;\r\n" + 
-        		"a = flag[j];								// All operation made in one line are atomic\r\n" + 
-        		"b = turn;										\r\n" + 
-        		"											//	Blank line are allowed\r\n" + 
-        		"while ( a == true && b == j) {				//	The opening accolade \"{\" have to be in the same line than the condition\r\n" + 
-        		"a = flag[j];\r\n" + 
-        		"b = turn;\r\n" + 
-        		"}											//	The closing accolade \"}\" have to be alone on the line\r\n" + 
-        		"// critical section \r\n" + 
-        		"1\r\n" + 
-        		"1\r\n" + 
-        		"1\r\n" + 
-        		"1\r\n" + 
-        		"1\r\n" + 
-        		"1\r\n" + 
-        		"1\r\n" + 
-        		"1\r\n" + 
-        		"// end of critical section\r\n" + 
-        		"flag[i] = false;\r\n" + 
+        alert.setContentText("import java.lang.Math; 						//	All import have to be made without any blank line\r\n" +
+        		"\r\n" +
+        		"// // Shared variables declaration			//	All declaration have to be made without any blank line\r\n" +
+        		"Integer turn;\r\n" +
+        		"Boolean[] flag;\r\n" +
+        		"\r\n" +
+        		"// // Shared variables initialization		//	All initialization have to be made without any blank line\r\n" +
+        		"turn = new Integer(0);\r\n" +
+        		"flag = new Boolean[2];\r\n" +
+        		"flag[0] = false;\r\n" +
+        		"flag[1] = false;\r\n" +
+        		"\r\n" +
+        		"// // Local variables declaration			//	All declaration have to be made without any blank line\r\n" +
+        		"int j;\r\n" +
+        		"boolean a;\r\n" +
+        		"int b;\r\n" +
+        		"\r\n" +
+        		"// // Algorithm								//	You can write your algorithm using Java Syntax, blank line are allowed\r\n" +
+        		"// 											//	You only can access one variable operation at a time\r\n" +
+        		"// \r\n" +
+        		"\r\n" +
+        		"// // There for example, Petreson algorithm \r\n" +
+        		"j = (i+1) % 2;\r\n" +
+        		"flag[i] = true;\r\n" +
+        		"turn = j;\r\n" +
+        		"a = flag[j];								// All operation made in one line are atomic\r\n" +
+        		"b = turn;										\r\n" +
+        		"											//	Blank line are allowed\r\n" +
+        		"while ( a == true && b == j) {				//	The opening accolade \"{\" have to be in the same line than the condition\r\n" +
+        		"a = flag[j];\r\n" +
+        		"b = turn;\r\n" +
+        		"}											//	The closing accolade \"}\" have to be alone on the line\r\n" +
+        		"// critical section \r\n" +
+        		"1\r\n" +
+        		"1\r\n" +
+        		"1\r\n" +
+        		"1\r\n" +
+        		"1\r\n" +
+        		"1\r\n" +
+        		"1\r\n" +
+        		"1\r\n" +
+        		"// end of critical section\r\n" +
+        		"flag[i] = false;\r\n" +
         		"");
         alert.setResizable(true);
         alert.getDialogPane().setPrefSize(500, 500);
         alert.showAndWait();
 	}
-	
+
 	//-> Teaching <-//
-	
+
 		// Bouton Splitter
 		public void splitter(){
 			openTeachingWin("splitter");
@@ -476,27 +473,27 @@ public class FXMLController {
 		public void bakery(){
 			openTeachingWin("bakery");
 		}
-	
+
 	//---------------------------------------------------------------------------------------------------------------------------//
-						//---------- BARRE DE MENU_2 (New execution et tous se qu'il y a derière) ----------//
-	
+						//---------- BARRE DE MENU_2 (New execution et tous se qu'il y a deriï¿½re) ----------//
+
 	// -- Bouton "NEW EXECUTION" --  //
 	public void newExecution() throws BackEndException {
-        
+
 		flushall();
 		ignorAlert = false;
-		
+
 		simulationBuilder = new SimulationBuilder();
-		
-		//Print du répertoire courant
+
+		//Print du rï¿½pertoire courant
 		String currentDir = System.getProperty("user.dir");
         System.out.println("Current dir using System:" +currentDir);
-        
+
 		//Path to test/sources.txt
 		String sourcecode = currentDir + "\\src\\main\\resources\\org\\Algorithmes\\source.txt";
 		System.out.println("Path to source code :" +sourcecode);
-		
-		// On copie le code du 'shell' dans sources.txt			
+
+		// On copie le code du 'shell' dans sources.txt
 		code=textAreaOriginalCode.getText();
 
 		try (FileWriter fw = new FileWriter(sourcecode)){
@@ -508,49 +505,49 @@ public class FXMLController {
 		}catch (IOException e) {
 			//customeAlert("Vous n'avez aucun code !");
 		}
-		
+
 		try {
-		//Simulation et récupérations des infos de la simulation
+		//Simulation et rï¿½cupï¿½rations des infos de la simulation
 		String schedChoice = choiceBoxScheduling.getValue().toLowerCase();
-		
+
 		simulation = simulationBuilder
 				.withSourceCodeFromFile(sourcecode)
 				.withNumberOfProcesses(Integer.parseInt(textFieldNumberOfProcessesRandom.getText()))
 				.withScheduler(schedChoice,ShedString)
-				.build(); //Création de la simulation
-		infos = simulation.getInfos();  //Récupération du résultat de la simu
+				.build(); //Crï¿½ation de la simulation
+		infos = simulation.getInfos();  //Rï¿½cupï¿½ration du rï¿½sultat de la simu
 		System.out.print(infos.simulationIsDone());
-		
-		//Nouvelle méthode, tous enregistrer dans History
+
+		//Nouvelle mï¿½thode, tous enregistrer dans History
 		history = new History();
-		
+
 		//Updates de l'affichage
-		initalizeProcess(Integer.parseInt(textFieldNumberOfProcessesRandom.getText()));  //La fonction qui initialise le truc à gauche (avec les lignes)
+		initalizeProcess(Integer.parseInt(textFieldNumberOfProcessesRandom.getText()));  //La fonction qui initialise le truc ï¿½ gauche (avec les lignes)
 		updateChoiceBoxLocalVariables();
 		updateChoiceBoxStepByStep();
 		updateChoiceBoxProcessToCrash();
 		textAreaParsedCode.setText(infos.getNewSourceCode());
-		
+
 		}catch (Exception e) {
 			System.out.print(e);
 			customeAlert("Echec de l'execution");
 			flushall();
 		}
-		
+
 	}
-	
+
 	// -- Bouton "Choose Sheduler" -- //
 	public void chooseSched() throws BackEndException{
-		        
+
 	}
-	
+
 	// -- Bouton "SPEED" -- //
-	
-	//Quand on écrit dans le texte
+
+	//Quand on ï¿½crit dans le texte
 	public void speedtex() {
 		sliderSpeed.setValue(Double.valueOf(textFieldSpeed.getText()) );
 	}
-	
+
 	//Quand on fait glisser le curceur
 	public void slidert() {
 		s= sliderSpeed.getValue();
@@ -558,15 +555,15 @@ public class FXMLController {
 		System.out.print(s+"\n");
 		textFieldSpeed.setText(""+s2);
 	}
-	
-	
+
+
 	// -- Bouton "START" -- //
 	public void startAuto() throws BackEndException, InterruptedException{
 		if(simulation != null) {
 		System.out.println( "Process starting ...");
 		if (!auto) {
 		auto = true;
-		timeline = new Timeline(new KeyFrame(Duration.millis(10000/s), new EventHandler<ActionEvent>() { 
+		timeline = new Timeline(new KeyFrame(Duration.millis(10000/s), new EventHandler<ActionEvent>() {
 
 		    @Override
 		    public void handle(ActionEvent event) {
@@ -580,7 +577,7 @@ public class FXMLController {
 		    	if(infos.simulationIsDone()) {
 					stopAuto();
 				}
-		    	
+
 		    }
 		}));
 		timeline.setCycleCount(10000000);
@@ -591,7 +588,7 @@ public class FXMLController {
 	    	customeAlert("You must start a new execution");
     	}
 	}
-		
+
 
 	// -- Bouton "STOP" -- //
 	public void stopAuto(){
@@ -606,7 +603,7 @@ public class FXMLController {
 		else {
 			customeAlert("No auto-simaltion is in process");
 		}
-	}	
+	}
 
 
 	// -- Bouton "DO STEPS" -- //
@@ -615,7 +612,7 @@ public class FXMLController {
 			int count = Integer.parseInt(textFieldNumberOfSteps.getText());
 			while (!infos.simulationIsDone() && count>0) {
 				count -= 1;
-				controllerPlusStep(); //Déclanche i fois la fonction PlusStep ci dessous
+				controllerPlusStep(); //Dï¿½clanche i fois la fonction PlusStep ci dessous
 			}
 			if(infos.simulationIsDone()) {
 				customeAlert("Simulation is done !");
@@ -626,25 +623,25 @@ public class FXMLController {
 	    	}
 		}
 	}
-	
+
 	// -- Bouton "+ step", ET EGALEMENT UTILISER DANS DO STEPS -- //
 	public void controllerPlusStep() throws BackEndException{
-		
+
 		if(ignorAlert == false && checkCodeChange() == true) {
 			ignorAlert = true;
 	    	customeAlert("Beware ! \nYou made some modification in your code.\nThis will NOT apply for this simulation.\nStart a new execution if you want to test your new code.\nOtherwise, juste ignor this message. ");
 		}
-		
+
 		try {
 		if (!infos.simulationIsDone()) {
-			
+
 			history.addStep(infos,simulation,processline);
-			
+
 			simulation.nextStep();
-			
+
 			ArrayList<Integer> arrayExec = infos.getOriginalSourceLinesExecutedDuringLastStep(infos.getIdOfLastExecutedProcess());
 
-			
+
 			updateProcess(infos.getIdOfLastExecutedProcess(),arrayExec.get(0));
 			updateSharedVariables();
 			updateLocalVariables();
@@ -663,71 +660,71 @@ public class FXMLController {
 	    }
 
 	}
-	
+
 	// -- Bouton "- step" -- //
 	public void controllerMinusStep() throws BackEndException{
-		
+
 		try {
 			System.out.println("Step Back");
 			simulation = history.getBackInTime(simulation);
 			processline = history.getBackInTime(processline);
 			infos = history.getBackInTime(infos);
-			
+
 			history.getBackInTime();
-			
+
 	        ArrayList<Integer> arrayExec = infos.getOriginalSourceLinesExecutedDuringLastStep(infos.getIdOfLastExecutedProcess());
-			
+
 	        updateProcess(infos.getIdOfLastExecutedProcess(),arrayExec.get(0));
 			updateSharedVariables();
 			updateLocalVariables();
-			
+
 		}catch(Exception e) {
 			System.out.println("New Exe");
 			newExecution();
-		}        
+		}
 	}
-	
+
 	//Edit shed
 	public void EditShed(){
-		
+
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("editShed.fxml"));
-			
+
 	        Parent secondroot;
 
 	        try {
-			
+
 			secondroot = loader.load();
 
 	        Scene secondscene = new Scene(secondroot);
 	        secondscene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
-	        
+
 	        EditController controller = loader.getController();
-	        
-	        
+
+
 	        Stage secondStage = new Stage();
 	        secondStage.setTitle("Sheduler Editor");
 	        secondStage.setScene(secondscene);
 	        controller.initialize(ShedString);
 	        secondStage.showAndWait();
-	        
+
 	        ShedString = controller.getShed();
-	        
+
 			} catch (IOException e) {
 				// Auto-generated catch block
 				e.printStackTrace();
 			}
 
 	}
-	
+
 	//---------------------------------------------------------------------------------------------------------------------------//
-					//---------- ONLGETS (Random step_by_step crashes) ((fenêtre à droite)) ----------//
+					//---------- ONLGETS (Random step_by_step crashes) ((fenï¿½tre ï¿½ droite)) ----------//
 
 
 	// ------- ONLGET STEp_BY_STEP ------- //
-	
+
 	//BOUTON CRASH
 	public void onClickedCrashProcess() throws RipException {
-		
+
 	try {
 		String currentProcess = choiceBoxProcessToCrash.getSelectionModel().getSelectedItem();
 		int currentProcessId = Character.getNumericValue(currentProcess.charAt(1));
@@ -741,12 +738,12 @@ public class FXMLController {
     	}
 	}
 	}
-	
+
 	// ------- ONLGET STEp_BY_STEP ------- //
-	
+
 	//BOUTON NEXT_STEP
 	public void onClickedStepByStepNextStep() throws BadSourceCodeException, RipException {
-		
+
 	try {
 		String processToExecute = choiceBoxStepByStep.getSelectionModel().getSelectedItem();
 		int processToExecuteId = Character.getNumericValue(processToExecute.charAt(1));
@@ -761,12 +758,12 @@ public class FXMLController {
     	}
 	}
 	}
-		
-	
+
+
 	//---------------------------------------------------------------------------------------------------------------------------//
-											//---------- JE SUIS PAS SUR DE A QUOI çA SERT ----------//
-	
-	
+											//---------- JE SUIS PAS SUR DE A QUOI ï¿½A SERT ----------//
+
+
 	public void updateChoiceBoxLocalVariables() {
 		System.out.println( "updateChoiceBoxLocalVariables");
 		choiceBoxLocalVariables.getItems().clear();
@@ -775,7 +772,7 @@ public class FXMLController {
 		}
 		choiceBoxLocalVariables.setValue("P0");
 	}
-	
+
 	public void updateChoiceBoxStepByStep() {
 		System.out.println( "updateChoiceBoxStepByStep");
 		choiceBoxStepByStep.getItems().clear();
@@ -784,7 +781,7 @@ public class FXMLController {
 		}
 		choiceBoxStepByStep.setValue("P0");
 	}
-	
+
 	public void updateChoiceBoxProcessToCrash() {
 		System.out.println( "updateChoiceBoxProcessToCrash");
 		choiceBoxProcessToCrash.getItems().clear();
@@ -793,17 +790,17 @@ public class FXMLController {
 		}
 		choiceBoxProcessToCrash.setValue("P0");
 	}
-	
+
 	public void choiceordon() {
 		System.out.println( "choiceordon ?wtf");
 		cordo=choiceBoxScheduling.getValue();
-		System.out.print(cordo+"\n");    	
+		System.out.print(cordo+"\n");
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------//
 									//---------- UPTADTES DES TABLEAU D'INFORMATION  ---------//
-	
-	
+
+
 	// Updates de Shared Variables
 	public void updateSharedVariables() {
 		content3.remove(0, content3.size());
@@ -812,7 +809,7 @@ public class FXMLController {
 		for(int i=0;i<variableInfo.length;i++)
 		{
 			if(variableInfo[i] == null)
-			{		  
+			{
 				break;
 			}
 			else {
@@ -821,7 +818,7 @@ public class FXMLController {
 			}
 		}
 	}
-	
+
 	// Updates de LocalVariables
 	public void updateLocalVariables() {
 		content1.remove(0, content1.size());
@@ -840,7 +837,7 @@ public class FXMLController {
 		for(int i=0;i<variableInfo.length;i++)
 		{
 			if(variableInfo[i] == null)
-			{		  
+			{
 				break;
 			}
 			else {
@@ -850,26 +847,26 @@ public class FXMLController {
 			}
 		}
 	}
-	
+
 	//---------------------------------------------------------------------------------------------------------------------------//
 													//  -- FONCTIONS TOOLS -- //
-	
-	
+
+
 	//Compteur de lignes d'un code
 	private static int countLines(String str){
 		   String[] lines = str.split("\r\n|\r|\n");
 		   return  lines.length;
 	}
-	
-	//La fonction qui réinitialise l'execution
+
+	//La fonction qui rï¿½initialise l'execution
 	public void initalizeProcess(int nbrp) throws RipException{
 		numberOfProcesses=nbrp;
 		processline= new int[nbrp];
 		Arrays.fill(processline, 0);
 		updateProcess(0,0);
 	}
-	
-	//La fonction qui réinitialise l'execution
+
+	//La fonction qui rï¿½initialise l'execution
 	public void customeAlert(String alertText) {
 
 	 Alert alert = new Alert(AlertType.INFORMATION);
@@ -879,10 +876,10 @@ public class FXMLController {
         alert.setResizable(true);
         alert.getDialogPane().setPrefSize(400, 150);
         alert.show();
-	        
+
 	}
-	
-	// Vide toute les initialisation, les variable de l'app sont comme si elle venait juste de démarrer. 
+
+	// Vide toute les initialisation, les variable de l'app sont comme si elle venait juste de dï¿½marrer.
 	public void flushall() {
 		processline = null;
 		simulationBuilder = null;
@@ -893,17 +890,18 @@ public class FXMLController {
 		listView2.setItems(content2);
 		listView3.setItems(content3);
 		listView4.setItems(content4);
-		System.out.print(simulation = null);    	
+		System.out.print(simulation = null);
 		lineProc.getChildren().clear();
-		
+
 	}
-	
-	// Charge un code depuis teaching 
+
+	// Charge un code depuis teaching
 	public void loadFromTeaching() {
-		
+
     	String currentDir = System.getProperty("user.dir");
-		String sourcecode = currentDir + "\\src\\main\\resources\\org\\Algorithmes\\source.txt";
-		
+        System.out.println(currentDir);
+    	String sourcecode = currentDir + "\\src\\main\\resources\\org\\Algorithmes\\source.txt";
+
 		try (BufferedReader reader = new BufferedReader(new FileReader(new File(sourcecode)))) {
 
 			String line;
@@ -914,25 +912,25 @@ public class FXMLController {
 			e.printStackTrace();
 		}
 		textAreaOriginalCode.setText(code);
-	
+
 	}
-	
-	// Pour vérifié si le code à été modifié ou pas
+
+	// Pour vï¿½rifiï¿½ si le code ï¿½ ï¿½tï¿½ modifiï¿½ ou pas
 	public boolean checkCodeChange() {
 		if(textAreaOriginalCode.getText().equals(code)) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	public void openTeachingWin(String algo) {
-		
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("teaching.fxml"));
-		
+
         Parent secondroot;
 
         try {
-		
+
 		secondroot = loader.load();
 
         Scene secondscene = new Scene(secondroot);
@@ -942,47 +940,47 @@ public class FXMLController {
 
         // capitalize first letter
         String Algo = algo.substring(0, 1).toUpperCase() + algo.substring(1);
-        
+
         Stage secondStage = new Stage();
         secondStage.setTitle(Algo);
         secondStage.setScene(secondscene);
         controller.initialize(algo);
         secondStage.showAndWait();
-        
+
 		} catch (IOException e) {
 			// Auto-generated catch block
 			e.printStackTrace();
 		}
-        //Load le splitter (Si "test it!" a été actionné, réinitialise tous sinon )
+        //Load le splitter (Si "test it!" a ï¿½tï¿½ actionnï¿½, rï¿½initialise tous sinon )
         flushall();
         loadFromTeaching();
 	}
-	
-	// Dessiser l'animation. 
+
+	// Dessiser l'animation.
 	@FXML private void drawCanvas(ActionEvent event) {
 
     }
 
-	
-	//Updates le truc de gauche (La où en sont les Processus) (Utiliser dans toute les fonctions qui gères l'execution du truc)
+
+	//Updates le truc de gauche (La oï¿½ en sont les Processus) (Utiliser dans toute les fonctions qui gï¿½res l'execution du truc)
 	public void updateProcess(int nump,int linep) throws RipException{
- 	 	
-		ArrayList<Blocks> BlockStruct = simulation.getBlockStruct();         
+
+		ArrayList<Blocks> BlockStruct = simulation.getBlockStruct();
         lineProc.getChildren().clear();
 		processline[nump]=linep;
-		
+
 		//System.out.println("addr dans updateProc"+processline);
 
-		
+
 		for (int l = 0; l < countLines(code) ; l++) {
-			Text textForProcess2 = new Text(Integer.toString(l)+")"); 
+			Text textForProcess2 = new Text(Integer.toString(l)+")");
 			textForProcess2.setFont(Font.font("System", 18.9));
 			textForProcess2.setStyle("-fx-font-weight: normal");
 			textForProcess2.setFill(Color.BLACK);
 			lineProc.getChildren().add(textForProcess2);
 			for (int i = 0; i < numberOfProcesses; i++) {
 				if (l==processline[i]) {
-					Text textForProcess = new Text("P"+Integer.toString(i)+","); 
+					Text textForProcess = new Text("P"+Integer.toString(i)+",");
 					textForProcess.setFont(Font.font("System", 18.9));
 					textForProcess.setStyle("-fx-font-weight: normal");
 					textForProcess.setFill(Color.BLACK);
@@ -999,7 +997,7 @@ public class FXMLController {
 				}
 			}
 
-			Text textForProcess = new Text("\n"); 
+			Text textForProcess = new Text("\n");
 			textForProcess.setFont(Font.font("System", 18.9));
 			lineProc.getChildren().add(textForProcess);
 		}
