@@ -7,7 +7,7 @@ public class SnapArray {
 	private ArrayList<Object> REG;
 	
 	//Constructeur
-	SnapArray(){
+	public SnapArray(){
 		this.REG = new ArrayList<Object>();
 	}
 
@@ -25,6 +25,10 @@ public class SnapArray {
 
 	public void setREG(int i,Object obj) {
 		REG.set(i, obj);
+	}
+	
+	public void sayHi() {
+		
 	}
 	
 }

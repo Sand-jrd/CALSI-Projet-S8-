@@ -7,6 +7,11 @@ repositories {
     mavenCentral()
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
 dependencies {
 	compile group: 'org.beanshell', name: 'bsh-core', version: '2.0b4'
 }
@@ -31,3 +36,5 @@ run {
 
 //A changer avec notre main class
 mainClassName = 'org.frontend.MainApp'
+
+version = '11.0.6'

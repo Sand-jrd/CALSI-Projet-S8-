@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox prefHeight="710.0" prefWidth="490.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frontend.EditController">
+   <children>
+      <Pane prefHeight="80.0" prefWidth="490.0">
+         <children>
+            <Label layoutX="184.0" layoutY="29.0" text="Edite your Sheduler" />
+         </children>
+      </Pane>
+      <Pane prefHeight="641.0" prefWidth="490.0">
+         <children>
+            <TextArea fx:id="shed" prefHeight="518.0" prefWidth="490.0" text="Ici le sheduler chargé. " />
+         </children>
+      </Pane>
+   </children>
+</VBox>

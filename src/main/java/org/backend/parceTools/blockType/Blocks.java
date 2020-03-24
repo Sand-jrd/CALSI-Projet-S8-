@@ -7,7 +7,20 @@ public class Blocks {
 	String type;
 	int idStart;
     int idEnd;
+	int truelineStart;
+    int truelineStop;
     ArrayList<Blocks> blocksInside;
+    
+    public Blocks () {
+    	
+    }
+    
+    public Blocks (String type, int idStart,int idEndint){
+    	this.type = type;
+    	this.idStart = idStart;
+    	this.idEnd = idEnd;
+    	this.blocksInside = new  ArrayList<Blocks>();
+	}
     
 	// --- Getters and Setters --- //
     
@@ -37,5 +50,17 @@ public class Blocks {
 		this.blocksInside = blocksInside;
 	}
 
+	public int getTruelineStart() {
+		return truelineStart;
+	}
+	public void setTruelineStart(int truelineStart) {
+		this.truelineStart = truelineStart;
+	}
+	public int getTruelineStop() {
+		return truelineStop;
+	}
+	public void setTruelineStop(int truelineStop) {
+		this.truelineStop = truelineStop;
+	}
 	
 }

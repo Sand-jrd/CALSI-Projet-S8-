@@ -2,18 +2,20 @@ package org.backend;
 
 
 import java.util.ArrayList;
+import java.nio.file.Paths;
 
 import org.backend.exceptions.BackEndException;
 import org.backend.exceptions.BadSourceCodeException;
 import org.backend.exceptions.RipException;
 import org.backend.varStorage.Variable;
 import org.tools.Tools;
+import org.objects.*;
 
 import bsh.EvalError;
 import bsh.Interpreter;
 
-//import bsh.BshClassManager;
-//import java.net.URL;
+import bsh.BshClassManager;
+import java.net.URL;
 
 
 
@@ -32,14 +34,21 @@ public class Process extends Tools{
 	public Process(int index,int numberOfProcesses, PreTreatment preTreatment) throws BackEndException {
 		this.inter = new Interpreter();
 		
-		/*
-		BshClassManager manag  = new BshClassManager();
+		
+		BshClassManager manag  = inter.getClassManager();
+		
 		//On ajoute le package Object à ClassPath pour qu'il puisse être importer: 
 		String currentDir = System.getProperty("user.dir");
-		String sourcecode = currentDir + "\\src\\main\\java\\org\\objets";
-		URL myURL = new URL(sourcecode);
-		BshClassManager.addClassPath(sourcecode);
-		*/
+		String sourcecode = currentDir + "\\src\\main\\java\\org\\objects\\";
+		try {
+			//URL myURL = new URL(sourcecode);
+			//System.out.println("Path to Objects:" +sourcecode);
+			manag.addClassPath(Paths.get(sourcecode).toUri().toURL());
+			manag.addClassPath(Paths.get(sourcecode + "\\mycommands\\").toUri().toURL());
+			this.inter.source(sourcecode + "\\mycommands\\StandardFonctions.bsh");  //TRY TO IMPLEMENT SIMPLE FONCTIONS
+	    } catch (Exception e) {
+	        throw new RuntimeException(e);
+	    }
 		
 		// Reserved variables index et numberOfProcesses
 		try {
@@ -53,6 +62,7 @@ public class Process extends Tools{
 			this.inter.set("nbProc", numberOfProcesses);
 		} catch (EvalError e1) {
 			e1.printStackTrace();
+			customeAlertTool(e1.getMessage());
 			throw new RipException("EvalError when setting index variable (NbProc).");
 		}
 	
@@ -61,6 +71,7 @@ public class Process extends Tools{
 			this.inter.eval(preTreatment.getInitialisationBlock());
 		} catch (EvalError e) {
 			e.printStackTrace();
+			customeAlertTool(e.getMessage());
 			throw new BadSourceCodeException("Error in initialization.");
 		}
 
@@ -133,7 +144,7 @@ public class Process extends Tools{
 			this.inter.eval(this.sourceCode[this.currentLine]);
 			this.currentLine++;
 			}catch (EvalError e) {
-				customeAlertTool("An error occured when eval this line :" + e.getErrorText());
+				customeAlertTool(e.getMessage());
 			}
 		}
 

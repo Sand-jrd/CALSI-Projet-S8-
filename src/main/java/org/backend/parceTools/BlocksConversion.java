@@ -3,6 +3,8 @@ package org.backend.parceTools;
 import java.util.ArrayList;
 
 import org.backend.exceptions.BackEndException;
+import org.backend.parceTools.blockType.*;
+
 
 /**
  * @author Chaimaa & Issam
@@ -18,10 +20,14 @@ public class BlocksConversion {
 	// the actual code composed of ordered line ids
 	ArrayList<Integer> code;
 
+	//Struct to make front-end animation (Struct for blocks). 
+	ArrayList<Blocks> BlockStruct;
+	
 	// Normal constructor
 	public BlocksConversion(String[] sourceCode) throws BackEndException {
 		this.lines = new ArrayList<Line>();
 		this.code = new ArrayList<Integer>();
+		this.BlockStruct = new ArrayList<Blocks>();
 		preTreat(sourceCode);
 	}
 	
@@ -93,7 +99,7 @@ public class BlocksConversion {
 			this.lines.add(i, new LineString(i, sourceCode[i]));
 			this.code.add(i, Integer.valueOf(i));
 		}
-
+		int jump;
 		block = getFirstBlockString();
 
 		while (block != "none") {
@@ -101,7 +107,7 @@ public class BlocksConversion {
 
 			switch (block) {
 			case "while":
-				preTreatWhile(line);
+				jump = preTreatWhile(line);
 				break;
 			case "if":
 				preTreatIf(line);
@@ -191,11 +197,11 @@ public class BlocksConversion {
 		return "";
 	}
 
-	private void preTreatWhile(int line) throws BackEndException {
-
+	private int preTreatWhile(int line) throws BackEndException {
+		
 		int whileLine = line;
 		int closeLine = getBlockEnd(whileLine);
-
+		
 		String whileLineString = lines.get(code.get(whileLine)).getLineCode(code);
 		String cond = whileLineString.substring(whileLineString.indexOf('(') + 1, whileLineString.lastIndexOf(')'));
 		
@@ -207,17 +213,20 @@ public class BlocksConversion {
 
 		String notCond = "!(" + conds.get(0) + ")"; 
 		lines.set(code.get(whileLine), new LineGoto(code.get(whileLine), notCond, startToId));
-		
+
 		for(int i = 1;i<=nbConds;i++) {
 			notCond = "!(" + conds.get(i) + ")"; 
-			lines.add(code.get(whileLine)+i, new LineGoto(code.get(whileLine)+i, notCond, startToId));
+			this.code.add(code.get(whileLine+i), code.get(whileLine+i));
+			lines.add(code.get(whileLine+i), new LineGoto(code.get(whileLine+i+1), notCond, startToId));
 		}
 
-		lines.set(code.get(closeLine), new LineGoto(code.get(closeLine), "true", closeToId));
+		BlockStruct.add(new Blocks("While",startToId,closeToId+nbConds));
+		lines.set(code.get(closeLine+nbConds), new LineGoto(code.get(closeLine+nbConds), "true", closeToId));
 
+		return nbConds-1;
 	}
 
-	private void preTreatIf(int line) throws BackEndException {
+	private int preTreatIf(int line) throws BackEndException {
 
 		int ifLine = line;
 		int elseLine = getBlockEnd(ifLine);
@@ -241,13 +250,13 @@ public class BlocksConversion {
 		lines.set(ifLineId, new LineGoto(ifLineId, notCond, ifToId));
 		
 		for(int i = 1;i<=nbConds;i++) {
-			//System.out.print(conds.get(i));
 			notCond = "!(" + conds.get(i) + ")"; 
-			lines.add(ifLineId+i, new LineGoto(ifLineId+i, notCond, ifToId));
+			lines.add(code.get(ifLine+i), new LineGoto(code.get(ifLine+i+1), notCond, getBlockEnd(ifLine)));
 		}
 		
-		lines.set(elseLineId, new LineGoto(elseLineId, "true", elseToId));
-
+		BlockStruct.add(new Blocks("If",ifLineId,closeLine+nbConds));
+		lines.set(elseLineId+nbConds, new LineGoto(code.get(elseLine+nbConds), "true", elseToId));
+		return nbConds-1;
 	}
 
 	private void preTreatDoWhile(int line) throws BackEndException {
@@ -366,6 +375,10 @@ public class BlocksConversion {
 	
 	public ArrayList<Integer> getCode() {
 		return (ArrayList<Integer>)code.clone();
+	}
+	
+	public ArrayList<Blocks> getBlockStruct() {
+		return this.BlockStruct;
 	}
 
 }

@@ -1,15 +1,23 @@
 package org.backend;
 
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.nio.file.Paths;
 
 import org.backend.parceTools.BlocksConversion;
+import org.backend.parceTools.blockType.Blocks;
 import org.backend.varStorage.Variable;
 import org.backend.exceptions.BackEndException;
 import org.backend.exceptions.BadSourceCodeException;
 import org.tools.Tools;
 
+import org.objects.*;
+
 import bsh.EvalError;
 import bsh.Interpreter;
+
+import bsh.BshClassManager;
+import java.net.URL;
 
 
 public class PreTreatment extends Tools{
@@ -101,7 +109,22 @@ public class PreTreatment extends Tools{
 		// We create a bsh interpreter to help us evaluate the initialized shared
 		// variables
 		Interpreter interpreter = new Interpreter();
-
+		//Quick inizialisation of parameters that interpreter should have
+		try {
+			BshClassManager manag  = interpreter.getClassManager();
+			manag.addClassPath(Paths.get(System.getProperty("user.dir") + "\\src\\main\\java\\org\\objets\\").toUri().toURL());
+		} catch (Exception e) {
+		    throw new RuntimeException(e);
+		}
+		try {
+			interpreter.eval(String.join("\n", importBlock));
+		} catch (EvalError e) {
+			e.printStackTrace();
+			customeAlertTool(e.getMessage());
+			throw new BadSourceCodeException("Error in initialization.");
+		}
+		
+		
 		declareSharedVars(blockIndexes[2], sharedVarDecBlock, interpreter);
 		initSharedVars(blockIndexes[4], sharedVarInitBlock, interpreter);
 		declareLocalVars(blockIndexes[6], localVarDecBlock, interpreter);
@@ -192,7 +215,7 @@ public class PreTreatment extends Tools{
 				// Bsh interpreter is used to parse the line for us and init the variable
 				interpreter.eval(line);
 			} catch (EvalError e) {
-				customeAlertTool("Error in the initialisation of the shared variable on line " + (startOfBlock + i));
+				customeAlertTool(e.getMessage());
 				e.printStackTrace();
 				throw new BadSourceCodeException(
 						"Error in the initialisation of the shared variable on line " + (startOfBlock + i));
@@ -204,7 +227,7 @@ public class PreTreatment extends Tools{
 				// interpreter
 				sharedVars[i].update(interpreter.get(sharedVars[i].getName()));
 			} catch (EvalError e) {
-				customeAlertTool("Shared variable " + sharedVars[i].getName() + " not initialised");
+				customeAlertTool(e.getMessage());
 				e.printStackTrace();
 				throw new BadSourceCodeException("Shared variable " + sharedVars[i].getName() + " not initialised");
 			}
@@ -230,11 +253,12 @@ public class PreTreatment extends Tools{
 			try {
 				// We init the variable in the bsh interpreter for
 				interpreter.eval(line);
+				
 				sharedVars[i] = new Variable(varName);
 			} catch (EvalError e) {
 				e.printStackTrace();
-				customeAlertTool("Error in the declaration of the shared variable " + varName
-						+ " on line " + (startOfBlock + i));
+				//customeAlertTool("Error in the declaration of the shared variable " + varName + " on line " + (startOfBlock + i));
+				customeAlertTool(e.getMessage());
 				throw new BadSourceCodeException("Error in the declaration of the shared variable " + varName
 						+ " on line " + (startOfBlock + i));
 			}
@@ -324,4 +348,8 @@ public class PreTreatment extends Tools{
 		return trans;
 	}
 
+	public ArrayList<Blocks> getBlockStruct() {
+		return this.blocksConversion.getBlockStruct();
+	}
+	
 }
