@@ -87,8 +87,14 @@
                      <children>
             <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="100.0" prefHeight="38.0" prefWidth="1205.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="buttonNewExecution" layoutX="14.0" layoutY="6.0" mnemonicParsing="false" onAction="#newExecution" prefHeight="25.0" prefWidth="96.0" text="New Execution" />
-                  <TextField fx:id="textFieldNumberOfProcessesRandom" layoutX="259.0" layoutY="8.0" prefHeight="25.0" prefWidth="49.0" text="5" />
+                  <Button fx:id="buttonNewExecution" layoutX="14.0" layoutY="6.0" mnemonicParsing="false" onAction="#newExecution" prefHeight="25.0" prefWidth="96.0" text="New Execution">
+                     <tooltip>
+                        <Tooltip text="Run the code and debug the shared variable access" />
+                     </tooltip></Button>
+                  <TextField fx:id="textFieldNumberOfProcessesRandom" layoutX="259.0" layoutY="8.0" prefHeight="25.0" prefWidth="49.0" text="5">
+                     <tooltip>
+                        <Tooltip text="Number of processes that will run the code" />
+                     </tooltip></TextField>
                   <Label layoutX="136.0" layoutY="12.0" prefHeight="17.0" prefWidth="123.0" text="Number of processes :" />
                </children>
             </Pane>
@@ -96,13 +102,19 @@
                <children>
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#a6b1bff8" height="25.0" layoutX="360.0" layoutY="8.0" stroke="#909eab" strokeType="INSIDE" width="266.0" />
                   <Label layoutX="104.0" layoutY="12.0" text="Scheduling Policy " />
-                  <ChoiceBox fx:id="choiceBoxScheduling" layoutX="200.0" layoutY="8.0" minWidth="100.0" prefWidth="150.0" />
+                  <ChoiceBox fx:id="choiceBoxScheduling" layoutX="200.0" layoutY="8.0" minWidth="100.0" prefWidth="150.0">
+                     <tooltip>
+                        <Tooltip text="Choose how to decide which process will be the next to take a step further." />
+                     </tooltip></ChoiceBox>
                   <Label layoutX="362.0" layoutY="12.0" prefHeight="17.0" prefWidth="131.0" text="Current Sheduler File : ">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <Label fx:id="SchedName" layoutX="493.0" layoutY="12.0" prefHeight="17.0" prefWidth="131.0" text="None" />
+                  <Label fx:id="SchedName" layoutX="493.0" layoutY="12.0" prefHeight="17.0" prefWidth="131.0" text="None">
+                     <tooltip>
+                        <Tooltip text="You can insert a file that registered the order of all the processes along the program." />
+                     </tooltip></Label>
                   <Button fx:id="ChooseScheduler" layoutY="8.0" mnemonicParsing="false" onAction="#chooseSched" prefHeight="25.0" prefWidth="96.0" text="Scheduler" />
                </children>
             </Pane>
@@ -146,6 +158,9 @@
                                  </children>
                               </AnchorPane>
                         </content>
+                           <tooltip>
+                              <Tooltip text="This is where you write your code" />
+                           </tooltip>
                       </Tab>
                       <Tab text="Parsed Code">
                         <content>
@@ -155,6 +170,9 @@
                                  </children>
                               </AnchorPane>
                         </content>
+                           <tooltip>
+                              <Tooltip text="This pannel is for understanding purpose only. This is how your code looks like when it is processed." />
+                           </tooltip>
                       </Tab>
                     </tabs>
                   </TabPane>
@@ -183,6 +201,9 @@
                                              </children>
                                           </AnchorPane>
                                     </content>
+                                       <tooltip>
+                                          <Tooltip text="Here you can move by steps, represented by each shared data access. You can also run multiple stepsat once." />
+                                       </tooltip>
                                   </Tab>
 
                                               <!-- _______ Onglet Random ________ -->
@@ -203,6 +224,9 @@
                                              </children>
                                           </AnchorPane>
                                     </content>
+                                       <tooltip>
+                                          <Tooltip text="Here, you can choose a speed for the program to run" />
+                                       </tooltip>
                                   </Tab>
 
                                               <!-- _______ Onglet Next process ________ -->
@@ -217,6 +241,9 @@
                                                          </children>
                                           </AnchorPane>
                                     </content>
+                                       <tooltip>
+                                          <Tooltip text="Decide yourself which process will take the next turn" />
+                                       </tooltip>
                                   </Tab>
 
                                               <!-- _______ Onglet Crashes ________ -->
@@ -230,6 +257,9 @@
                                              </children>
                                           </AnchorPane>
                                     </content>
+                                       <tooltip>
+                                          <Tooltip text="You can force a process to crash and see how the program perform with it" />
+                                       </tooltip>
                                   </Tab>
 
             
@@ -246,11 +276,17 @@
                                  <children>
                                     <ChoiceBox fx:id="choiceBoxLocalVariables" layoutX="8.0" layoutY="250.0" onDragDone="#updateLocalVariables" prefWidth="150.0" />
                                     <ListView fx:id="listView1" layoutX="4.0" layoutY="286.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="137.0" prefWidth="131.0" />
-                                    <Label layoutX="4.0" layoutY="227.0" text="Local Variables" />
+                                    <Label layoutX="4.0" layoutY="227.0" text="Local Variables">
+                                       <tooltip>
+                                          <Tooltip text="The local variables of each process will be displayed here" />
+                                       </tooltip></Label>
                                     <ListView fx:id="listView2" layoutX="135.0" layoutY="286.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="137.0" prefWidth="131.0" />
                                     <ListView fx:id="listView3" layoutX="4.0" layoutY="39.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="178.0" prefWidth="131.0" />
                                     <ListView fx:id="listView4" layoutX="135.0" layoutY="39.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="178.0" prefWidth="131.0" />
-                                    <Label layoutX="9.0" layoutY="14.0" text="Shared Variables" textFill="#280e0e" />
+                                    <Label layoutX="9.0" layoutY="14.0" text="Shared Variables" textFill="#280e0e">
+                                       <tooltip>
+                                          <Tooltip text="All the shared variables will be visible here" />
+                                       </tooltip></Label>
                                  </children>
                               </Pane>
                            </children>
