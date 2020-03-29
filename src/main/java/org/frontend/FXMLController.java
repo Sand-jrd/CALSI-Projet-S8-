@@ -965,15 +965,16 @@ public class FXMLController {
 	//Updates le truc de gauche (La oï¿½ en sont les Processus) (Utiliser dans toute les fonctions qui gï¿½res l'execution du truc)
 	public void updateProcess(int nump,int linep) throws RipException{
 
-		ArrayList<Blocks> BlockStruct = simulation.getBlockStruct();
+		ArrayList<Blocks> BlockStruct = simulation.getBlockStruct(); // Ici, la strucure que j'ai crée. cf le docs ou j'explique se qu'il y a dedans (y'as pas les infos pour l'état des processus, juste les info sur comment est le code)
         lineProc.getChildren().clear();
-		processline[nump]=linep;
-
-		//System.out.println("addr dans updateProc"+processline);
+        processline[nump]=linep;
 
 
+		// La textForProcess c'est l'id de la balise FXML dans laquelle on va mettre l'animation. Pour l'instant c'est un texte
+		// Il faudra adapter le code ET le FXML pour que à la place d'un texte, on est une grille.
+		
 		for (int l = 0; l < countLines(code) ; l++) {
-			Text textForProcess2 = new Text(Integer.toString(l)+")");
+			Text textForProcess2 = new Text(Integer.toString(l)+")");  //On crée un Object "TEXTE" (un string avec des info sur le font)
 			textForProcess2.setFont(Font.font("System", 18.9));
 			textForProcess2.setStyle("-fx-font-weight: normal");
 			textForProcess2.setFill(Color.BLACK);
@@ -999,7 +1000,7 @@ public class FXMLController {
 
 			Text textForProcess = new Text("\n");
 			textForProcess.setFont(Font.font("System", 18.9));
-			lineProc.getChildren().add(textForProcess);
+			lineProc.getChildren().add(textForProcess); // Et la on met l'object texte que l'on viens de crée dans la balise "textForProcess"
 		}
 	}
 }

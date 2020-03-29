@@ -104,7 +104,6 @@ public class BlocksConversion {
 
 		while (block != "none") {
 			int line = getFirstBlockLine();
-
 			switch (block) {
 			case "while":
 				jump = preTreatWhile(line);
@@ -202,6 +201,8 @@ public class BlocksConversion {
 		int whileLine = line;
 		int closeLine = getBlockEnd(whileLine);
 		
+		BlockStruct.add(new Blocks("while",whileLine,closeLine));
+		
 		String whileLineString = lines.get(code.get(whileLine)).getLineCode(code);
 		String cond = whileLineString.substring(whileLineString.indexOf('(') + 1, whileLineString.lastIndexOf(')'));
 		
@@ -235,6 +236,9 @@ public class BlocksConversion {
 		int ifLineId = code.get(ifLine);
 		int elseLineId = code.get(elseLine);
 
+		BlockStruct.add(new Blocks("if",ifLine,elseLine));
+		BlockStruct.add(new Blocks("else",elseLine,closeLine));
+		
 		String ifLineString = lines.get(ifLineId).getLineCode(code);
 		String cond = ifLineString.substring(ifLineString.indexOf('(') + 1, ifLineString.lastIndexOf(')'));
 		//String notCond = "!(" + cond + ")";
@@ -254,7 +258,6 @@ public class BlocksConversion {
 			lines.add(code.get(ifLine+i), new LineGoto(code.get(ifLine+i+1), notCond, getBlockEnd(ifLine)));
 		}
 		
-		BlockStruct.add(new Blocks("If",ifLineId,closeLine+nbConds));
 		lines.set(elseLineId+nbConds, new LineGoto(code.get(elseLine+nbConds), "true", elseToId));
 		return nbConds-1;
 	}
@@ -264,6 +267,8 @@ public class BlocksConversion {
 		int startLine = line;
 		int closeLine = getBlockEnd(startLine);
 
+		BlockStruct.add(new Blocks("do",startLine,closeLine));
+		
 		String whileLineString = lines.get(code.get(closeLine)).getLineCode(code);
 		String cond = whileLineString.substring(whileLineString.indexOf('(') + 1, whileLineString.lastIndexOf(')'));
 
@@ -288,6 +293,8 @@ public class BlocksConversion {
 		int startLine = line;
 		int endLine = getBlockEnd(startLine);
 
+		BlockStruct.add(new Blocks("for",startLine,endLine));
+		
 		int startLineId = code.get(startLine);
 		int endLineId = code.get(endLine);
 		int afterEndId = endLine + 1 < code.size() ? code.get(endLine + 1) : Line.ID_END;

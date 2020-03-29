@@ -89,11 +89,11 @@
                <children>
                   <Button fx:id="buttonNewExecution" layoutX="14.0" layoutY="6.0" mnemonicParsing="false" onAction="#newExecution" prefHeight="25.0" prefWidth="96.0" text="New Execution">
                      <tooltip>
-                        <Tooltip text="Run the code and debug the shared variable access" />
+                        <Tooltip ShowDelay="1ms" text="Run the code and debug the shared variable access" />
                      </tooltip></Button>
                   <TextField fx:id="textFieldNumberOfProcessesRandom" layoutX="259.0" layoutY="8.0" prefHeight="25.0" prefWidth="49.0" text="5">
                      <tooltip>
-                        <Tooltip text="Number of processes that will run the code" />
+                        <Tooltip ShowDelay="1ms" text="Number of processes that will run the code" />
                      </tooltip></TextField>
                   <Label layoutX="136.0" layoutY="12.0" prefHeight="17.0" prefWidth="123.0" text="Number of processes :" />
                </children>
@@ -104,7 +104,7 @@
                   <Label layoutX="104.0" layoutY="12.0" text="Scheduling Policy " />
                   <ChoiceBox fx:id="choiceBoxScheduling" layoutX="200.0" layoutY="8.0" minWidth="100.0" prefWidth="150.0">
                      <tooltip>
-                        <Tooltip text="Choose how to decide which process will be the next to take a step further." />
+                        <Tooltip ShowDelay="1ms" text="Choose how to decide which process will be the next to take a step further." />
                      </tooltip></ChoiceBox>
                   <Label layoutX="362.0" layoutY="12.0" prefHeight="17.0" prefWidth="131.0" text="Current Sheduler File : ">
                      <font>
@@ -113,13 +113,13 @@
                   </Label>
                   <Label fx:id="SchedName" layoutX="493.0" layoutY="12.0" prefHeight="17.0" prefWidth="131.0" text="None">
                      <tooltip>
-                        <Tooltip text="You can insert a file that registered the order of all the processes along the program." />
+                        <Tooltip ShowDelay="1ms" text="You can insert a file that registered the order of all the processes along the program." />
                      </tooltip></Label>
                   <Button fx:id="ChooseScheduler" layoutY="8.0" mnemonicParsing="false" onAction="#chooseSched" prefHeight="25.0" prefWidth="96.0" text="Scheduler" />
 
                   <Button fx:id="EditShed" layoutX="590.0" layoutY="8.0" mnemonicParsing="false" onAction="#EditShed" text="Edit">
                      <tooltip>
-                        <Tooltip text="Edit the scheduler here"/>
+                        <Tooltip ShowDelay="1ms" text="Edit the scheduler here"/>
                      </tooltip></Button>
                </children>
             </Pane>
@@ -164,7 +164,7 @@
                               </AnchorPane>
                         </content>
                            <tooltip>
-                              <Tooltip text="This is where you write your code" />
+                              <Tooltip ShowDelay="1ms" text="This is where you write your code" />
                            </tooltip>
                       </Tab>
                       <Tab text="Parsed Code">
@@ -176,7 +176,7 @@
                               </AnchorPane>
                         </content>
                            <tooltip>
-                              <Tooltip text="This pannel is for understanding purpose only. This is how your code looks like when it is processed." />
+                              <Tooltip ShowDelay="1ms" text="This pannel is for understanding purpose only. This is how your code looks like when it is processed." />
                            </tooltip>
                       </Tab>
                     </tabs>
@@ -207,7 +207,7 @@
                                           </AnchorPane>
                                     </content>
                                        <tooltip>
-                                          <Tooltip text="Here you can move by steps, represented by each shared data access. You can also run multiple stepsat once." />
+                                          <Tooltip ShowDelay="1ms" text="Here you can move by steps, represented by each shared data access. You can also run multiple stepsat once." />
                                        </tooltip>
                                   </Tab>
 
@@ -230,7 +230,7 @@
                                           </AnchorPane>
                                     </content>
                                        <tooltip>
-                                          <Tooltip text="Here, you can choose a speed for the program to run" />
+                                          <Tooltip ShowDelay="1ms" text="Here, you can choose a speed for the program to run" />
                                        </tooltip>
                                   </Tab>
 
@@ -247,7 +247,7 @@
                                           </AnchorPane>
                                     </content>
                                        <tooltip>
-                                          <Tooltip text="Decide yourself which process will take the next turn" />
+                                          <Tooltip ShowDelay="1ms" text="Decide yourself which process will take the next turn" />
                                        </tooltip>
                                   </Tab>
 
@@ -263,7 +263,7 @@
                                           </AnchorPane>
                                     </content>
                                        <tooltip>
-                                          <Tooltip text="You can force a process to crash and see how the program perform with it" />
+                                          <Tooltip ShowDelay="1ms" text="You can force a process to crash and see how the program perform with it" />
                                        </tooltip>
                                   </Tab>
 
@@ -283,14 +283,14 @@
                                     <ListView fx:id="listView1" layoutX="4.0" layoutY="286.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="137.0" prefWidth="131.0" />
                                     <Label layoutX="4.0" layoutY="227.0" text="Local Variables">
                                        <tooltip>
-                                          <Tooltip text="The local variables of each process will be displayed here" />
+                                          <Tooltip ShowDelay="1ms" text="The local variables of each process will be displayed here" />
                                        </tooltip></Label>
                                     <ListView fx:id="listView2" layoutX="135.0" layoutY="286.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="137.0" prefWidth="131.0" />
                                     <ListView fx:id="listView3" layoutX="4.0" layoutY="39.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="178.0" prefWidth="131.0" />
                                     <ListView fx:id="listView4" layoutX="135.0" layoutY="39.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="178.0" prefWidth="131.0" />
                                     <Label layoutX="9.0" layoutY="14.0" text="Shared Variables" textFill="#280e0e">
                                        <tooltip>
-                                          <Tooltip text="All the shared variables will be visible here" />
+                                          <Tooltip ShowDelay="1ms" text="All the shared variables will be visible here" />
                                        </tooltip></Label>
                                  </children>
                               </Pane>

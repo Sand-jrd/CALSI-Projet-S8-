@@ -52,7 +52,7 @@ public class Process extends Tools{
 		
 		// Reserved variables index et numberOfProcesses
 		try {
-			this.inter.set("i", index);
+			this.inter.set("index", index);
 		} catch (EvalError e1) {
 			e1.printStackTrace();
 			throw new RipException("EvalError when setting index variable (i).");

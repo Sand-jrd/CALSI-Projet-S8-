@@ -9,7 +9,7 @@ porte = true;
 // Local variables declaration
 Integer direction;
 // Splitter Algorithm
-idRegister = i;
+idRegister = index;
 if(porte == false){
 	direction = 1;
 }else{

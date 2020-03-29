@@ -347,9 +347,26 @@ public class PreTreatment extends Tools{
 	public Transformation getTrans() {
 		return trans;
 	}
-
+	
+	public void whatsInside(ArrayList<Blocks> StructForAnimation) {
+		
+		System.out.println("Let's see what is inside\n");
+		int i;
+		System.out.println("Addr : "+ StructForAnimation);
+		for(i=0;i<StructForAnimation.size();i++) {
+			System.out.println("Element" + i + " = " + StructForAnimation.get(i) );
+			System.out.println("Type :" + StructForAnimation.get(i).getType() );
+			System.out.println("IdStart :" + StructForAnimation.get(i).getIdStart() );
+			System.out.println("IdEnd :" + StructForAnimation.get(i).getIdEnd() );
+		}
+	}
+	
 	public ArrayList<Blocks> getBlockStruct() {
-		return this.blocksConversion.getBlockStruct();
+		ArrayList<Blocks> StructForAnimation = this.blocksConversion.getBlockStruct();
+		Blocks initBloks = new Blocks("init",0,this.endOfInitBlocks);
+		StructForAnimation.add(0,initBloks);
+		whatsInside(StructForAnimation);
+		return StructForAnimation;
 	}
 	
 }

@@ -9,17 +9,11 @@ public class Blocks {
     int idEnd;
 	int truelineStart;
     int truelineStop;
-    ArrayList<Blocks> blocksInside;
     
-    public Blocks () {
-    	
-    }
-    
-    public Blocks (String type, int idStart,int idEndint){
+    public Blocks (String type, int idStart,int idEnd){
     	this.type = type;
     	this.idStart = idStart;
     	this.idEnd = idEnd;
-    	this.blocksInside = new  ArrayList<Blocks>();
 	}
     
 	// --- Getters and Setters --- //
@@ -43,13 +37,6 @@ public class Blocks {
 		this.idEnd = idEnd;
 	}
 	
-	public ArrayList<Blocks> getBlocksInside() {
-		return blocksInside;
-	}
-	public void setBlocksInside(ArrayList<Blocks> blocksInside) {
-		this.blocksInside = blocksInside;
-	}
-
 	public int getTruelineStart() {
 		return truelineStart;
 	}
