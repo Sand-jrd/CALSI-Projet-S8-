@@ -15,17 +15,22 @@ import javafx.animation.Timeline;
 import javafx.util.Duration;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 
 import javafx.scene.paint.*;
 import javafx.scene.canvas.*;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.Circle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -127,6 +132,9 @@ public class FXMLController {
 
 	@FXML
 	private TextField textFieldNumberOfProcessesRandom;
+	
+	@FXML
+	private GridPane Animation;
 
 	@FXML
 	private TextField textFieldNumberOfSteps;
@@ -179,7 +187,6 @@ public class FXMLController {
 		listView2.setItems(content2);
 		listView3.setItems(content3);
 		listView4.setItems(content4);
-		gc = lineProcCanvas.getGraphicsContext2D();
 		textAreaOriginalCode.setText(code);
 
 	}
@@ -636,13 +643,14 @@ public class FXMLController {
 		if (!infos.simulationIsDone()) {
 
 			history.addStep(infos,simulation,processline);
-
+			
 			simulation.nextStep();
 
 			ArrayList<Integer> arrayExec = infos.getOriginalSourceLinesExecutedDuringLastStep(infos.getIdOfLastExecutedProcess());
 
-
 			updateProcess(infos.getIdOfLastExecutedProcess(),arrayExec.get(0));
+			
+			
 			updateSharedVariables();
 			updateLocalVariables();
 		}
@@ -806,6 +814,7 @@ public class FXMLController {
 		content3.remove(0, content3.size());
 		content4.remove(0, content4.size());
 		VariableInfo[] variableInfo = infos.getSharedVariables();
+
 		for(int i=0;i<variableInfo.length;i++)
 		{
 			if(variableInfo[i] == null)
@@ -858,8 +867,21 @@ public class FXMLController {
 		   return  lines.length;
 	}
 
+	public void initGrid() {
+		
+		Animation.getChildren().clear();
+	    for (int y = 0 ; y < countLines(code) ; y++) {
+	        Animation.add(new Label(y+")"),0,y);
+		}
+	    
+	}
+	
 	//La fonction qui rï¿½initialise l'execution
 	public void initalizeProcess(int nbrp) throws RipException{
+        
+		initGrid();
+		
+		//Initialisation animation texte
 		numberOfProcesses=nbrp;
 		processline= new int[nbrp];
 		Arrays.fill(processline, 0);
@@ -961,19 +983,65 @@ public class FXMLController {
 
     }
 
-
-	//Updates le truc de gauche (La oï¿½ en sont les Processus) (Utiliser dans toute les fonctions qui gï¿½res l'execution du truc)
+	//ANIMATION AVEC LA GRILLE
 	public void updateProcess(int nump,int linep) throws RipException{
+
+		ArrayList<Blocks> BlockStruct = simulation.getBlockStruct(); // Ici, la strucure que j'ai crée. cf le docs ou j'explique se qu'il y a dedans (y'as pas les infos pour l'état des processus, juste les info sur comment est le code)
+
+        initGrid();
+		
+        processline[nump]=linep;
+        int nbperline;
+        
+		// La textForProcess c'est l'id de la balise FXML dans laquelle on va mettre l'animation. Pour l'instant c'est un texte
+		// Il faudra adapter le code ET le FXML pour que à la place d'un texte, on est une grille.
+		for (int l = 0; l < countLines(code) ; l++) {
+			nbperline = 1;
+			for (int i = 0; i < numberOfProcesses; i++) {
+				if (l==processline[i]) {
+
+					if(infos.processIsDone(i)) {
+						StackPane proc = new StackPane();
+						proc.getChildren().addAll(new Circle(10,Color.BLUE), new Label("P"+i));
+						Animation.add(proc,nbperline,l);
+					}
+					else if(infos.processIsCrashed(i)) {
+						StackPane proc = new StackPane();
+						proc.getChildren().addAll(new Circle(10,Color.RED), new Label("P"+i));
+						Animation.add(proc,nbperline,l);
+					}
+					else if(i==nump) {
+						StackPane proc = new StackPane();
+						proc.getChildren().addAll(new Circle(10,Color.GREEN), new Label("P"+i));
+						Animation.add(proc,nbperline,l);
+					}
+					else {
+						StackPane proc = new StackPane();
+						proc.getChildren().addAll(new Circle(10,Color.web("#8599ad")), new Label("P"+i));
+						Animation.add(proc,nbperline,l);
+					}
+					nbperline++;
+				}
+			}
+		}
+		
+		Animation.setGridLinesVisible(true);
+	}
+	
+	// ANIMATION EN TXT
+	public void updateProcessTXT(int nump,int linep) throws RipException{
 
 		ArrayList<Blocks> BlockStruct = simulation.getBlockStruct(); // Ici, la strucure que j'ai crée. cf le docs ou j'explique se qu'il y a dedans (y'as pas les infos pour l'état des processus, juste les info sur comment est le code)
         lineProc.getChildren().clear();
+		
         processline[nump]=linep;
-
-
+        int nbperline;
+        
 		// La textForProcess c'est l'id de la balise FXML dans laquelle on va mettre l'animation. Pour l'instant c'est un texte
 		// Il faudra adapter le code ET le FXML pour que à la place d'un texte, on est une grille.
 		
 		for (int l = 0; l < countLines(code) ; l++) {
+			nbperline = 1;
 			Text textForProcess2 = new Text(Integer.toString(l)+")");  //On crée un Object "TEXTE" (un string avec des info sur le font)
 			textForProcess2.setFont(Font.font("System", 18.9));
 			textForProcess2.setStyle("-fx-font-weight: normal");
@@ -984,15 +1052,17 @@ public class FXMLController {
 					Text textForProcess = new Text("P"+Integer.toString(i)+",");
 					textForProcess.setFont(Font.font("System", 18.9));
 					textForProcess.setStyle("-fx-font-weight: normal");
-					textForProcess.setFill(Color.BLACK);
 					if(infos.processIsDone(i)) {
 						textForProcess.setFill(Color.BLUE);
 					}
-					if(infos.processIsCrashed(i)) {
+					else if(infos.processIsCrashed(i)) {
 						textForProcess.setFill(Color.RED);
 					}
-					if(i==nump) {
+					else if(i==nump) {
 						textForProcess.setStyle("-fx-font-weight: bold");
+					}
+					else {
+						textForProcess.setFill(Color.BLACK);
 					}
 					lineProc.getChildren().add(textForProcess);
 				}

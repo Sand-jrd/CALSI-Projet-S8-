@@ -63,9 +63,11 @@ public class Infos extends Tools{
 	 * @return infos about the shared variables.
 	 */
 	public VariableInfo[] getSharedVariables() {
+		
 		Variable sharedVars[] = Process.getSharedVars();
 		
 		return VariableArrayToVariableInfoArray(sharedVars);
+		
 	}
 	
 	/**
@@ -147,11 +149,15 @@ public class Infos extends Tools{
 	}
 	
 	private VariableInfo[] VariableArrayToVariableInfoArray(Variable[] variableArray) {
-		VariableInfo variablesInfos[] = new VariableInfo[variableArray.length];
 
+		VariableInfo variablesInfos[] = new VariableInfo[variableArray.length];
+		
 		for (int i = 0; i < variableArray.length; i++) {
+
 			Variable sharedVar = variableArray[i];
+	
 			variablesInfos[i] = new VariableInfo(sharedVar.getName(), sharedVar.getValue(), sharedVar.getType());
+			
 		}
 		return variablesInfos;
 	}

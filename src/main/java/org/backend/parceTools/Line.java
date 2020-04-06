@@ -16,9 +16,18 @@ public abstract class Line {
 		this.mapId = id;
 	}
 	
+	public Line(int id, int mapId) {
+		this.id = id;
+		this.mapId = mapId;
+	}
+	
 	int id; 		// line Id
 	int mapId;		// line original Id, which corresponds to the line in the original source code
 	
+	
+	public void showContent() {
+        System.out.println("ID : "+this.id+" trueLien : "+this.mapId);
+	}
 	
 	/**
 	 * 

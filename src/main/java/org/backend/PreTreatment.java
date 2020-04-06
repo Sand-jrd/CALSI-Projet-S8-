@@ -225,7 +225,9 @@ public class PreTreatment extends Tools{
 			try {
 				// We can then extract the computed value of the initialized variable from the
 				// interpreter
+				
 				sharedVars[i].update(interpreter.get(sharedVars[i].getName()));
+
 			} catch (EvalError e) {
 				customeAlertTool(e.getMessage());
 				e.printStackTrace();
@@ -365,7 +367,7 @@ public class PreTreatment extends Tools{
 		ArrayList<Blocks> StructForAnimation = this.blocksConversion.getBlockStruct();
 		Blocks initBloks = new Blocks("init",0,this.endOfInitBlocks);
 		StructForAnimation.add(0,initBloks);
-		whatsInside(StructForAnimation);
+		//whatsInside(StructForAnimation);
 		return StructForAnimation;
 	}
 	

@@ -15,7 +15,15 @@ public class LineString extends Line {
 		super(id);
 		this.code = code;
 	}
-
+	
+	public LineString(int id,int mapid, String code) {
+		super(id,mapid);
+		this.code = code;
+	}
+	public void showContent() {
+		super.showContent();
+        System.out.println("code: '"+this.code +"'" );
+	}
 
 
 	@Override

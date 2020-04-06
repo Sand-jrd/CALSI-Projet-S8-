@@ -122,19 +122,21 @@ public class Process extends Tools{
 	// --------------  ICI on utilise l'interpréteur ------------------- //
 	
 	public void oneStep() throws EvalError {
-		if (this.done)
+		if (this.done) {
 			return;
+		}
 		
 		originalSourceLinesExecutedDuringLastStep.clear();
 		originalSourceLinesExecutedDuringLastStep.add(preTreatment.getOriginalLineNumber(currentLine));
 
 		// The shared variables in the interpreter (which might have been modified in an other process since) are 
 		// updated from the array of shared variables.
+		
 		for (int i = 0; i < Process.sharedVars.length; ++i) {
-			this.inter.set(Process.getSharedVars()[i].getName(), Process.getSharedVars()[i].getObj());
+			if(Process.getSharedVars()[i].getObj() != null) {
+				this.inter.set(Process.getSharedVars()[i].getName(), Process.getSharedVars()[i].getObj());
+			}
 		}
-
-		// System.out.println(this.sourceCode[this.currentLine]);
 
 		// One line is executed
 		if (this.sourceCode[this.currentLine].indexOf("goto") >= 0) {
@@ -147,7 +149,7 @@ public class Process extends Tools{
 				customeAlertTool(e.getMessage());
 			}
 		}
-
+		
 		// After the step, the shared variables are updated so their value can be shared between the processes
 		for (int i = 0; i < Process.sharedVars.length; ++i) {
 			Process.getSharedVars()[i].update(this.inter.get(Process.getSharedVars()[i].getName()));
@@ -161,6 +163,7 @@ public class Process extends Tools{
 		if (this.currentLine >= this.sourceCode.length) {
 			this.done = true;
 		}
+
 	}
 
 	public static void setSharedVars(PreTreatment preTreatment) {

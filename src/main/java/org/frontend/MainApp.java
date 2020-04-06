@@ -33,7 +33,8 @@ public class MainApp extends Application {
         stage.show();
 
         //Affichage de la fenêtre Welcome
-        
+         
+        /*
         Parent secondroot = FXMLLoader.load(getClass().getResource("welcome.fxml"));
         Scene secondscene = new Scene(secondroot);
         
@@ -41,7 +42,7 @@ public class MainApp extends Application {
         secondStage.setTitle("Welcome !");
         secondStage.setScene(secondscene);
         secondStage.show();
-        
+        */
     }
 
 

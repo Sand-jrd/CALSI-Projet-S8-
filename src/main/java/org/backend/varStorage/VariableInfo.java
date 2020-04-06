@@ -16,6 +16,13 @@ public class VariableInfo {
 		this.type = type;
 	}
 
+	public VariableInfo(String name) {
+		this.name = name;
+		this.value = "";
+		this.type = "";
+	}
+
+	
 	/**
 	 * Get the name of the variable.
 	 * @return the name of the variable

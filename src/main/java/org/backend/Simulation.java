@@ -121,7 +121,6 @@ public class Simulation extends Tools{
 	public void nextStep() throws BadSourceCodeException {
 		int i = scheduler.getNext();
 		nextStep(i);
-		System.out.println("Next Step !"+i);
 
 	}
 
@@ -142,6 +141,7 @@ public class Simulation extends Tools{
 		}
 		executionOrderHistory.add(processId);
 		System.out.println("On a ajouté "+processId);
+		
 	}
 
 	private void initSimulation() throws BackEndException {

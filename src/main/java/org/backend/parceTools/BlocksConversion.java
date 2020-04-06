@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.backend.exceptions.BackEndException;
 import org.backend.parceTools.blockType.*;
 
+import java.lang.Object;
+
 
 /**
  * @author Chaimaa & Issam
@@ -75,10 +77,10 @@ public class BlocksConversion {
 	}
 	
 	public String[] getNewSourceCodeArray() throws BackEndException {
-		String[] result = new String[this.code.size()];
+		String[] result = new String[this.lines.size()];
 
-		for(int i=0; i<this.code.size(); i++) {
-			Line l = this.lines.get(code.get(i));
+		for(int i=0; i<this.lines.size(); i++) {
+			Line l = this.lines.get(i);
 			result[i] = l.getLineCode(this.code);
 		}
 		return result;
@@ -94,34 +96,44 @@ public class BlocksConversion {
 
 		this.lines.clear();
 		this.code.clear();
-
+				
 		for (int i = 0; i < sourceCode.length; ++i) {
 			this.lines.add(i, new LineString(i, sourceCode[i]));
 			this.code.add(i, Integer.valueOf(i));
 		}
-		int jump;
+		int jump = 0;
+		
 		block = getFirstBlockString();
 
 		while (block != "none") {
 			int line = getFirstBlockLine();
 			switch (block) {
 			case "while":
-				jump = preTreatWhile(line);
+				jump = jump + preTreatWhile(line);
 				break;
 			case "if":
-				preTreatIf(line);
+				jump = jump + preTreatIf(line);
 				break;
 			case "for":
 				preTreatFor(line);
 				break;
 			case "do":
-				preTreatDoWhile(line);
+				jump = jump +preTreatDoWhile(line);
 				break;
 			}
-
 			block = getFirstBlockString();
 		}
-
+		
+		
+		//Do usefull prints
+		
+		/*
+		for (int i = 0; i < 20; ++i) {
+			lines.get(i).showContent();
+			System.out.println("Code : " + code.get(i));
+		}
+		*/
+		
 	}
 
 	/**
@@ -150,7 +162,7 @@ public class BlocksConversion {
 
 		for (int i = 0; i < code.size(); ++i) {
 
-			blockString = containBlock(lines.get(code.get(i)).getLineCode(code));
+			blockString = containBlock(lines.get(i).getLineCode(code));
 			if (blockString != "") {
 				return blockString;
 			}
@@ -217,8 +229,8 @@ public class BlocksConversion {
 
 		for(int i = 1;i<=nbConds;i++) {
 			notCond = "!(" + conds.get(i) + ")"; 
-			this.code.add(code.get(whileLine+i), code.get(whileLine+i));
-			lines.add(code.get(whileLine+i), new LineGoto(code.get(whileLine+i+1), notCond, startToId));
+			//this.code.add(code.get(whileLine+i), code.get(whileLine+i));
+			lines.add(code.get(whileLine+i), new LineGoto(code.get(whileLine+i),whileLine, notCond, startToId));
 		}
 
 		BlockStruct.add(new Blocks("While",startToId,closeToId+nbConds));
@@ -257,12 +269,12 @@ public class BlocksConversion {
 			notCond = "!(" + conds.get(i) + ")"; 
 			lines.add(code.get(ifLine+i), new LineGoto(code.get(ifLine+i+1), notCond, getBlockEnd(ifLine)));
 		}
-		
+
 		lines.set(elseLineId+nbConds, new LineGoto(code.get(elseLine+nbConds), "true", elseToId));
 		return nbConds-1;
 	}
 
-	private void preTreatDoWhile(int line) throws BackEndException {
+	private int preTreatDoWhile(int line) throws BackEndException {
 
 		int startLine = line;
 		int closeLine = getBlockEnd(startLine);
@@ -276,8 +288,16 @@ public class BlocksConversion {
 		int closeLineId = code.get(closeLine);
 		int afterDoId = code.get(startLine + 1);
 
-		lines.set(closeLineId, new LineGoto(closeLineId, cond, startLineId));
+		ArrayList<String> conds = dividConds(cond);
+		int nbConds = conds.size()-1;
+		
+		String notCond = "!(" + conds.get(0) + ")"; 
+		lines.set(closeLineId, new LineGoto(closeLineId, conds.get(0), startLineId));
 
+		for(int i = 1;i<=nbConds;i++) {
+			lines.add(closeLineId+i, new LineGoto(closeLineId+i,closeLine, conds.get(i), startLineId));
+		}
+		
 		code.remove(startLine);
 
 		Line lineAfterDo = lines.get(afterDoId);
@@ -285,7 +305,7 @@ public class BlocksConversion {
 
 		lines.set(startLineId, lineAfterDo);
 		code.set(startLine, startLineId);
-
+		return 0;
 	}
 
 	private void preTreatFor(int line) throws BackEndException {
@@ -350,12 +370,12 @@ public class BlocksConversion {
 			if(indexOu>indexEt) {
 				//System.out.print(gluedConds.substring(0,indexEt));
 				conds.add(gluedConds.substring(0,indexEt));
-				gluedConds = gluedConds.substring(indexEt+2,gluedConds.length()-1);
+				gluedConds = gluedConds.substring(indexEt+2,gluedConds.length());
 				//System.out.print(gluedConds);
 			}
 			else {
 				conds.add(gluedConds.substring(1,indexOu));
-				gluedConds = gluedConds.substring(indexOu+2,gluedConds.length()-1);
+				gluedConds = gluedConds.substring(indexOu+2,gluedConds.length());
 			}
 			
 			indexEt = gluedConds.indexOf("&&");
@@ -369,7 +389,6 @@ public class BlocksConversion {
 			}
 			
 		}
-		//System.out.print(gluedConds);
 		conds.add(gluedConds);
 		return conds;
 	}

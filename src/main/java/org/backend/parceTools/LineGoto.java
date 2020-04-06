@@ -18,7 +18,17 @@ public class LineGoto extends Line {
 		
 	}
 	
+	public LineGoto(int id, int mapid, String cond, int toid) {
+		super(id, mapid);
+		this.condition = cond;
+		this.toId = toid;
+		
+	}
 	
+	public void showContent() {
+		super.showContent();
+        System.out.println("Condition : "+this.condition +" toid :"+this.toId );
+	}
 	
 	/**
 	 *	This function returns the final code of the line as a string.
