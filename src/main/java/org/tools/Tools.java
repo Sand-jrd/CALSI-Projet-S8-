@@ -21,7 +21,7 @@ public class Tools implements Cloneable {
 	    return contentBuilder.toString();
 	}
 	
-	//La fonction qui réinitialise l'execution
+	//La fonction qui r?initialise l'execution
 	public void customeAlertTool(String alertText) {
 
 	 Alert alert = new Alert(AlertType.INFORMATION);
