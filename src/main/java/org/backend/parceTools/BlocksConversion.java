@@ -45,7 +45,7 @@ public class BlocksConversion {
 	}
 
 	public int originalLineNumber(int lineNumber) throws IndexOutOfBoundsException {
-
+		
 		if (lineNumber >= this.getNumberOfLines()) {
 			throw new IndexOutOfBoundsException();
 		}
@@ -96,11 +96,12 @@ public class BlocksConversion {
 
 		this.lines.clear();
 		this.code.clear();
-				
+
 		for (int i = 0; i < sourceCode.length; ++i) {
 			this.lines.add(i, new LineString(i, sourceCode[i]));
 			this.code.add(i, Integer.valueOf(i));
 		}
+		
 		int jump = 0;
 		
 		block = getFirstBlockString();
@@ -122,13 +123,15 @@ public class BlocksConversion {
 				break;
 			}
 			block = getFirstBlockString();
+			
+			
 		}
 		
 		
 		//Do usefull prints
 		
 		/*
-		for (int i = 0; i < 20; ++i) {
+		for (int i = 0; i < code.size(); ++i) {
 			lines.get(i).showContent();
 			System.out.println("Code : " + code.get(i));
 		}
@@ -241,6 +244,7 @@ public class BlocksConversion {
 
 	private int preTreatIf(int line) throws BackEndException {
 
+		
 		int ifLine = line;
 		int elseLine = getBlockEnd(ifLine);
 		int closeLine = getBlockEnd(elseLine);
@@ -255,7 +259,9 @@ public class BlocksConversion {
 		String cond = ifLineString.substring(ifLineString.indexOf('(') + 1, ifLineString.lastIndexOf(')'));
 		//String notCond = "!(" + cond + ")";
 
-		code.remove(closeLine);
+		//code.remove(closeLine);
+		lines.set(closeLine, new LineString(closeLine, closeLine, ""));
+		
 		int ifToId = elseLine + 1 < code.size() ? code.get(elseLine + 1) : Line.ID_END;
 		int elseToId = closeLine < code.size() ? code.get(closeLine) : Line.ID_END;
 		
@@ -298,8 +304,8 @@ public class BlocksConversion {
 			lines.add(closeLineId+i, new LineGoto(closeLineId+i,closeLine, conds.get(i), startLineId));
 		}
 		
-		code.remove(startLine);
-
+		//code.remove(startLine);
+		
 		Line lineAfterDo = lines.get(afterDoId);
 		lineAfterDo.id = startLineId;
 

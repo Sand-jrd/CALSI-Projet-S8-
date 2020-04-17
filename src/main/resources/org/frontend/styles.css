@@ -20,6 +20,16 @@ MenuBar {
     -fx-text-fill: #bebfc2;
 }
 
+.textClient{
+    -fx-font-size: 8;
+   -fx-fill: #bebfc2;
+}
+
+#numCod{
+     -fx-control-inner-background: #282c34;
+    -fx-text-fill: #bebfc2;
+}
+
 .text-area .text {
      -fx-line-spacing: 0px;
 }

@@ -22,6 +22,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
@@ -116,7 +117,6 @@
                      <tooltip>
                         <Tooltip ShowDelay="300ms" text="You can insert a file that registered the order of all the processes along the program." />
                      </tooltip></Label>
-                  <Button fx:id="ChooseScheduler" layoutY="8.0" mnemonicParsing="false" onAction="#chooseSched" prefHeight="25.0" prefWidth="96.0" text="Scheduler" />
 
                   <Button fx:id="EditShed" layoutX="590.0" layoutY="8.0" mnemonicParsing="false" onAction="#EditShed" text="Edit">
                      <tooltip>
@@ -141,7 +141,7 @@
                   <Pane maxWidth="-Infinity" minHeight="200.0" minWidth="86.0" prefHeight="648.0" prefWidth="204.0">
                      <children>
                         <TextFlow fx:id="lineProc" maxHeight="1.7976931348623157E308" maxWidth="250.0" prefHeight="650.0" prefWidth="199.0" />
-                        <GridPane fx:id="Animation" prefHeight="649.0" prefWidth="200.0">
+                        <GridPane fx:id="Animation" layoutY="32.0" prefHeight="620.0" prefWidth="196.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                           </columnConstraints>
@@ -161,7 +161,18 @@
                         <content>
                           <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="621.0" prefWidth="345.0">
                                  <children>
-                                    <TextArea fx:id="textAreaOriginalCode" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="622.0" prefWidth="674.0" />
+                                    <TextArea fx:id="textAreaOriginalCode" layoutY="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="620.0" prefWidth="674.0">
+                                       <padding>
+                                          <Insets left="10.0" />
+                                       </padding></TextArea>
+                                    <GridPane fx:id="numCod" layoutX="1.0" layoutY="3.0" prefHeight="620.0" prefWidth="10.0" style="-fx-background-color: #282c34;" stylesheets="@styles.css">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
+                                      </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints />
+                                       </rowConstraints>
+                                    </GridPane>
                                  </children>
                               </AnchorPane>
                         </content>

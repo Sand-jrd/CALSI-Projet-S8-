@@ -25,19 +25,21 @@ public class PreTreatment extends Tools{
 	private String[] preTreatedSource;
 	private String initialisationBlock;
 	private int endOfInitBlocks;
+	private int numberOfProcesses;
 	private BlocksConversion blocksConversion;
-	
+	static Transformation trans;
+
 	private Variable[] sharedVars;
 	private Variable[] localVars;
 	
 
 	static String[] blocks = { "while", "if", "for", "do"}; // possible blocks
 	static String[] conds = { "&&", "||"}; // possible conditions
-	static Transformation trans;
 
 	//Contructeur classique
-	public PreTreatment(String source) throws BackEndException {
+	public PreTreatment(String source,int numberOfProcesses) throws BackEndException {
 		this.source = source;
+		this.numberOfProcesses = numberOfProcesses;
 		preTreat();
 	}
 
@@ -48,6 +50,7 @@ public class PreTreatment extends Tools{
 		this.preTreatedSource = preTreatOld.getPreTreatedSource().clone();
 		this.initialisationBlock = new String(preTreatOld.getInitialisationBlock());
 		this.endOfInitBlocks = preTreatOld.getEndOfInitBlocks();
+		this.numberOfProcesses =  preTreatOld.getNumberOfProcesses();
 		this.blocksConversion = new BlocksConversion(preTreatOld.getBlocksConversion());
 		
 		this.sharedVars = preTreatOld.getSharedVars();
@@ -109,6 +112,14 @@ public class PreTreatment extends Tools{
 		// We create a bsh interpreter to help us evaluate the initialized shared
 		// variables
 		Interpreter interpreter = new Interpreter();
+		try {
+		interpreter.set("nbProc", numberOfProcesses);
+		} catch (EvalError e) {
+			e.printStackTrace();
+			customeAlertTool(e.getMessage());
+			throw new BadSourceCodeException("Error in initialization.");
+		}
+		
 		//Quick inizialisation of parameters that interpreter should have
 		try {
 			BshClassManager manag  = interpreter.getClassManager();
@@ -324,6 +335,10 @@ public class PreTreatment extends Tools{
 
 	public int getEndOfInitBlocks() {
 		return endOfInitBlocks;
+	}
+	
+	public int getNumberOfProcesses() {
+		return this.numberOfProcesses;
 	}
 	
 	public BlocksConversion getBlocksConversion() {

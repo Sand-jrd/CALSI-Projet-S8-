@@ -65,7 +65,7 @@ public class Process extends Tools{
 			customeAlertTool(e1.getMessage());
 			throw new RipException("EvalError when setting index variable (NbProc).");
 		}
-	
+		
 		// Execution of the initialization block (imports, and variable declarations)
 		try {
 			this.inter.eval(preTreatment.getInitialisationBlock());
@@ -125,7 +125,6 @@ public class Process extends Tools{
 		if (this.done) {
 			return;
 		}
-		
 		originalSourceLinesExecutedDuringLastStep.clear();
 		originalSourceLinesExecutedDuringLastStep.add(preTreatment.getOriginalLineNumber(currentLine));
 

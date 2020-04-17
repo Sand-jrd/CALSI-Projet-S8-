@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import org.backend.parceTools.blockType.Blocks;
+import org.backend.varStorage.Variable;
 import org.backend.exceptions.*;
 import org.tools.Tools;
 import bsh.EvalError;
@@ -17,9 +18,6 @@ import bsh.EvalError;
  */
 public class Simulation extends Tools{
 	
-	//Infos ça correspond contient la simu à l'étape d'avant.
-	private Infos infos;  
-	
 	// Simulation initialization parameters 
 	
 	//Same as simulationBuilder
@@ -30,7 +28,7 @@ public class Simulation extends Tools{
 	
 	//Les paramètres de la simulation 
 	private Process processes[];
-	private Scheduler scheduler; // Dans un Scheduler y'a une simu, dans une simu y'a un scheduler... mdr
+	private Scheduler scheduler;
 	private PreTreatment preTreatment;
 	private ArrayList<Integer> executionOrderHistory;
 
@@ -45,9 +43,6 @@ public class Simulation extends Tools{
 		this.executionOrderHistory = new ArrayList<Integer>();
 
 		initSimulation();
-
-		// infos gets a reference to simulation being created
-		this.infos = new Infos(this);
 	}
 
 	//Builder Quand on fait une copie d'une autre simu (pour History)
@@ -70,29 +65,6 @@ public class Simulation extends Tools{
 		this.executionOrderHistory = (ArrayList<Integer>)((simulationOld.getExecutionOrderHistory()).clone());
 		
 	}
-	
-	//Builder Quand on fait une copie d'une autre avec des info (Ou on ne update pas Info du coup !) (pour History)
-		public Simulation(Infos infosOld,Simulation simulationLinked){
-
-			Simulation simulationOld = infosOld.getSimulation();
-			
-			// Simulation initialization parameters
-			//this.infos = new Infos(simulationOld.getInfos());
-
-			this.sourceCodeFileName = simulationLinked.getSourceCodeFileName();
-			this.numberOfProcesses = simulationLinked.getNumberOfProcesses();
-			this.schedulerType = simulationLinked.getSchedulerType();
-
-
-			this.processes = simulationLinked.getProcesses();
-			
-			
-			this.scheduler = simulationLinked.getScheduler();
-			this.preTreatment = simulationLinked.getPreTreatment();
-			this.executionOrderHistory = simulationLinked.getExecutionOrderHistory();
-			
-			
-		}
 	
 	//Pour changer de Scheduler mais c'est pas encore implémenté. 
 	public void changeScheduler(String newSchedulerType) {
@@ -150,7 +122,7 @@ public class Simulation extends Tools{
 		String sourceCode = readSourceCode();
 		
 		//Parcage du code
-		this.preTreatment = new PreTreatment(sourceCode);
+		this.preTreatment = new PreTreatment(sourceCode, numberOfProcesses);
 
 		//Inisialisation des variables Shared et Local dans l'interpréteur
 		Process.setSharedVars(preTreatment);
@@ -180,12 +152,122 @@ public class Simulation extends Tools{
 			throw new RipException("IO error while attempting to read from source code file.");
 		}
 	}
+	
+	/**
+	 * Get the id of the last process that was executed.
+	 * 
+	 * @return an int corresponding to the id of the last executed process
+	 */
+	public int getIdOfLastExecutedProcess() {
+		try{
+			ArrayList<Integer> executionOrderHistory = this.getExecutionOrderHistory();
+			return executionOrderHistory.get(executionOrderHistory.size() - 1);
+		}catch(Exception e) {
+			customeAlertTool("There is no previous step ! ");
+			return -1;
+		}
+	}
+
+	/**
+	 * Get the line of the last executed pre-treated line of code. For debugging
+	 * purposes, not intended to be displayed to the user.
+	 * 
+	 * @return a string of the executed line
+	 */
+	public String getExecutedPreTreatedLine() {
+		Process executedProcess = this.getProcesses()[getIdOfLastExecutedProcess()];
+		String sourceCode[] = executedProcess.getSourceCode();
+		return sourceCode[executedProcess.getCurrentLine() - 1];
+	}
+
+	/**
+	 * Get info about the shared variables.
+	 * 
+	 * @return infos about the shared variables.
+	 */
+	public Variable[] getSharedVariables() {
+		
+		return Process.getSharedVars();
+		
+	}
+	
+	/**
+	 * Get infos about the local variables of the specified process
+	 * @param processId the id of the specified process
+	 * @return infos about the local variables
+	 * @throws RipException 
+	 */
+	public Variable[] getLocalVariables(int processId) throws RipException {
+		return getProcess(processId).getLocalVars();
+	}
+
+	// Accessible from package only
+	void updateInfos() {
+		// TODO
+	}
+
+	/**
+	 * Check whether the simulation is finished (ie that all processes are done)
+	 * 
+	 * @return true if done, false if not
+	 */
+	public boolean simulationIsDone() {
+		Process processes[] = this.getProcesses();
+		for (int i = 0; i < processes.length; i++) {
+			if (!processes[i].isDone()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Check if the specified process has terminated. 
+	 * @param processId the id of the process to be checked for termination
+	 * @return true if terminated, false otherwise
+	 * @throws RipException if the process id specified does not correspond to a process
+	 */
+	public boolean processIsDone(int processId) throws RipException {
+		return getProcess(processId).isDone();
+	}
+	
+	/**
+	 * Check if the specified process has crashed. 
+	 * @param processId the id of the process to be checked for termination
+	 * @return true if terminated, false otherwise
+	 * @throws RipException if the process id specified does not correspond to a process
+	 */
+	public boolean processIsCrashed(int processId) throws RipException {
+		return getProcess(processId).isCrashed();
+	}
+	
+	/**
+	 * Get a list of original source code line numbers, corresponding to the lines executed 
+	 * during the last step of the specified process
+	 * @param processId of the process in question
+	 * @return an list of the original source code line numbers, corresponding to the lines executed 
+	 * during the last step of the specified process
+	 * @throws RipException if the process id specified does not correspond to a process
+	 */
+	public ArrayList<Integer> getOriginalSourceLinesExecutedDuringLastStep(int processId) throws RipException {
+		Process process = getProcess(processId);
+		return process.getOriginalSourceLinesExecutedDuringLastStep();
+	}
+	
+	public String getNewSourceCode() throws BackEndException {
+		PreTreatment preTreatment = this.getPreTreatment();
+		return preTreatment.getNewSourceCode();
+	}
+	
+	public Process getProcess(int processId) throws RipException {
+		Process processes[] = this.getProcesses();
+		if (processId >= processes.length) {
+			throw new RipException("Can't get termination status for process " + processId + " as it does not exist.");
+		}
+		return processes[processId];
+	}
 
 	// -- Getters -- //
-	
-	public Infos getInfos() {
-		return this.infos;
-	}
 	
 	public String getSourceCodeFileName() {
 		return sourceCodeFileName;
@@ -211,16 +293,16 @@ public class Simulation extends Tools{
 		return scheduler;
 	}
 	
+	public String getSchedString() {
+		return SchedString;
+	}
+	
 	public PreTreatment getPreTreatment() {
 		return preTreatment;
 	}
 	
 	public ArrayList<Integer> getExecutionOrderHistory() {
 		return executionOrderHistory;
-	}
-
-	public void setInfos(Infos oldInfos) {
-		this.infos = oldInfos;
 	}
 
 	public void setProcess(Process[] processes) {

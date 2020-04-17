@@ -61,7 +61,6 @@ public class Variable {
 		}
 
 		if (this.obj != null) {
-			System.out.println( "obj.toString()= " + obj.toString());
 
 			return this.obj.toString();
 		}
