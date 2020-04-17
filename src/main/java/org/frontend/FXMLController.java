@@ -133,13 +133,13 @@ public class FXMLController {
 
 	@FXML
 	private TextField textFieldNumberOfProcessesRandom;
-	
+
 	@FXML
 	private GridPane Animation;
 
 	@FXML
 	private GridPane numCod;
-	
+
 	@FXML
 	private TextField textFieldNumberOfSteps;
 
@@ -537,7 +537,7 @@ public class FXMLController {
 		updateChoiceBoxLocalVariables();
 		updateChoiceBoxStepByStep();
 		updateChoiceBoxProcessToCrash();
-		
+
 		textAreaParsedCode.setText(simulation.getNewSourceCode());
 
 		}catch (Exception e) {
@@ -646,17 +646,17 @@ public class FXMLController {
 
 		try {
 		if (!simulation.simulationIsDone()) {
-			
+
 			history.addStep(simulation,processline);
-			
+
 			simulation.nextStep();
-			
+
 			ArrayList<Integer> arrayExec = simulation.getOriginalSourceLinesExecutedDuringLastStep(simulation.getIdOfLastExecutedProcess());
-			
+
 			updateProcess(simulation.getIdOfLastExecutedProcess(),arrayExec.get(0));
-			
+
 			updateSharedVariables();
-			
+
 			updateLocalVariables();
 		}
 		else {
@@ -684,16 +684,16 @@ public class FXMLController {
 
 			history.getBackInTime();
 
-	       
+
 
 
 		}catch(Exception e) {
 			System.out.println("New Exe");
 			newExecution();
 		}
-		
+
 		ArrayList<Integer> arrayExec = simulation.getOriginalSourceLinesExecutedDuringLastStep(simulation.getIdOfLastExecutedProcess());
-		
+
         updateProcess(simulation.getIdOfLastExecutedProcess(),arrayExec.get(0));
 		updateSharedVariables();
 		updateLocalVariables();
@@ -764,9 +764,9 @@ public class FXMLController {
 	try {
 		String processToExecute = choiceBoxStepByStep.getSelectionModel().getSelectedItem();
 		int processToExecuteId = Character.getNumericValue(processToExecute.charAt(1));
-		
+
 		ArrayList<Integer> arrayExec = simulation.getOriginalSourceLinesExecutedDuringLastStep(simulation.getIdOfLastExecutedProcess());
-		
+
 		simulation.nextStep(processToExecuteId);
 		updateProcess(simulation.getIdOfLastExecutedProcess(),arrayExec.get(0));
 		updateSharedVariables();
@@ -844,7 +844,7 @@ public class FXMLController {
 		content1.remove(0, content1.size());
 		content2.remove(0, content2.size());
 		String currentProcess = choiceBoxLocalVariables.getSelectionModel().getSelectedItem();
-		
+
 		int currentProcessId = Character.getNumericValue(currentProcess.charAt(1));
 		System.out.println("chosen process " + Integer.toString(currentProcessId));
 		Variable[] variableInfo;
@@ -880,19 +880,19 @@ public class FXMLController {
 	}
 
 	public void initGrid() {
-		
+
 		Animation.getChildren().clear();
 	    for (int y = 0 ; y < countLines(code) ; y++) {
 	        Animation.add(new Label(y+")"),0,y);
 		}
-	    
+
 	}
-	
+
 	//La fonction qui rï¿½initialise l'execution
 	public void initalizeProcess(int nbrp) throws RipException{
-        
+
 		initGrid();
-		
+
 		//Initialisation animation texte
 		numberOfProcesses=nbrp;
 		processline= new int[nbrp];
@@ -995,14 +995,14 @@ public class FXMLController {
 
 	    for (int y = 0 ; y < countLines(code) ; y++) {
 	    	System.out.println(y);
-			Text line = new Text(y+".");  //On crée un Object "TEXTE" (un string avec des info sur le font)
-			line.setStyle("    -fx-font-size: 12.7;\r\n" + 
+			Text line = new Text(y+".");  //On crï¿½e un Object "TEXTE" (un string avec des info sur le font)
+			line.setStyle("    -fx-font-size: 12.7;\r\n" +
 							"   -fx-fill: #bebfc2;");
 	    	numCod.add(line,0,y);
-	    	
+
 		}
 	}
-	
+
 	/* Dessiser l'animation.
 	@FXML private void drawCanvas(ActionEvent event) {
 
@@ -1012,15 +1012,15 @@ public class FXMLController {
 	//ANIMATION AVEC LA GRILLE
 	public void updateProcess(int nump,int linep) throws RipException{
 
-		//ArrayList<Blocks> BlockStruct = simulation.getBlockStruct(); // Ici, la strucure que j'ai crée. cf le docs ou j'explique se qu'il y a dedans (y'as pas les infos pour l'état des processus, juste les info sur comment est le code)
+		//ArrayList<Blocks> BlockStruct = simulation.getBlockStruct(); // Ici, la strucure que j'ai crï¿½e. cf le docs ou j'explique se qu'il y a dedans (y'as pas les infos pour l'ï¿½tat des processus, juste les info sur comment est le code)
 
         initGrid();
-		
+
         processline[nump]=linep;
         int nbperline;
-        
+
 		// La textForProcess c'est l'id de la balise FXML dans laquelle on va mettre l'animation. Pour l'instant c'est un texte
-		// Il faudra adapter le code ET le FXML pour que à la place d'un texte, on est une grille.
+		// Il faudra adapter le code ET le FXML pour que ï¿½ la place d'un texte, on est une grille.
 		for (int l = 0; l < countLines(code) ; l++) {
 			nbperline = 1;
 			for (int i = 0; i < numberOfProcesses; i++) {
@@ -1054,18 +1054,18 @@ public class FXMLController {
 				}
 			}
 		}
-		
+
 		Animation.setGridLinesVisible(true);
 	}
-	
-	
+
+
 	public void addTooltip(StackPane proc, int currentProcessId) {
-		
-		//On récupères lse donnée
-		
+
+		//On rï¿½cupï¿½res lse donnï¿½e
+
 		Variable[] variableInfo;
 		String str = "";
-		
+
 		try {
 			variableInfo = simulation.getLocalVariables(currentProcessId);
 		} catch (RipException e) {
@@ -1085,29 +1085,29 @@ public class FXMLController {
 				str = str + variableInfo[i].getValue() + "\n";
 			}
 		}
-		
+
 		//ON installe le tooltip
-		
+
 		Tooltip tool = new Tooltip(str);
 		tool.setShowDelay(new Duration(100));
 		Tooltip.install(proc,tool);
-		
+
 	}
-	
-	
+
+
 	// ANIMATION EN TXT
 	public void updateProcessTXT(int nump,int linep) throws RipException{
 
-		//ArrayList<Blocks> BlockStruct = simulation.getBlockStruct(); // Ici, la strucure que j'ai crée. cf le docs ou j'explique se qu'il y a dedans (y'as pas les infos pour l'état des processus, juste les info sur comment est le code)
+		//ArrayList<Blocks> BlockStruct = simulation.getBlockStruct(); // Ici, la strucure que j'ai crï¿½e. cf le docs ou j'explique se qu'il y a dedans (y'as pas les infos pour l'ï¿½tat des processus, juste les info sur comment est le code)
         lineProc.getChildren().clear();
-		
+
         processline[nump]=linep;
-        
+
 		// La textForProcess c'est l'id de la balise FXML dans laquelle on va mettre l'animation. Pour l'instant c'est un texte
-		// Il faudra adapter le code ET le FXML pour que à la place d'un texte, on est une grille.
-		
+		// Il faudra adapter le code ET le FXML pour que ï¿½ la place d'un texte, on est une grille.
+
 		for (int l = 0; l < countLines(code) ; l++) {
-			Text textForProcess2 = new Text(Integer.toString(l)+")");  //On crée un Object "TEXTE" (un string avec des info sur le font)
+			Text textForProcess2 = new Text(Integer.toString(l)+")");  //On crï¿½e un Object "TEXTE" (un string avec des info sur le font)
 			textForProcess2.setFont(Font.font("System", 18.9));
 			textForProcess2.setStyle("-fx-font-weight: normal");
 			textForProcess2.setFill(Color.BLACK);
@@ -1135,8 +1135,8 @@ public class FXMLController {
 
 			Text textForProcess = new Text("\n");
 			textForProcess.setFont(Font.font("System", 18.9));
-			lineProc.getChildren().add(textForProcess); // Et la on met l'object texte que l'on viens de crée dans la balise "textForProcess"
+			lineProc.getChildren().add(textForProcess); // Et la on met l'object texte que l'on viens de crï¿½e dans la balise "textForProcess"
 		}
 	}
-	
+
 }

@@ -1,24 +1,2 @@
-import java.lang.Math; 
-import java.lang.String;
-// Shared variables declaration
-Boolean porte;
-Integer idRegister;
-// Shared variables initialization
-idRegister = -1;
-porte = true;
-// Local variables declaration
-Integer direction;
-Integer fff;
-// Splitter Algorithm
-idRegister = index;
-fff= 1;
-if(porte == false){
-	direction = 1;
-}else{
-	porte = false;
-	if(idRegister == i){
-		direction = 0;
-	}else{
-		direction = 2;
-	}
-}
+Try to implemente bakery
+Good Luck !
