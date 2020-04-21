@@ -887,8 +887,8 @@ public class FXMLController {
 
 		Animation.getChildren().clear();
 
-		preTreatment = new PreTreatment(code, numberOfProcesses);
-		ArrayList<Blocks> blocksList = preTreatment.getBlocksConversion(code).getBlockStruct();
+		//preTreatment = new PreTreatment(code, numberOfProcesses);
+		ArrayList<Blocks> blocksList = preTreatment.getBlocksConversion().getBlockStruct();
 		int endOfInit = preTreatment.getEndOfInitBlocks();
 
 	    //for (int y = endOfInit ; y < countLines(code) ; y++) {
@@ -897,7 +897,7 @@ public class FXMLController {
 
 		/* On fait apparaître les if/while/for dans la grille */
 	    for (int x = 0 ; x < blocksList.size() ; x++){
-	    	Blocks block = blocksList[x];
+	    	Blocks block = blocksList.get(x);
 	    	String type = block.getType();
 	    	int startLine = block.getTruelineStart();
 	    	Animation.add(new Label(startLine+")"+type), 0, startLine);
@@ -1037,7 +1037,6 @@ public class FXMLController {
         int nbperline;
 
 		// La textForProcess c'est l'id de la balise FXML dans laquelle on va mettre l'animation. Pour l'instant c'est un texte
-		// Il faudra adapter le code ET le FXML pour que � la place d'un texte, on est une grille.
 		for (int l = 0; l < countLines(code) ; l++) {
 			nbperline = 1;
 			for (int i = 0; i < numberOfProcesses; i++) {
