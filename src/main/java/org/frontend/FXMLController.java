@@ -37,13 +37,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.KeyStroke;
 
+import org.backend.PreTreatment;
 import org.backend.Simulation;
 import org.backend.SimulationBuilder;
+import org.backend.parceTools.blockType.Blocks;
 import org.backend.varStorage.Variable;
 import org.backend.exceptions.*;
 import org.backend.History;
-import org.backend.parceTools.blockType.Blocks;
-
 
 import java.io.*;
 
@@ -146,6 +146,9 @@ public class FXMLController {
 	 @FXML
 	 private Canvas lineProcCanvas;
 
+	 private TextField initialisationBlock;
+	 private TextFlow initialisedProc;
+
 	//---------------------------- VARIABLES GLOBALES --------------------------------------//
 
 	boolean auto = false;
@@ -156,6 +159,7 @@ public class FXMLController {
 	private int numberOfProcesses;
 	private Timeline timeline;
 	private double s=50.00;
+	private PreTreatment preTreatment;
 
 	private String fichierShed=""; // Chemain absolu du fichier
 	private String ShedString="";  // Contenu du fichier.
@@ -882,8 +886,21 @@ public class FXMLController {
 	public void initGrid() {
 
 		Animation.getChildren().clear();
-	    for (int y = 0 ; y < countLines(code) ; y++) {
-	        Animation.add(new Label(y+")"),0,y);
+
+		preTreatment = new PreTreatment(code, numberOfProcesses);
+		ArrayList<Blocks> blocksList = preTreatment.getBlocksConversion(code).getBlockStruct();
+		int endOfInit = preTreatment.getEndOfInitBlocks();
+
+	    //for (int y = endOfInit ; y < countLines(code) ; y++) {
+	     //   Animation.add(new Label(y+")"),0,y);
+		//}
+
+		/* On fait apparaître les if/while/for dans la grille */
+	    for (int x = 0 ; x < blocksList.size() ; x++){
+	    	Blocks block = blocksList[x];
+	    	String type = block.getType();
+	    	int startLine = block.getTruelineStart();
+	    	Animation.add(new Label(startLine+")"+type), 0, startLine);
 		}
 
 	}
@@ -1098,7 +1115,8 @@ public class FXMLController {
 	// ANIMATION EN TXT
 	public void updateProcessTXT(int nump,int linep) throws RipException{
 
-		//ArrayList<Blocks> BlockStruct = simulation.getBlockStruct(); // Ici, la strucure que j'ai cr�e. cf le docs ou j'explique se qu'il y a dedans (y'as pas les infos pour l'�tat des processus, juste les info sur comment est le code)
+		//ArrayList<Blocks> BlockStruct = simulation.getBlockStruct(); // Ici, la strucure que j'ai cr�e. cf le docs ou j'explique se qu'il y a dedans (y'as pas les infos pour l'�tat des processus, juste les info sur comment est le code)
+
         lineProc.getChildren().clear();
 
         processline[nump]=linep;
