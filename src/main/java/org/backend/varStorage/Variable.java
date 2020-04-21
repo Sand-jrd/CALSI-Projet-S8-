@@ -17,7 +17,6 @@ public class Variable {
 
 	public Variable(String name) {
 		this.name = name;
-		this.obj = null;
 		this.type = "";
 		this.isArray = false;
 	}

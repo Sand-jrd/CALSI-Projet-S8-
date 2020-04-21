@@ -77,6 +77,7 @@ public class Process extends Tools{
 
 		// We receive a copy of the array of local variables
 		localVars = preTreatment.getLocalVars();
+		sharedVars = preTreatment.getSharedVars();
 		
 		sourceCode = preTreatment.getPreTreatedSource();
 
@@ -132,9 +133,7 @@ public class Process extends Tools{
 		// updated from the array of shared variables.
 		
 		for (int i = 0; i < Process.sharedVars.length; ++i) {
-			if(Process.getSharedVars()[i].getObj() != null) {
 				this.inter.set(Process.getSharedVars()[i].getName(), Process.getSharedVars()[i].getObj());
-			}
 		}
 
 		// One line is executed

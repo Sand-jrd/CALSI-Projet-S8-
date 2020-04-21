@@ -233,7 +233,7 @@ public class BlocksConversion {
 		for(int i = 1;i<=nbConds;i++) {
 			notCond = "!(" + conds.get(i) + ")"; 
 			//this.code.add(code.get(whileLine+i), code.get(whileLine+i));
-			lines.add(code.get(whileLine+i), new LineGoto(code.get(whileLine+i),whileLine, notCond, startToId));
+			lines.add(code.get(whileLine+i), new LineGoto(code.get(whileLine+i),whileLine, notCond, startToId+1));
 		}
 
 		BlockStruct.add(new Blocks("While",startToId,closeToId+nbConds));
