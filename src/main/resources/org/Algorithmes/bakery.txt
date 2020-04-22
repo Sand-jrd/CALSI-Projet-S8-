@@ -4,13 +4,13 @@ Integer turn;
 Boolean[] flag;
 // Shared variables initialization
 turn = new Integer(0);
-flag = new Boolean[nbProc];
+flag = new Boolean[np];
+Arrays.fill(flag , false);
 // Local variables declaration
 int j;
-boolean a;
+Boolean a;
 int b;
 // Algorithm
-flag = new Boolean[nbProc];
 j = (index+1) % 2;
 flag[index] = true;
 turn = j;
@@ -21,4 +21,3 @@ a = flag[j];
 b = turn;
 }
 flag[index] = false;
- 

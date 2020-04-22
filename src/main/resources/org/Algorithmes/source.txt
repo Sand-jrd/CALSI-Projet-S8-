@@ -1,22 +1,23 @@
 import java.lang.Math; 
-import java.lang.String;
 // Shared variables declaration
-Boolean porte;
-Integer idRegister;
+Integer turn;
+Boolean[] flag;
 // Shared variables initialization
-idRegister = -1;
-porte = true;
+turn = new Integer(0);
+flag = new Boolean[np];
+Arrays.fill(flag , false);
 // Local variables declaration
-Integer direction;
-// Splitter Algorithm
-idRegister = index;
-if(porte == false){
-	direction = 1;
-}else{
-	porte = false;
-	if(idRegister == i){
-		direction = 0;
-	}else{
-		direction = 2;
-	}
+int j;
+Boolean a;
+int b;
+// Algorithm
+j = (index+1) % 2;
+flag[index] = true;
+turn = j;
+a = flag[j];
+b = turn;
+while ( a == true && b == j ) {
+a = flag[j];
+b = turn;
 }
+flag[index] = false;

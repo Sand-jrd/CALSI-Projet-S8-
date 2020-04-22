@@ -93,7 +93,12 @@ public class Simulation extends Tools{
 	public void nextStep() throws BadSourceCodeException {
 		int i = scheduler.getNext();
 		nextStep(i);
-
+	}
+	
+	public void nextStepAtomique() throws BadSourceCodeException {
+		int i = scheduler.getNext();
+		
+		nextStep(i);
 	}
 
 	/**

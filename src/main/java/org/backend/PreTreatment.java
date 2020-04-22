@@ -113,7 +113,7 @@ public class PreTreatment extends Tools{
 		// variables
 		Interpreter interpreter = new Interpreter();
 		try {
-		interpreter.set("nbProc", numberOfProcesses);
+		interpreter.set("np", numberOfProcesses);
 		} catch (EvalError e) {
 			e.printStackTrace();
 			customeAlertTool(e.getMessage());
@@ -348,7 +348,7 @@ public class PreTreatment extends Tools{
 	public Variable[] getSharedVars() {
 		Variable[]  sharedVarsDeepCopy = new Variable[sharedVars.length];
 		for (int i = 0; i <  sharedVars.length; i++) {
-			sharedVarsDeepCopy[i] = new Variable( sharedVars[i].getName());
+			sharedVarsDeepCopy[i] = new Variable(sharedVars[i].getName(),sharedVars[i].getRealValue());
 		}
 		return sharedVarsDeepCopy;
 	}

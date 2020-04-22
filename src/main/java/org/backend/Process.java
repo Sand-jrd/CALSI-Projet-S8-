@@ -59,7 +59,7 @@ public class Process extends Tools{
 		}
 		
 		try {
-			this.inter.set("nbProc", numberOfProcesses);
+			this.inter.set("np", numberOfProcesses);
 		} catch (EvalError e1) {
 			e1.printStackTrace();
 			customeAlertTool(e1.getMessage());
@@ -76,8 +76,17 @@ public class Process extends Tools{
 		}
 
 		// We receive a copy of the array of local variables
-		localVars = preTreatment.getLocalVars();
-		sharedVars = preTreatment.getSharedVars();
+		this.localVars = preTreatment.getLocalVars();
+		this.sharedVars = preTreatment.getSharedVars();
+		
+		// After the step, the shared variables are updated so their value can be shared between the processes
+		try {
+			for (int i = 0; i < Process.sharedVars.length; ++i) {
+				Process.getSharedVars()[i].update(this.inter.get(Process.getSharedVars()[i].getName()));
+			} 
+		}catch (EvalError e) {
+			customeAlertTool(e.getMessage());
+		}
 		
 		sourceCode = preTreatment.getPreTreatedSource();
 
@@ -169,6 +178,7 @@ public class Process extends Tools{
 	}
 	
 	public static Variable[] getSharedVars() {
+		//System.out.println("Variables : "+ Process.sharedVars[0].getRealValue());
 		return Process.sharedVars;
 	}
 	

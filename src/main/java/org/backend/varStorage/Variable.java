@@ -64,6 +64,6 @@ public class Variable {
 			return this.obj.toString();
 		}
 		
-		return "";
+		return "null";
 	}
 }
