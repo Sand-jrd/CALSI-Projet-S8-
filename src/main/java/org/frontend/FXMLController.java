@@ -209,15 +209,18 @@ public class FXMLController {
 
 		FileChooser fileChooser = new FileChooser();
 		File selectedFile = fileChooser.showOpenDialog(null);
-
+		System.out.print("File selected is : "+ selectedFile + "\n");
 		if (selectedFile != null) {
+			System.out.print("selectedFile n'est pas null\n");
 			fichiercode= selectedFile.getAbsolutePath();
 			try (BufferedReader reader = new BufferedReader(new FileReader(new File(fichiercode)))) {
-
+				System.out.print("Reading code \n");
 				String line;
 				code="";
+
 				while ((line = reader.readLine()) != null)
 					code=code+line+"\n";
+				System.out.print(code +"\n");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -493,8 +496,8 @@ public class FXMLController {
 
 	// -- Bouton "NEW EXECUTION" --  //
 	public void newExecution() throws BackEndException {
-
 		flushall();
+		System.out.print("New Execution button clicked \n");
 		ignorAlert = false;
 
 		simulationBuilder = new SimulationBuilder();
@@ -512,8 +515,8 @@ public class FXMLController {
 
 		try (FileWriter fw = new FileWriter(sourcecode)){
 			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(code);
 			bw.flush();
+			bw.write(code);
 			bw.close();
 			System.out.print("saved\n");
 		}catch (IOException e) {
@@ -523,13 +526,13 @@ public class FXMLController {
 		try {
 		//Simulation et r�cup�rations des infos de la simulation
 		String schedChoice = choiceBoxScheduling.getValue().toLowerCase();
-
+		System.out.print("Start simulation\n");
 		simulation = simulationBuilder
 				.withSourceCodeFromFile(sourcecode)
 				.withNumberOfProcesses(Integer.parseInt(textFieldNumberOfProcessesRandom.getText()))
 				.withScheduler(schedChoice,ShedString)
 				.build(); //Cr�ation de la simulation
-
+		System.out.print("Finishing simulation \n");
 		System.out.print(simulation.simulationIsDone());
 
 		//Nouvelle m�thode, tous enregistrer dans History
@@ -546,6 +549,7 @@ public class FXMLController {
 
 		}catch (Exception e) {
 			System.out.print(e);
+			System.out.print("Error in parsing code \n");
 			customeAlert("Echec de l'execution");
 			flushall();
 		}
