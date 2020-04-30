@@ -1,5 +1,6 @@
 package org.frontend;
 
+import java.io.*;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -518,8 +519,10 @@ public class FXMLController {
 			bw.flush();
 			bw.write(code);
 			bw.close();
+			System.out.print("This is the text saved in source.txt" + code +"\n");
 			System.out.print("saved\n");
 		}catch (IOException e) {
+			System.out.print("Error wrinting in source.txt" + e + "\n");
 			//customeAlert("Vous n'avez aucun code !");
 		}
 

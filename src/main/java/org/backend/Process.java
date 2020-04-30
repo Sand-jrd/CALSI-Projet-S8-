@@ -34,7 +34,7 @@ public class Process extends Tools{
 	public Process(int index,int numberOfProcesses, PreTreatment preTreatment) throws BackEndException {
 		this.inter = new Interpreter();
 		
-		
+		/*
 		BshClassManager manag  = inter.getClassManager();
 		
 		//On ajoute le package Object à ClassPath pour qu'il puisse être importer: 
@@ -49,7 +49,7 @@ public class Process extends Tools{
 	    } catch (Exception e) {
 	        throw new RuntimeException(e);
 	    }
-		
+		*/
 		// Reserved variables index et numberOfProcesses
 		try {
 			this.inter.set("index", index);
