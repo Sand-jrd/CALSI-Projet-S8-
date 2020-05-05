@@ -894,24 +894,23 @@ public class FXMLController {
 	public void initGrid(PreTreatment preTreatment) {
 
 		Animation.getChildren().clear();
+
 		int endOfInitBlocks = preTreatment.getEndOfInitBlocks();
+		ArrayList<Blocks> blocksList = preTreatment.getBlocksConversion().getBlockStruct();
 		System.out.println("The last line of initialisation blocks is : " + endOfInitBlocks + "\n");
-		//preTreatment = new PreTreatment(code, numberOfProcesses);
-		//ArrayList<Blocks> blocksList = preTreatment.getBlocksConversion().getBlockStruct();
-		//int endOfInit = preTreatment.getEndOfInitBlocks();
 
 	    for (int y = endOfInitBlocks ; y < countLines(code) ; y++) {
 	        Animation.add(new Label(y+")"),0,y);
 		}
 
-		/* On fait apparaître les if/while/for dans la grille 
+		/* On fait apparaître les if/while/for dans la grille */
 	    for (int x = 0 ; x < blocksList.size() ; x++){
-	    	//Blocks block = blocksList.get(x);
-	    	//String type = block.getType();
-	    	//int startLine = block.getTruelineStart();
+	    	Blocks block = blocksList.get(x);
+	    	String type = block.getType();
+	    	int startLine = block.getIdStart();
 	    	Animation.add(new Label(startLine+")"+type), 0, startLine);
 		}
-		 */
+
 	}
 
 	//La fonction qui r?initialise l'execution
