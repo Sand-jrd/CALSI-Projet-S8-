@@ -144,7 +144,6 @@ public class FXMLController {
 	 @FXML
 	 private Canvas lineProcCanvas;
 
-	 // private TextField initialisationBlock;
 	 private HBox initialisedProc;
 
 	//---------------------------- VARIABLES GLOBALES --------------------------------------//
@@ -896,8 +895,9 @@ public class FXMLController {
 		ArrayList<Blocks> blocksList = preTreatment.getBlocksConversion().getBlockStruct();
 		System.out.println("The last line of initialisation blocks is : " + endOfInitBlocks + "\n");
 
+		Animation.add(new Label("Initialising ..."), 0,0);
 	    for (int y = endOfInitBlocks ; y < countLines(code) ; y++) {
-	        Animation.add(new Label(y+")"),0,y);
+	        Animation.add(new Label(y+")"),0,y+1);
 		}
 
 		/* On fait apparaitre les if/while/for dans la grille */
@@ -905,9 +905,19 @@ public class FXMLController {
 	    	Blocks block = blocksList.get(x);
 	    	String type = block.getType();
 	    	int startBlockLine = block.getIdStart();
-	    	Animation.add(new Label(startBlockLine+")"+type), 0, startBlockLine);
+	    	Animation.add(new Label(startBlockLine+")"+type), 0, startBlockLine+1);
 		}
 
+	}
+	public void initBlock(int numberOfProcesses){
+		// Placement des processus dans le block d'initialisation
+		initialisedProc = new HBox();
+		for(int i=0;i<numberOfProcesses; i++){
+			StackPane proc = new StackPane();
+			proc.getChildren().addAll(new Circle(10, Color.web("#8599ad")), new Label("P" + i));
+			//addTooltip(proc, i);
+			initialisedProc.getChildren().add(proc);
+		}
 	}
 
 	//La fonction qui r?initialise l'execution
@@ -917,16 +927,9 @@ public class FXMLController {
 		preTreatment = simulation.getPreTreatment();
 		initGrid(preTreatment);
 
-		// Placement des processus dans le block d'initialisation
-		StackPane proc = new StackPane();
-		proc.getChildren().addAll(new Circle(10, Color.web("#8599ad")), new Label("P" + 0));
-		addTooltip(proc, 0);
-		initialisedProc.getChildren().add(proc);
-		/*for(int i=0;i<nbrp; i++){
-			proc.getChildren().addAll(new Circle(10, Color.web("#8599ad")), new Label("P" + i));
-			addTooltip(proc, i);
-			initialisedProc.getChildren().add(proc);
-		}*/
+		// Initialisation du block
+		//initBlock(nbrp);
+
 		//Initialisation animation texte
 		numberOfProcesses=nbrp;
 		processline= new int[nbrp];
@@ -1043,38 +1046,63 @@ public class FXMLController {
 		// linep : line of process ?
 
         processline[nump]=linep;
-        int nbperline;
+        //int nbperline;
 		int startGridLine = simulation.getPreTreatment().getEndOfInitBlocks();
 		System.out.println("The grid will start at line : "+startGridLine +"\n");
 
 		for (int l = 0; l < countLines(code) ; l++) {
-			nbperline = 1;
+			//nbperline = 1;
 			for (int i = 0; i < numberOfProcesses; i++) {
 
-					if (l == processline[i]) {
-
+					if (l == processline[i] && l>= startGridLine) {
+						// Le processus n'est plus dans la phase d'initialisation
 						if (simulation.processIsCrashed(i)) {
 							StackPane proc = new StackPane();
 							proc.getChildren().addAll(new Circle(10, Color.RED), new Label("P" + i));
 							addTooltip(proc, i);
-							Animation.add(proc, nbperline, l);
+							Animation.add(proc, i+1, l+1);
 						} else if (simulation.processIsDone(i)) {
 							StackPane proc = new StackPane();
 							proc.getChildren().addAll(new Circle(10, Color.BLUE), new Label("P" + i));
 							addTooltip(proc, i);
-							Animation.add(proc, nbperline, l);
+							Animation.add(proc, i+1, l+1);
 						} else if (i == nump) {
 							StackPane proc = new StackPane();
 							proc.getChildren().addAll(new Circle(10, Color.GREEN), new Label("P" + i));
 							addTooltip(proc, i);
-							Animation.add(proc, nbperline, l);
+							Animation.add(proc, i+1, l+1);
 						} else {
 							StackPane proc = new StackPane();
 							proc.getChildren().addAll(new Circle(10, Color.web("#8599ad")), new Label("P" + i));
 							addTooltip(proc, i);
-							Animation.add(proc, nbperline, l);
+							Animation.add(proc, i+1, l+1);
 						}
-						nbperline++;
+						//nbperline++;
+					}
+					else if(l == processline[i] && l< startGridLine){
+						// Le processus est dans sa phase d'initialisation
+						if (simulation.processIsCrashed(i)) {
+							StackPane proc = new StackPane();
+							proc.getChildren().addAll(new Circle(10, Color.RED), new Label("P" + i));
+							addTooltip(proc, i);
+							Animation.add(proc, i+1, 0);
+						} else if (simulation.processIsDone(i)) {
+							StackPane proc = new StackPane();
+							proc.getChildren().addAll(new Circle(10, Color.BLUE), new Label("P" + i));
+							addTooltip(proc, i);
+							Animation.add(proc, i+1, 0);
+						} else if (i == nump) {
+							StackPane proc = new StackPane();
+							proc.getChildren().addAll(new Circle(10, Color.GREEN), new Label("P" + i));
+							addTooltip(proc, i);
+							Animation.add(proc, i+1, 0);
+						} else {
+							StackPane proc = new StackPane();
+							proc.getChildren().addAll(new Circle(10, Color.web("#8599ad")), new Label("P" + i));
+							addTooltip(proc, i);
+							Animation.add(proc, i+1, 0);
+						}
+						//nbperline++;
 					}
 			}
 		}
