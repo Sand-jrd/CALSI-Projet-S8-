@@ -3,6 +3,7 @@ package org.frontend;
 import java.io.*;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
@@ -649,7 +650,7 @@ public class FXMLController {
 
 		if(ignorAlert == false && checkCodeChange() == true) {
 			ignorAlert = true;
-	    	customeAlert("Beware ! \nYou made some modification in your code.\nThis will NOT apply for this simulation.\nStart a new execution if you want to test your new code.\nOtherwise, juste ignor this message. ");
+	    	customeAlert("Beware ! \nYou made some modification in your code.\nThis will NOT apply for this simulation.\nStart a new execution if you want to test your new code.\nOtherwise, just ignore this message. ");
 		}
 
 		try {
@@ -1056,7 +1057,22 @@ public class FXMLController {
 
 					if (l == processline[i] && l>= startGridLine) {
 						// Le processus n'est plus dans la phase d'initialisation
-						if (simulation.processIsCrashed(i)) {
+
+						// On retire le processus de la ligne d'initialisation au moment où il en sort
+						if(processline[i]==startGridLine){
+							StackPane proc0 = new StackPane();
+							proc0.getChildren().add(new Circle(10, Color.web("#c3c3c3")));
+							Animation.add(proc0, i+1, 0);
+							/*ObservableList<Node> children = Animation.getChildren();
+							for(Node node : children) {
+								if (node instanceof StackPane && Animation.getRowIndex(node) == 0 && Animation.getColumnIndex(node) == i + 1) {
+									StackPane procToRemove = new StackPane(node);
+									Animation.getChildren().remove(procToRemove);
+									break;
+								}
+							}*/
+						}
+						else if (simulation.processIsCrashed(i)) {
 							StackPane proc = new StackPane();
 							proc.getChildren().addAll(new Circle(10, Color.RED), new Label("P" + i));
 							addTooltip(proc, i);
@@ -1103,6 +1119,22 @@ public class FXMLController {
 							Animation.add(proc, i+1, 0);
 						}
 						//nbperline++;
+					}
+
+					else if (l != processline[i] && l>= startGridLine){
+						// Suppression des processus dans la grille selon leur avancée dans le code
+						StackPane proc0 = new StackPane();
+						proc0.getChildren().add(new Circle(10, Color.web("#c3c3c3")));
+						Animation.add(proc0, i+1, l+1);
+						/*
+						ObservableList<Node> children = Animation.getChildren();
+						for(Node node : children) {
+							if (node instanceof StackPane && Animation.getRowIndex(node) == l + 1 && Animation.getColumnIndex(node) == i + 1) {
+								StackPane procToRemove = new StackPane(node);
+								Animation.getChildren().remove(procToRemove);
+								break;
+							}
+						} */
 					}
 			}
 		}
