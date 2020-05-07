@@ -890,18 +890,25 @@ public class FXMLController {
 
 	public void initGrid(PreTreatment preTreatment) {
 
+		// Permet de vider la grille tout en gardant les lignes visibles
+		Animation.setGridLinesVisible(false);
+		Animation.getColumnConstraints().clear();
+		Animation.getRowConstraints().clear();
 		Animation.getChildren().clear();
+		Animation.setGridLinesVisible(true);
 
 		int endOfInitBlocks = preTreatment.getEndOfInitBlocks();
 		ArrayList<Blocks> blocksList = preTreatment.getBlocksConversion().getBlockStruct();
 		System.out.println("The last line of initialisation blocks is : " + endOfInitBlocks + "\n");
 
+		// Ajout de la ligne d'initialisation
 		Animation.add(new Label("Initialising ..."), 0,0);
+		// Complete la grille avec le reste des lignes de code
 	    for (int y = endOfInitBlocks ; y < countLines(code) ; y++) {
 	        Animation.add(new Label(y+")"),0,y+1);
 		}
 
-		/* On fait apparaitre les if/while/for dans la grille */
+		/* Affichage des if/while/for dans la grille */
 	    for (int x = 0 ; x < blocksList.size() ; x++){
 	    	Blocks block = blocksList.get(x);
 	    	String type = block.getType();
@@ -1058,11 +1065,19 @@ public class FXMLController {
 					if (l == processline[i] && l>= startGridLine) {
 						// Le processus n'est plus dans la phase d'initialisation
 
-						// On retire le processus de la ligne d'initialisation au moment où il en sort
-						if(processline[i]==startGridLine){
+						// On retire le processus de la ligne d'initialisation au moment ou il en sort
+						if(l == startGridLine ){
+							// Retrait de la ligne d'initialisation
 							StackPane proc0 = new StackPane();
 							proc0.getChildren().add(new Circle(10, Color.web("#c3c3c3")));
 							Animation.add(proc0, i+1, 0);
+
+							// Affichage sur la deuxième ligne de la grille
+							StackPane proc = new StackPane();
+							proc.getChildren().addAll(new Circle(10, Color.web("#8599ad")), new Label("P" + i));
+							addTooltip(proc, i);
+							Animation.add(proc, i+1, l+1);
+
 							/*ObservableList<Node> children = Animation.getChildren();
 							for(Node node : children) {
 								if (node instanceof StackPane && Animation.getRowIndex(node) == 0 && Animation.getColumnIndex(node) == i + 1) {
