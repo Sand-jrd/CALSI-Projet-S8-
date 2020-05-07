@@ -12,3 +12,5 @@ CALSI - Concurrent ALgorithms SImulation
 * Drive de Hugo : [Google Drive](https://drive.google.com/drive/folders/1ndgQrFq3mB6TFbm02dFImA5jYWv3Pfnh?fbclid=IwAR39Nyb6VtM8gVq_4iDJy9CgXI9-0xn-R8QUb4siYwqTfEzkd-qrTr-_biI)
 
 * Generateur FXML : [Scene Builder](https://gluonhq.com/products/scene-builder/)
+
+* Notre rapport : [googleDoc](https://docs.google.com/document/d/1v5-YGtqdptiS6RzAxRAToEoeLxqlWYb_Rx-n9GWrxp8/edit)
