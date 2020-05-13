@@ -25,6 +25,18 @@ public class Scheduler extends Tools{
 		
 	}
 	
+	public Scheduler(String SchedulerType,String SchedString) {
+		
+		this.random = new Random();
+		
+		if(SchedulerType.equals("with file")) {
+			
+			this.SchedString = SchedString;
+			// TODO transformé le fichier texte en suite de int que l'on met dans -> "SheduleFileParced"
+		}
+		
+	}
+	
 	public int getNext() {
 		
 		
@@ -55,7 +67,7 @@ public class Scheduler extends Tools{
 			}
 		}
 		
-		System.out.println( "No de step effectué : " + simulation.getExecutionOrderHistory().size());
+		//System.out.println( "No de step effectué : " + simulation.getExecutionOrderHistory().size());
 
 		
 		// Dans le cas ou on suit un fichier : 
@@ -63,6 +75,53 @@ public class Scheduler extends Tools{
 			
 			// TODO renvoyer le bon int, throw les bonnes exeptions
 			// simulation.getExecutionOrderHistory().size() permet d'avoir le nombre de step qui a été effectué. 
+
+			
+			
+		}
+		
+		
+		return next;
+	}
+	
+	public int getNext(SimulationMS simulationms) {
+		
+		
+		Process procs[] = simulationms.getProcesses();
+		boolean allDone = true;
+		
+		// On vérifie qu'il reste des proccesus à faire avancé
+		for(int i=0; i < procs.length; ++i) {
+			if(!procs[i].isDone()) {
+				allDone = false;
+				break;
+			}
+		}
+		if(allDone)
+			return -1; // Si tous le monde a fini on retourne la valeur d'erreur
+		
+		int next = -1;
+		
+		// Dans le cas ou la simulation est aléatoire : 
+		if(simulationms.getSchedulerType().equals("random")) {
+			
+			next = this.random.nextInt(procs.length); // On génère un entier aléatoire (entre 0 et nbProc)
+			
+			while (procs[next].isDone()) { // Si le processus que l'on a pioché a terminé, 
+				if(simulationms.getSchedulerType().equals("random")) {
+					next = this.random.nextInt(procs.length); //On en repioche 1
+				}
+			}
+		}
+		
+		//System.out.println( "No de step effectué : " + simulationms.getExecutionOrderHistory().size());
+
+		
+		// Dans le cas ou on suit un fichier : 
+		if(simulationms.getSchedulerType().equals("with file")) {
+			
+			// TODO renvoyer le bon int, throw les bonnes exeptions
+			// simulationms.getExecutionOrderHistory().size() permet d'avoir le nombre de step qui a été effectué. 
 
 			
 			

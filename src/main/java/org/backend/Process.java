@@ -131,9 +131,9 @@ public class Process extends Tools{
 
 	// --------------  ICI on utilise l'interpréteur ------------------- //
 	
-	public void oneStep() throws EvalError {
+	public boolean oneStep() throws EvalError {
 		if (this.done) {
-			return;
+			return true;
 		}
 		originalSourceLinesExecutedDuringLastStep.clear();
 		originalSourceLinesExecutedDuringLastStep.add(preTreatment.getOriginalLineNumber(currentLine));
@@ -145,12 +145,14 @@ public class Process extends Tools{
 				this.inter.set(Process.getSharedVars()[i].getName(), Process.getSharedVars()[i].getObj());
 		}
 
+		String codeLine = this.sourceCode[this.currentLine];
+		
 		// One line is executed
-		if (this.sourceCode[this.currentLine].indexOf("goto") >= 0) {
+		if (codeLine.indexOf("goto") >= 0) {
 			this.treatGoto();
 		} else {
 			try {
-			this.inter.eval(this.sourceCode[this.currentLine]);
+			this.inter.eval(codeLine);
 			this.currentLine++;
 			}catch (EvalError e) {
 				customeAlertTool(e.getMessage());
@@ -170,7 +172,26 @@ public class Process extends Tools{
 		if (this.currentLine >= this.sourceCode.length) {
 			this.done = true;
 		}
+		
+		return isItAnAtomicOperation(codeLine);
 
+	}
+	
+	private boolean isItAnAtomicOperation(String CodeLine) {
+		
+		//Fonction qui vérifie que l'opération est atomique; Dans cette fonction, on vérifie que l'opération est atomique de manière "dicotomique".
+		for (int i = 0; i < Process.sharedVars.length; ++i) {
+			
+			String varName = Process.sharedVars[i].getName();
+			
+			if(CodeLine.contains(varName)) { //Si la ligne de code contient le nom de la variable, on affine la detection
+				if(lineReallyContainObject(CodeLine,varName)) {
+					return true;
+				}
+			}
+			
+		}
+		return false;
 	}
 
 	public static void setSharedVars(PreTreatment preTreatment) {
@@ -180,6 +201,14 @@ public class Process extends Tools{
 	public static Variable[] getSharedVars() {
 		//System.out.println("Variables : "+ Process.sharedVars[0].getRealValue());
 		return Process.sharedVars;
+	}
+	
+	public Variable[] getSharedVarsDeepCopy() {
+		Variable[]  sharedVarsDeepCopy = new Variable[sharedVars.length];
+		for (int i = 0; i <  sharedVars.length; i++) {
+			sharedVarsDeepCopy[i] = new Variable(sharedVars[i].getName(),sharedVars[i].getRealValue());
+		}
+		return sharedVarsDeepCopy;
 	}
 	
 	public Variable[] getLocalVars() {
@@ -209,6 +238,16 @@ public class Process extends Tools{
 	
 	public Interpreter getInter() {
 		return inter;
+	}
+	
+	public void updateInter(String name,Object obj) {
+	try {
+		this.inter.set(name,obj);
+	} catch (EvalError e) {
+		e.printStackTrace();
+		customeAlertTool(e.getMessage());
+	}
+		
 	}
 	
 	private PreTreatment getPreTreatment() {

@@ -1,6 +1,7 @@
 package org.backend;
 
 import org.backend.exceptions.BackEndException;
+import java.util.ArrayList;
 
 /**
  * Builder pattern for creating a new simulation.
@@ -9,6 +10,9 @@ import org.backend.exceptions.BackEndException;
  */
 public class SimulationBuilder {
 	String sourceCodeFileName;
+	ArrayList<String> sourcesCodesFilesNames;
+	ArrayList<Integer> processPartition;
+	int NumberOfSciptActif;
 	int numberOfProcesses;
 	String schedulerType;
 	String SchedString;
@@ -24,6 +28,27 @@ public class SimulationBuilder {
 	 */
 	public SimulationBuilder withSourceCodeFromFile(String sourceCodeFileName) {
 		this.sourceCodeFileName = sourceCodeFileName;
+		return this;
+	}
+	
+	/**
+	 * Set the source file for the processes
+	 * 
+	 * @param sourceCodeFileName the name of the source file to be read from
+	 * @return itself
+	 */
+	public SimulationBuilder withSourceCodeFromFileMS(ArrayList<String> sourcesCodesFilesNames) {
+		this.sourcesCodesFilesNames = sourcesCodesFilesNames;
+		return this;
+	}
+	
+	public SimulationBuilder withprocessPartition(ArrayList<Integer> processPartition) {
+		this.processPartition = processPartition;
+		return this;
+	}
+	
+	public SimulationBuilder withNumberOfSciptActif(int NumberOfSciptActif) {
+		this.NumberOfSciptActif = NumberOfSciptActif;
 		return this;
 	}
 
@@ -60,5 +85,10 @@ public class SimulationBuilder {
 	 */
 	public Simulation build() throws BackEndException {
 		return new Simulation(this);
+	}
+	
+	public SimulationMS buildMS() throws BackEndException {
+		SimulationMS simu = new SimulationMS(this);
+		return simu;
 	}
 }

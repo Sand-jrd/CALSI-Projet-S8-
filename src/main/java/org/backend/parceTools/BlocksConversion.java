@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.backend.exceptions.BackEndException;
 import org.backend.parceTools.blockType.*;
+import org.tools.Tools;
 
 import java.lang.Object;
 
@@ -12,7 +13,7 @@ import java.lang.Object;
  * @author Chaimaa & Issam
  */
 
-public class BlocksConversion {
+public class BlocksConversion extends Tools{
 
 	static String[] blocks = { "while", "if", "for", "do" }; // possible blocks
 
@@ -58,14 +59,15 @@ public class BlocksConversion {
 	public String getNewSourceCode() throws BackEndException {
 		String result = "";
 
-		for (int i = 0; i < this.code.size(); i++) {
-			Line l = this.lines.get(code.get(i));
+		for (int i = 0; i < this.lines.size(); i++) {
+			Line l = this.lines.get(i);
 			result = result + Integer.toString(i) + ") " + l.getLineCode(code) + "\n";
 		}
 		return result;
 	}
 	
 	public String[] getNewSourceCodeAsArray() throws BackEndException {
+		System.out.println("lines size getNewSourceCodeAsArray: " + code.size());
 		String[] newSourceCode = new String[code.size()];
 		
 		for (int i = 0; i < this.code.size(); i++) {
@@ -77,6 +79,7 @@ public class BlocksConversion {
 	}
 	
 	public String[] getNewSourceCodeArray() throws BackEndException {
+		System.out.println("lines size getNewSourceCodeArray: " +lines.size());
 		String[] result = new String[this.lines.size()];
 
 		for(int i=0; i<this.lines.size(); i++) {
@@ -123,7 +126,6 @@ public class BlocksConversion {
 				break;
 			}
 			block = getFirstBlockString();
-			
 			
 		}
 		
@@ -185,28 +187,32 @@ public class BlocksConversion {
 
 		Integer start = start_line;
 
-		Integer p = 1;
-		Integer i = start;
-
-		while (p != 0 && i < code.size()) {
-			i++;
-			String line = lines.get(code.get(i)).getLineCode(code);
-			if (line.contains("}"))
+		int p = 1;
+		int i;
+		for (i = start+1; i < lines.size() ;i++ ) {
+			String line = lines.get(i).getLineCode(code);
+			//System.out.println("La ligne est " + line);
+			if (line.contains("}")) {
 				p--;
-			if (p == 0)
-				break;
+				if(p == 0) {
+					return i;
+				}
+			}
 			if (line.contains("{"))
 				p++;
 		}
-
-		return i;
+		return -1;
 	}
 
 	// if String line contains block, returns block type, else returns ""
 	private static String containBlock(String line) {
 		for (int i = 0; i < blocks.length; ++i) {
-			if (line.contains(blocks[i]))
-				return blocks[i];
+			if (line.contains(blocks[i])) {
+				// TODO affiner la détection du bloque avant de conclure.
+				if(lineReallyContainObject(line,blocks[i])) {
+					return blocks[i];
+				}
+			}
 		}
 		return "";
 	}
@@ -244,40 +250,68 @@ public class BlocksConversion {
 
 	private int preTreatIf(int line) throws BackEndException {
 
-		
 		int ifLine = line;
-		int elseLine = getBlockEnd(ifLine);
-		int closeLine = getBlockEnd(elseLine);
+	 
+		//On regarde si il y a un else
+		if(getBlockEnd(getBlockEnd(ifLine)) > 0) {
+			int elseLine = getBlockEnd(ifLine);
+			int closeLine = getBlockEnd(elseLine);
+			int ifLineId = code.get(ifLine);
+			int elseLineId = code.get(elseLine);
 
-		int ifLineId = code.get(ifLine);
-		int elseLineId = code.get(elseLine);
+			BlockStruct.add(new Blocks("if",ifLine,elseLine));
+			BlockStruct.add(new Blocks("else",elseLine,closeLine));
+			
+			String ifLineString = lines.get(ifLineId).getLineCode(code);
+			String cond = ifLineString.substring(ifLineString.indexOf('(') + 1, ifLineString.lastIndexOf(')'));
+			//String notCond = "!(" + cond + ")";
+			
+			//code.remove(closeLine);
+			lines.set(closeLine, new LineString(closeLine, closeLine, ""));
+			
+			int ifToId = elseLine + 1 < code.size() ? code.get(elseLine + 1) : Line.ID_END;
+			int elseToId = closeLine < code.size() ? code.get(closeLine) : Line.ID_END;
+			
+			ArrayList<String> conds = dividConds(cond);
+			int nbConds = conds.size()-1;
 
-		BlockStruct.add(new Blocks("if",ifLine,elseLine));
-		BlockStruct.add(new Blocks("else",elseLine,closeLine));
-		
-		String ifLineString = lines.get(ifLineId).getLineCode(code);
-		String cond = ifLineString.substring(ifLineString.indexOf('(') + 1, ifLineString.lastIndexOf(')'));
-		//String notCond = "!(" + cond + ")";
-
-		//code.remove(closeLine);
-		lines.set(closeLine, new LineString(closeLine, closeLine, ""));
-		
-		int ifToId = elseLine + 1 < code.size() ? code.get(elseLine + 1) : Line.ID_END;
-		int elseToId = closeLine < code.size() ? code.get(closeLine) : Line.ID_END;
-		
-		ArrayList<String> conds = dividConds(cond);
-		int nbConds = conds.size()-1;
-
-		String notCond = "!(" + conds.get(0) + ")"; 
-		lines.set(ifLineId, new LineGoto(ifLineId, notCond, ifToId));
-		
-		for(int i = 1;i<=nbConds;i++) {
-			notCond = "!(" + conds.get(i) + ")"; 
-			lines.add(code.get(ifLine+i), new LineGoto(code.get(ifLine+i+1), notCond, getBlockEnd(ifLine)));
+			String notCond = "!(" + conds.get(0) + ")"; 
+			lines.set(ifLineId, new LineGoto(ifLineId, notCond, ifToId));
+			
+			for(int i = 1;i<=nbConds;i++) {
+				notCond = "!(" + conds.get(i) + ")"; 
+				lines.add(code.get(ifLine+i), new LineGoto(code.get(ifLine+i), notCond, elseLine+nbConds));
+			}
+			lines.set(elseLineId+nbConds, new LineGoto(code.get(elseLine+nbConds), "true", elseLineId+nbConds+1));
+			return nbConds-1;
 		}
+		//Sinon, c'est un if tous seul. 
+		else {
+			int closeLine = getBlockEnd(ifLine);
+			int ifLineId = code.get(ifLine);
 
-		lines.set(elseLineId+nbConds, new LineGoto(code.get(elseLine+nbConds), "true", elseToId));
-		return nbConds-1;
+			BlockStruct.add(new Blocks("if",ifLine,closeLine));
+			
+			String ifLineString = lines.get(ifLineId).getLineCode(code);
+			String cond = ifLineString.substring(ifLineString.indexOf('(') + 1, ifLineString.lastIndexOf(')'));
+			
+			lines.set(closeLine, new LineString(closeLine, closeLine, ""));
+			
+			int ifToId = closeLine + 1 < code.size() ? code.get(closeLine + 1) : Line.ID_END;
+			
+			ArrayList<String> conds = dividConds(cond);
+			int nbConds = conds.size()-1;
+
+			String notCond = "!(" + conds.get(0) + ")"; 
+			lines.set(ifLineId, new LineGoto(ifLineId, notCond, ifToId));
+			
+			for(int i = 1;i<=nbConds;i++) {
+				notCond = "!(" + conds.get(i) + ")"; 
+				lines.add(code.get(ifLine+i), new LineGoto(code.get(ifLine+i), notCond, closeLine+nbConds));
+			}
+			return nbConds-1;
+		}
+		
 	}
 
 	private int preTreatDoWhile(int line) throws BackEndException {
@@ -301,7 +335,9 @@ public class BlocksConversion {
 		lines.set(closeLineId, new LineGoto(closeLineId, conds.get(0), startLineId));
 
 		for(int i = 1;i<=nbConds;i++) {
+			
 			lines.add(closeLineId+i, new LineGoto(closeLineId+i,closeLine, conds.get(i), startLineId));
+			
 		}
 		
 		//code.remove(startLine);

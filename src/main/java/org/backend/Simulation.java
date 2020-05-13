@@ -21,16 +21,16 @@ public class Simulation extends Tools{
 	// Simulation initialization parameters 
 	
 	//Same as simulationBuilder
-	private String sourceCodeFileName;
-	private int numberOfProcesses;
-	private String schedulerType;
-	private String SchedString;
+	protected String sourceCodeFileName;
+	protected int numberOfProcesses;
+	protected String schedulerType;
+	protected String SchedString;
 	
 	//Les paramètres de la simulation 
-	private Process processes[];
-	private Scheduler scheduler;
-	private PreTreatment preTreatment;
-	private ArrayList<Integer> executionOrderHistory;
+	protected Process processes[];
+	protected Scheduler scheduler;
+	protected PreTreatment preTreatment;
+	protected ArrayList<Integer> executionOrderHistory;
 
 	//Builder classique
 	public Simulation(SimulationBuilder simulationBuilder) throws BackEndException {
@@ -97,10 +97,13 @@ public class Simulation extends Tools{
 	
 	public void nextStepAtomique() throws BadSourceCodeException {
 		int i = scheduler.getNext();
-		
-		nextStep(i);
+		// La valeur de retour de nextStep est vrai si l'opération est atomique ou si le processus est terminer. Donc, tant que l'opération n'est pas atomique, on est bloquer dans le while.
+		while(!nextStep(i)) {
+			System.out.println("C'est pas atomique, on continu");
+		}
 	}
 
+	
 	/**
 	 * Execute one step of the specified process.
 	 * 
@@ -108,20 +111,22 @@ public class Simulation extends Tools{
 	 * @throws BadSourceCodeException if there is a problem with the source code
 	 *                                executed during that step
 	 */
-	public void nextStep(int processId) throws BadSourceCodeException {
+	public boolean nextStep(int processId) throws BadSourceCodeException {
+		boolean res = true;
 		try {
-			processes[processId].oneStep();
+			res = processes[processId].oneStep();
 		} catch (EvalError e) {
 			e.printStackTrace();
 			customeAlertTool(e.getMessage());
 			throw new BadSourceCodeException("EvalError when executing next step ");
 		}
 		executionOrderHistory.add(processId);
-		System.out.println("On a ajouté "+processId);
+		System.out.println("Le processus " + processId + "avance d'une ligne.");
+		return res;
 		
 	}
 
-	private void initSimulation() throws BackEndException {
+	protected void initSimulation() throws BackEndException {
 		
 		//Lecture de source.txt (Le où est enregistrer le fichier qu'on à ouvert)
 		String sourceCode = readSourceCode();
@@ -139,14 +144,14 @@ public class Simulation extends Tools{
 		initProcesses();
 	}
 
-	private void initProcesses() throws BackEndException {
+	protected void initProcesses() throws BackEndException {
 		processes = new Process[numberOfProcesses];
 		for (int i = 0; i < numberOfProcesses; i++) {
 			processes[i] = new Process(i,numberOfProcesses, preTreatment);
 		}
 	}
 
-	private String readSourceCode() throws BackEndException {
+	protected String readSourceCode() throws BackEndException {
 		try {
 			return Tools.getContentOfFile(sourceCodeFileName);
 		} catch (FileNotFoundException e) {

@@ -14,7 +14,11 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 import javafx.scene.text.Font;
+import javafx.scene.control.TableColumn;
 import javafx.scene.text.FontWeight;
+import javafx.scene.control.Spinner;
+import javafx.scene.Node;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
@@ -25,6 +29,8 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 
 import javafx.scene.paint.*;
 import javafx.scene.canvas.*;
@@ -61,7 +67,6 @@ import javafx.scene.control.Alert.AlertType;
  *
  */
 
-
 public class FXMLController {
 
 
@@ -95,6 +100,8 @@ public class FXMLController {
 	private Label SchedName;
 	@FXML
 	private Button buttonProcessCrash;
+	@FXML
+	private Button MultiScirptMode;
 	@FXML
 	private ListView<String> listView1;   //Mdr on laisse pas de nom comme �a ptn
 	@FXML
@@ -132,16 +139,22 @@ public class FXMLController {
 	private TextField textFieldSpeed;
 
 	@FXML
-	private TextField textFieldNumberOfProcessesRandom;
+	private Spinner textFieldNumberOfProcessesRandom;
 
 	@FXML
 	private GridPane Animation;
 
 	@FXML
 	private GridPane numCod;
-
+	
 	@FXML
 	private TextField textFieldNumberOfSteps;
+
+	@FXML
+	private ToggleButton atomic;
+	
+	@FXML
+	private ToggleButton linebyline;
 
 	 @FXML
 	 private Canvas lineProcCanvas;
@@ -195,7 +208,6 @@ public class FXMLController {
 		listView3.setItems(content3);
 		listView4.setItems(content4);
 		textAreaOriginalCode.setText(code);
-
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------//
@@ -501,11 +513,11 @@ public class FXMLController {
 
 		//Print du r�pertoire courant
 		String currentDir = System.getProperty("user.dir");
-        System.out.println("Current dir using System:" +currentDir);
+        //System.out.println("Current dir using System:" +currentDir);
 
 		//Path to test/sources.txt
 		String sourcecode = currentDir + "\\src\\main\\resources\\org\\Algorithmes\\source.txt";
-		System.out.println("Path to source code :" +sourcecode);
+		//System.out.println("Path to source code :" +sourcecode);
 
 		// On copie le code du 'shell' dans sources.txt
 		code=textAreaOriginalCode.getText();
@@ -526,18 +538,16 @@ public class FXMLController {
 
 		simulation = simulationBuilder
 				.withSourceCodeFromFile(sourcecode)
-				.withNumberOfProcesses(Integer.parseInt(textFieldNumberOfProcessesRandom.getText()))
+				.withNumberOfProcesses(((Spinner<Integer>)textFieldNumberOfProcessesRandom).getValue())
 				.withScheduler(schedChoice,ShedString)
 				.build(); //Cr�ation de la simulation
-
-		System.out.print(simulation.simulationIsDone());
 
 		//Nouvelle m�thode, tous enregistrer dans History
 		history = new History();
 
 		//Updates de l'affichage
 		setThenumberToTheCode();
-		initalizeProcess(Integer.parseInt(textFieldNumberOfProcessesRandom.getText()));  //La fonction qui initialise le truc � gauche (avec les lignes)
+		initalizeProcess(((Spinner<Integer>)textFieldNumberOfProcessesRandom).getValue());  //La fonction qui initialise le truc � gauche (avec les lignes)
 		updateChoiceBoxLocalVariables();
 		updateChoiceBoxStepByStep();
 		updateChoiceBoxProcessToCrash();
@@ -568,7 +578,6 @@ public class FXMLController {
 	public void slidert() {
 		s= sliderSpeed.getValue();
 		String s2= df.format(s);
-		System.out.print(s+"\n");
 		textFieldSpeed.setText(""+s2);
 	}
 
@@ -652,9 +661,13 @@ public class FXMLController {
 		if (!simulation.simulationIsDone()) {
 
 			history.addStep(simulation,processline);
-
-			simulation.nextStep();
-
+			
+			if(linebyline.isSelected()) {
+				simulation.nextStep();
+			}
+			else {
+				simulation.nextStepAtomique();
+			}
 			ArrayList<Integer> arrayExec = simulation.getOriginalSourceLinesExecutedDuringLastStep(simulation.getIdOfLastExecutedProcess());
 
 			updateProcess(simulation.getIdOfLastExecutedProcess(),arrayExec.get(0));
@@ -705,7 +718,7 @@ public class FXMLController {
 	}
 
 	//Edit shed
-	public void EditShed(){
+	public void EditShed(ActionEvent  event){
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("editShed.fxml"));
 
@@ -725,8 +738,11 @@ public class FXMLController {
 	        secondStage.setTitle("Sheduler Editor");
 	        secondStage.setScene(secondscene);
 	        controller.initialize(ShedString);
-	        secondStage.showAndWait();
 
+			((Stage)((Node)event.getSource()).getScene().getWindow()).hide();
+	        secondStage.showAndWait();
+			((Stage)((Node)event.getSource()).getScene().getWindow()).show();
+			
 	        ShedString = controller.getShed();
 
 			} catch (IOException e) {
@@ -782,13 +798,42 @@ public class FXMLController {
 	}
 	}
 
+	public void switchMode(ActionEvent  event) {
+	
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("multiScipt.fxml"));
+
+        Parent secondroot;
+
+        try {
+
+		secondroot = loader.load();
+
+        Scene secondscene = new Scene(secondroot);
+        secondscene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+
+        MultiScirptController controller = loader.getController();
+
+
+        Stage secondStage = new Stage();
+        secondStage.setTitle("Multi-Script Editor");
+        secondStage.setScene(secondscene);
+
+		((Stage)((Node)event.getSource()).getScene().getWindow()).hide();
+        secondStage.showAndWait();
+		((Stage)((Node)event.getSource()).getScene().getWindow()).show();
+		
+		} catch (IOException e) {
+			// Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	//---------------------------------------------------------------------------------------------------------------------------//
 											//---------- JE SUIS PAS SUR DE A QUOI �A SERT ----------//
 
 
 	public void updateChoiceBoxLocalVariables() {
-		System.out.println( "updateChoiceBoxLocalVariables");
+		//System.out.println( "updateChoiceBoxLocalVariables");
 		choiceBoxLocalVariables.getItems().clear();
 		for (int i = 0; i < numberOfProcesses; i++) {
 			choiceBoxLocalVariables.getItems().add("P"+ Integer.toString(i));
@@ -797,7 +842,7 @@ public class FXMLController {
 	}
 
 	public void updateChoiceBoxStepByStep() {
-		System.out.println( "updateChoiceBoxStepByStep");
+		//System.out.println( "updateChoiceBoxStepByStep");
 		choiceBoxStepByStep.getItems().clear();
 		for (int i = 0; i < numberOfProcesses; i++) {
 			choiceBoxStepByStep.getItems().add("P"+ Integer.toString(i));
@@ -806,7 +851,7 @@ public class FXMLController {
 	}
 
 	public void updateChoiceBoxProcessToCrash() {
-		System.out.println( "updateChoiceBoxProcessToCrash");
+		//System.out.println( "updateChoiceBoxProcessToCrash");
 		choiceBoxProcessToCrash.getItems().clear();
 		for (int i = 0; i < numberOfProcesses; i++) {
 			choiceBoxProcessToCrash.getItems().add("P"+ Integer.toString(i));
@@ -815,7 +860,7 @@ public class FXMLController {
 	}
 
 	public void choiceordon() {
-		System.out.println( "choiceordon ?wtf");
+		//System.out.println( "choiceordon ?wtf");
 		cordo=choiceBoxScheduling.getValue();
 		System.out.print(cordo+"\n");
 	}
@@ -850,7 +895,6 @@ public class FXMLController {
 		String currentProcess = choiceBoxLocalVariables.getSelectionModel().getSelectedItem();
 
 		int currentProcessId = Character.getNumericValue(currentProcess.charAt(1));
-		System.out.println("chosen process " + Integer.toString(currentProcessId));
 		Variable[] variableInfo;
 		try {
 			variableInfo = simulation.getLocalVariables(currentProcessId);
@@ -866,7 +910,7 @@ public class FXMLController {
 				break;
 			}
 			else {
-				System.out.println("    " + variableInfo[i].getName() + " " + variableInfo[i].getValue());
+				//System.out.println("    " + variableInfo[i].getName() + " " + variableInfo[i].getValue());
 				content1.addAll(variableInfo[i].getName());
 				content2.addAll(variableInfo[i].getValue());
 			}
@@ -940,7 +984,7 @@ public class FXMLController {
 		listView2.setItems(content2);
 		listView3.setItems(content3);
 		listView4.setItems(content4);
-		System.out.print(simulation = null);
+		//System.out.print(simulation = null);
 		lineProc.getChildren().clear();
 
 	}
@@ -1011,7 +1055,7 @@ public class FXMLController {
 		numCod.getChildren().clear();
 
 	    for (int y = 0 ; y < countLines(code) ; y++) {
-	    	System.out.println(y);
+	    	//System.out.println(y);
 			Text line = new Text(y+".");  //On cr�e un Object "TEXTE" (un string avec des info sur le font)
 			line.setStyle("    -fx-font-size: 12.7;\r\n" +
 							"   -fx-fill: #bebfc2;");
@@ -1090,7 +1134,7 @@ public class FXMLController {
 				break;
 			}
 			else {
-				System.out.println("    " + variableInfo[i].getName() + " " + variableInfo[i].getValue());
+				//System.out.println("    " + variableInfo[i].getName() + " " + variableInfo[i].getValue());
 				str = str + variableInfo[i].getName() + " = ";
 				str = str + variableInfo[i].getValue() + "\n";
 			}
@@ -1148,6 +1192,5 @@ public class FXMLController {
 			textForProcess.setFont(Font.font("System", 18.9));
 			lineProc.getChildren().add(textForProcess); // Et la on met l'object texte que l'on viens de cr�e dans la balise "textForProcess"
 		}
-	}
-
+	}	
 }
