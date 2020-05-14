@@ -919,13 +919,14 @@ public class FXMLController {
 		}
 
 		/* Numerotation des lignes dans la grille */
-
+		RowConstraints rowConstraints = new RowConstraints();
+		rowConstraints.setPercentHeight(100/countLines(code));
 		for (int i = endOfInitBlocks; i < countLines(code); i++) {
 			int lineGrid = i-endOfInitBlocks;
-			Animation.add(new Label(i+")"),0,lineGrid);
-			RowConstraints rowConstraints = new RowConstraints();
-			rowConstraints.setPercentHeight(100/countLines(code));
+
 			Animation.getRowConstraints().add(rowConstraints);
+			Animation.add(new Label(i+")"),0,lineGrid);
+
 		}
 
 		/* Affichage des if/while/for dans la premiere colonne */
