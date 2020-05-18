@@ -154,7 +154,7 @@
                                        <padding>
                                           <Insets left="10.0" />
                                        </padding></TextArea>
-                                    <GridPane fx:id="numCod" layoutX="1.0" layoutY="3.0" prefHeight="620.0" prefWidth="10.0" style="-fx-background-color: #282c34;" stylesheets="@styles.css">
+                                    <GridPane fx:id="numCod" layoutX="1.0" layoutY="3.0" prefHeight="620.0" prefWidth="11.0" style="-fx-background-color: #282c34;" stylesheets="@styles.css">
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
                                       </columnConstraints>

@@ -45,6 +45,7 @@ import org.backend.exceptions.*;
 import org.backend.History;
 
 import java.io.*;
+import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -152,7 +153,7 @@ public class FXMLController {
 	boolean auto = false;
 	private static DecimalFormat df = new DecimalFormat("0.0");
 	private String code=" ";
-	private static String[] codeLines;
+	private ArrayList<String> codeLines = new ArrayList<String>();
 	private String fichiercode="";
 	private String cordo="";
 	private int numberOfProcesses;
@@ -217,9 +218,11 @@ public class FXMLController {
 				String line;
 				code="";
 
-				while ((line = reader.readLine()) != null)
-					code=code+line+"\n";
-				System.out.print(code +"\n");
+				while ((line = reader.readLine()) != null) {
+					codeLines.add(line);
+					code = code + line + "\n";
+					System.out.print(code + "\n");
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -541,6 +544,7 @@ public class FXMLController {
 
 		//Updates de l'affichage
 		setThenumberToTheCode();
+		textAreaOriginalCode.setVisible(false);
 		initalizeProcess(Integer.parseInt(textFieldNumberOfProcessesRandom.getText()));  //La fonction qui initialise le truc ? gauche (avec les lignes)
 		updateChoiceBoxLocalVariables();
 		updateChoiceBoxStepByStep();
@@ -885,8 +889,8 @@ public class FXMLController {
 
 	//Compteur de lignes d'un code
 	private static int countLines(String str){
-		   codeLines = str.split("\r\n|\r|\n");
-		   return  codeLines.length;
+		   String[] tmp = str.split("\r\n|\r|\n");
+		   return  tmp.length;
 	}
 
 	// METHODES D'INITIALISATION DE L'ANIMATION
@@ -920,7 +924,8 @@ public class FXMLController {
 
 		/* Numerotation des lignes dans la grille */
 		RowConstraints rowConstraints = new RowConstraints();
-		rowConstraints.setPercentHeight(100/countLines(code));
+		//rowConstraints.setPercentHeight(100/countLines(code));
+		rowConstraints.setPercentHeight(25);
 		for (int i = endOfInitBlocks; i < countLines(code); i++) {
 			int lineGrid = i-endOfInitBlocks;
 
@@ -1078,15 +1083,39 @@ public class FXMLController {
 	}
 
 	private void setThenumberToTheCode() {
+		/* Met le code sous forme de grille avec
+		premiere colonne : le numero de ligne
+		deuxieme colonne : la ligne de code
 
+		La partie texte n'est plus accessible car rendue invisible pour l'utilisateur
+		 */
 		numCod.getChildren().clear();
 
+		// Ajout de la premiere colonne
+		ColumnConstraints numberColumn = new ColumnConstraints();
+		numberColumn.setPercentWidth(35);
+		numCod.getColumnConstraints().add(numberColumn);
+
+		// Ajout de la deuxieme colonne
+		ColumnConstraints column = new ColumnConstraints();
+		column.setPercentWidth(100);
+		numCod.getColumnConstraints().add(column);
+
+		// Ajout des lignes
+		RowConstraints rowConstraints = new RowConstraints();
+		rowConstraints.setPercentHeight(100/countLines(code));
 	    for (int y = 0 ; y < countLines(code) ; y++) {
+
 	    	System.out.println(y);
-			Text lineNumber = new Text(y+".");  //On cr?e un Object "TEXTE" (un string avec des info sur le font)
+	    	Text lineCode = new Text(codeLines.get(y));
+			lineCode.setStyle("    -fx-font-size: 12.7;\r\n" +
+					"   -fx-fill: #bebfc2;");
+			Text lineNumber = new Text(y+".");
 			lineNumber.setStyle("    -fx-font-size: 12.7;\r\n" +
 							"   -fx-fill: #bebfc2;");
+			numCod.getRowConstraints().add(rowConstraints);
 	    	numCod.add(lineNumber,0,y);
+			numCod.add(lineCode, 1, y);
 
 		}
 	}
@@ -1116,23 +1145,12 @@ public class FXMLController {
 
 		removeProcFromCell(grid, row-1, proc + 1);
 		StackPane pane = processStatus(proc, nump);
-		/*
-		if (simulation.processIsCrashed(proc)) {
-			pane.getChildren().addAll(new Circle(10, Color.RED), new Label("P" + proc));
-		} else if (simulation.processIsDone(proc)) {
-			pane.getChildren().addAll(new Circle(10, Color.BLUE), new Label("P" + proc));
-		} else if (proc == nump) {
-			pane.getChildren().addAll(new Circle(10, Color.GREEN), new Label("P" + proc));
-		} else {
-			pane.getChildren().addAll(new Circle(10, Color.web("#8599ad")), new Label("P" + proc));
-		}
-
-		addTooltip(pane, proc); */
 		Animation.add(pane, proc + 1,row);
 
 	}
 
 	public StackPane processStatus(int proc, int nump) throws RipException {
+
 		StackPane pane = new StackPane();
 
 		if (simulation.processIsCrashed(proc)) {
@@ -1179,21 +1197,7 @@ public class FXMLController {
 						//addProcToCell(Animation, 0, i, nump);
 
 						refreshBlock(startGridLine);
-						/*
-						StackPane pane = new StackPane();
 
-						if (simulation.processIsCrashed(i)) {
-							pane.getChildren().addAll(new Circle(10, Color.RED), new Label("P" + i));
-						} else if (simulation.processIsDone(i)) {
-							pane.getChildren().addAll(new Circle(10, Color.BLUE), new Label("P" + i));
-						} else if (i == nump) {
-							pane.getChildren().addAll(new Circle(10, Color.GREEN), new Label("P" + i));
-						} else {
-							pane.getChildren().addAll(new Circle(10, Color.web("#8599ad")), new Label("P" + i));
-						}
-
-						addTooltip(pane, i); */
-						//initialisedProc.getChildren().add(pane);
 					}
 			}
 		}
