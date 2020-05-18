@@ -295,7 +295,18 @@ public class FXMLController {
 
 	// Bouton "SAVE SCheduler"
 	public void saveSched() {
-
+		
+		try{
+			
+			ArrayList<Integer> ShedInt = simulation.getExecutionOrderHistory();
+			
+			// TODO convertir la suite de int en string séparé par des /n, le mettre dans ShedString
+		    // Et met dans une fonction :) 
+					
+		}catch(Exception e) {
+			customeAlert("There is no Sheduler to save");
+		}
+		
 	    FileChooser fileChooser = new FileChooser();
 	    File selectedFile = fileChooser.showSaveDialog(null);
 
