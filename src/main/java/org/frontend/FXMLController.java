@@ -167,6 +167,7 @@ public class FXMLController {
 	private int [] processline;
 	private SimulationBuilder simulationBuilder;
 	private Simulation simulation;
+	private int endOfInitBlock;
 	private boolean ignorAlert;
 	private	History history;
 	private GraphicsContext gc;
@@ -539,6 +540,9 @@ public class FXMLController {
 		System.out.print("Finishing simulation \n");
 		System.out.print(simulation.simulationIsDone());
 
+		endOfInitBlock = simulation.getPreTreatment().getEndOfInitBlocks();
+		System.out.println("End of init block is : " + endOfInitBlock);
+
 		//Nouvelle m?thode, tous enregistrer dans History
 		history = new History();
 
@@ -898,11 +902,15 @@ public class FXMLController {
 	public void initGrid(PreTreatment preTreatment) {
 
 		// Permet de vider la grille tout en gardant les lignes visibles
-		Animation.setGridLinesVisible(false);
+		/*Animation.setGridLinesVisible(false);
 		Animation.getColumnConstraints().clear();
 		Animation.getRowConstraints().clear();
 		Animation.getChildren().clear();
-		Animation.setGridLinesVisible(true);
+		Animation.setGridLinesVisible(true);*/
+
+		Animation.getChildren().clear();
+		Animation.getRowConstraints().clear();
+		Animation.getColumnConstraints().clear();
 
 		int endOfInitBlocks = preTreatment.getEndOfInitBlocks();
 		ArrayList<Blocks> blocksList = preTreatment.getBlocksConversion().getBlockStruct();
@@ -923,14 +931,22 @@ public class FXMLController {
 		}
 
 		/* Numerotation des lignes dans la grille */
-		RowConstraints rowConstraints = new RowConstraints();
-		//rowConstraints.setPercentHeight(100/countLines(code));
-		rowConstraints.setPercentHeight(25);
-		for (int i = endOfInitBlocks; i < countLines(code); i++) {
-			int lineGrid = i-endOfInitBlocks;
 
-			Animation.getRowConstraints().add(rowConstraints);
-			Animation.add(new Label(i+")"),0,lineGrid);
+		for (int j = 0; j<endOfInitBlocks; j++){
+			Label label = new Label();
+			RowConstraints rowInit = new RowConstraints();
+			rowInit.setMinHeight(10);
+			Animation.getRowConstraints().add(rowInit);
+			Animation.addRow(j, label);
+
+			// Animation.add(new Label(j+")"),0,j);
+		}
+		for (int i = endOfInitBlocks; i < countLines(code); i++) {
+			//int lineGrid = i-endOfInitBlocks;
+			RowConstraints rowCode = new RowConstraints();
+			rowCode.setMinHeight(25);
+			Animation.getRowConstraints().add(rowCode);
+			Animation.add(new Label(i+")"),0,i);
 
 		}
 
@@ -939,8 +955,8 @@ public class FXMLController {
 	    	Blocks block = blocksList.get(x);
 	    	String type = block.getType();
 	    	int startBlockLine = block.getIdStart();
-	    	int startBlockGrid = startBlockLine - endOfInitBlocks;
-	    	Animation.add(new Label(startBlockLine+")"+type), 0, startBlockGrid);
+	    	// int startBlockGrid = startBlockLine - endOfInitBlocks;
+	    	Animation.add(new Label(startBlockLine+")"+type), 0, startBlockLine);
 		}
 
 
@@ -960,12 +976,12 @@ public class FXMLController {
 		}
 	}
 
-	public void refreshBlock(int startGridLine) throws RipException {
+	public void refreshInitBlock() throws RipException {
 		System.out.print("Refreshing initialisation block \n");
 		lineProcCanvas.getChildren().clear();
 
 		for (int i=0;i<numberOfProcesses;i++){
-			if (processline[i]<startGridLine){
+			if (processline[i]<endOfInitBlock){
 				StackPane pane = processStatus(i,numberOfProcesses);
 				lineProcCanvas.getChildren().add(pane);
 			}
@@ -989,7 +1005,7 @@ public class FXMLController {
 		initBlock();
 
 
-		refreshBlock(preTreatment.getEndOfInitBlocks());
+		refreshInitBlock();
 		//updateProcess(0,0);
 	}
 
@@ -1087,9 +1103,14 @@ public class FXMLController {
 		premiere colonne : le numero de ligne
 		deuxieme colonne : la ligne de code
 
+		Le block d'initialisation est separe du reste du code
 		La partie texte n'est plus accessible car rendue invisible pour l'utilisateur
 		 */
+
+		// Nettoyage de la grille numCod
 		numCod.getChildren().clear();
+		numCod.getColumnConstraints().clear();
+		numCod.getRowConstraints().clear();
 
 		// Ajout de la premiere colonne
 		ColumnConstraints numberColumn = new ColumnConstraints();
@@ -1102,8 +1123,7 @@ public class FXMLController {
 		numCod.getColumnConstraints().add(column);
 
 		// Ajout des lignes
-		RowConstraints rowConstraints = new RowConstraints();
-		rowConstraints.setPercentHeight(100/countLines(code));
+
 	    for (int y = 0 ; y < countLines(code) ; y++) {
 
 	    	System.out.println(y);
@@ -1113,9 +1133,22 @@ public class FXMLController {
 			Text lineNumber = new Text(y+".");
 			lineNumber.setStyle("    -fx-font-size: 12.7;\r\n" +
 							"   -fx-fill: #bebfc2;");
-			numCod.getRowConstraints().add(rowConstraints);
-	    	numCod.add(lineNumber,0,y);
-			numCod.add(lineCode, 1, y);
+
+
+			if (y < endOfInitBlock ){
+				RowConstraints initRows = new RowConstraints();
+				initRows.setMinHeight(10);
+				numCod.getRowConstraints().add(initRows);
+				numCod.add(lineNumber,0,y);
+				numCod.add(lineCode, 1, y);
+			}
+			else {
+				RowConstraints codeRows = new RowConstraints();
+				codeRows.setMinHeight(25);
+				numCod.getRowConstraints().add(codeRows);
+				numCod.add(lineNumber,0,y);
+				numCod.add(lineCode, 1, y);
+			}
 
 		}
 	}
@@ -1173,7 +1206,7 @@ public class FXMLController {
 		// linep : line of process
 
         processline[nump]=linep;
-		int startGridLine = simulation.getPreTreatment().getEndOfInitBlocks();
+		int startGridLine = endOfInitBlock;
 		System.out.println("The grid will start at line : "+startGridLine +"\n");
 
 		for (int l = 0; l < countLines(code) ; l++) {
@@ -1184,25 +1217,25 @@ public class FXMLController {
 
 						// On retire le processus de la ligne d'initialisation au moment ou il en sort
 						if(l == startGridLine ){
-							refreshBlock(startGridLine);
+							refreshInitBlock();
 							StackPane proc = processStatus(i, nump);
-							Animation.add(proc, i+1, 0);
+							Animation.add(proc, i+1, startGridLine);
 						}
 						else {
-							addProcToCell(Animation, l-startGridLine, i, nump);
+							addProcToCell(Animation, l, i, nump);
 						}
 					}
 					else if(l == processline[i] && l< startGridLine){
 						// Le processus est dans sa phase d'initialisation
 						//addProcToCell(Animation, 0, i, nump);
 
-						refreshBlock(startGridLine);
+						refreshInitBlock();
 
 					}
 			}
 		}
 
-		Animation.setGridLinesVisible(true);
+		//Animation.setGridLinesVisible(true);
 	}
 
 
