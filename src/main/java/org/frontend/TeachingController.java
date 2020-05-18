@@ -4,6 +4,9 @@ import javafx.fxml.FXML;
 //import javafx.scene.media.Media;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.scene.text.TextFlow;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 
 import javafx.event.ActionEvent;
 
@@ -33,7 +36,7 @@ public class TeachingController{
 	public Button closeButton;
 
 	@FXML
-	public TextArea algoTxt;
+	public TextFlow algoTxt;
 	
 	//---------------------------- VARIABLES GLOBALES --------------------------------------//
 
@@ -47,13 +50,32 @@ public class TeachingController{
 
     	algo = str;
     	//Initialise la fenï¿½tre avec la bonne explication.
+    	algoTxt.getChildren().clear();
+    	Text theTxt = new Text("Error");
     	if(algo == "splitter") {
-    		algoTxt.setText("Explication du splitter ici !");
+    		theTxt = new Text("Explication du splitter ici !");
     	}
     	else if(algo == "bakery") {
-    		algoTxt.setText("Explication du bakery ici !");
+    		theTxt = new Text("Desciption of the algorithm : \n"
+    				+ "Two SWMR safe registers, denoted FLAG[i] and MY_TURN[i], are associated with each   \n"
+    				+ "process pi (hence these registers can be read by any process but written only       \n"
+    				+ "by pi). \n"
+    				+ "My_TURn[i] (initialized to 0 and reste when pi exits the critical section) is used to \n"
+    				+ "contain the priority number of pi when it wants to use the critical section. \n"
+    				+ "FLAG[i] is a binary control variable whose domain is {down,up}. Inizializd to down, it is set \n"
+    				+ "to up by pi while it compute the value of its priority number MY_TURN[i].\n"
+    				+ "\n\nPseudo-code : \n"
+    				+ "(1) FLAG[i] <- up;\n"
+    				+ "(2) MY_TURN[i] <- max(MY_TURN[i],...,MY_TURN[n])+1;\n"
+    				+ "(3) FLAG[i] <- down;\n"
+    				+ "(4) for each j € {1,...,n}\\{i} do\n"
+    				+ "(5)	 wait(FLAG[j]=down);\n"
+    				+ "(6)	 wait((MY_TURN[j]=0) V <MY_TURN[i],i> < <MY_TURN[j],j>\n"
+    				+ "(7) end for;\n"
+    				+ "end operation");
     	}
-    	
+    	theTxt.setFont(Font.font("Arial", 18.9));
+    	algoTxt.getChildren().add(theTxt);
     	//Flush source code
     	sourceCodeFlush();
     	

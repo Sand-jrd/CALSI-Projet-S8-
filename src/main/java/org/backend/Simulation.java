@@ -222,6 +222,7 @@ public class Simulation extends Tools{
 	 * @return true if done, false if not
 	 */
 	public boolean simulationIsDone() {
+		System.out.print("simulationIsDone function \n");
 		Process processes[] = this.getProcesses();
 		for (int i = 0; i < processes.length; i++) {
 			if (!processes[i].isDone()) {

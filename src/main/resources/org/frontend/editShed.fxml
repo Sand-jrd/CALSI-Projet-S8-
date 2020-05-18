@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
@@ -15,7 +15,7 @@
       </Pane>
       <Pane prefHeight="641.0" prefWidth="490.0">
          <children>
-            <TextArea fx:id="shed" prefHeight="518.0" prefWidth="490.0" text="Ici le sheduler chargÃ©. " />
+            <TextArea fx:id="shed" prefHeight="518.0" prefWidth="490.0" text="Ici le sheduler chargé. " />
          </children>
       </Pane>
    </children>

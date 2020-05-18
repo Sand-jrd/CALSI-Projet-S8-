@@ -22,7 +22,7 @@ public class SimulationBuilder {
 
 	/**
 	 * Set the source file for the processes
-	 * 
+	 *
 	 * @param sourceCodeFileName the name of the source file to be read from
 	 * @return itself
 	 */
@@ -30,10 +30,10 @@ public class SimulationBuilder {
 		this.sourceCodeFileName = sourceCodeFileName;
 		return this;
 	}
-	
+
 	/**
 	 * Set the source file for the processes
-	 * 
+	 *
 	 * @param sourceCodeFileName the name of the source file to be read from
 	 * @return itself
 	 */
@@ -41,12 +41,12 @@ public class SimulationBuilder {
 		this.sourcesCodesFilesNames = sourcesCodesFilesNames;
 		return this;
 	}
-	
+
 	public SimulationBuilder withprocessPartition(ArrayList<Integer> processPartition) {
 		this.processPartition = processPartition;
 		return this;
 	}
-	
+
 	public SimulationBuilder withNumberOfSciptActif(int NumberOfSciptActif) {
 		this.NumberOfSciptActif = NumberOfSciptActif;
 		return this;
@@ -54,7 +54,7 @@ public class SimulationBuilder {
 
 	/**
 	 * Set how many processes should be simulated.
-	 * 
+	 *
 	 * @param numberOfProcesses the number of processes to be simulated
 	 * @return itself
 	 */
@@ -66,7 +66,7 @@ public class SimulationBuilder {
 
 	/**
 	 * Set the type of scheduler to use with the simulation.
-	 * 
+	 *
 	 * @param schedulerType the type of scheduler to use
 	 * @return itself
 	 */
@@ -86,7 +86,7 @@ public class SimulationBuilder {
 	public Simulation build() throws BackEndException {
 		return new Simulation(this);
 	}
-	
+
 	public SimulationMS buildMS() throws BackEndException {
 		SimulationMS simu = new SimulationMS(this);
 		return simu;
