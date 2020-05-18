@@ -26,7 +26,7 @@ public class Simulation extends Tools{
 	private String schedulerType;
 	private String SchedString;
 	
-	//Les paramètres de la simulation 
+	//Les paramï¿½tres de la simulation 
 	private Process processes[];
 	private Scheduler scheduler;
 	private PreTreatment preTreatment;
@@ -66,7 +66,7 @@ public class Simulation extends Tools{
 		
 	}
 	
-	//Pour changer de Scheduler mais c'est pas encore implémenté. 
+	//Pour changer de Scheduler mais c'est pas encore implï¿½mentï¿½. 
 	public void changeScheduler(String newSchedulerType) {
 		// TODO
 	}
@@ -91,14 +91,21 @@ public class Simulation extends Tools{
 	 *                                executed during that step
 	 */
 	public void nextStep() throws BadSourceCodeException {
-		int i = scheduler.getNext();
-		nextStep(i);
+		try {
+			int i = scheduler.getNext();
+			nextStep(i);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void nextStepAtomique() throws BadSourceCodeException {
-		int i = scheduler.getNext();
-		
-		nextStep(i);
+		try {
+			int i = scheduler.getNext();
+			nextStep(i);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -117,19 +124,19 @@ public class Simulation extends Tools{
 			throw new BadSourceCodeException("EvalError when executing next step ");
 		}
 		executionOrderHistory.add(processId);
-		System.out.println("On a ajouté "+processId);
+		System.out.println("On a ajoutï¿½ "+processId);
 		
 	}
 
 	private void initSimulation() throws BackEndException {
 		
-		//Lecture de source.txt (Le où est enregistrer le fichier qu'on à ouvert)
+		//Lecture de source.txt (Le oï¿½ est enregistrer le fichier qu'on ï¿½ ouvert)
 		String sourceCode = readSourceCode();
 		
 		//Parcage du code
 		this.preTreatment = new PreTreatment(sourceCode, numberOfProcesses);
 
-		//Inisialisation des variables Shared et Local dans l'interpréteur
+		//Inisialisation des variables Shared et Local dans l'interprï¿½teur
 		Process.setSharedVars(preTreatment);
 
 		//Choix du type de Scheduler (Randome, Step_By_Step ect..)

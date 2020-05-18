@@ -1,15 +1,19 @@
 package org.backend;
 import java.util.Random;
-
 import org.tools.Tools;
 import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import org.backend.exceptions.*;
 
 public class Scheduler extends Tools{
 	
 	private Simulation simulation;
-	public Random random; //La méthode nextInt() de la class Random permet de générer un entier aléatoire compris entre 0 inclus et l'entier passé en paramètre exclus
+	public Random random; //La mï¿½thode nextInt() de la class Random permet de gï¿½nï¿½rer un entier alï¿½atoire compris entre 0 inclus et l'entier passï¿½ en paramï¿½tre exclus
 	
-	private ArrayList<Integer> SheduleFileParced;  //On mettra la dedans la suite de int. 
+	private ArrayList<Integer> ScheduleFileParsed;  //On mettra la dedans la suite de int. 
 	private String SchedString;
 	
 	public Scheduler(Simulation simulation) {
@@ -20,18 +24,35 @@ public class Scheduler extends Tools{
 		if(simulation.getSchedulerType().equals("with file")) {
 			
 			this.SchedString = simulation.getSchedString();
-			// TODO transformé le fichier texte en suite de int que l'on met dans -> "SheduleFileParced"
+			this.ScheduleFileParsed = GetSchedFileParsed(this.SchedString);
+			// TODO transformï¿½ le fichier texte en suite de int que l'on met dans -> "SheduleFileParced"
 		}
 		
 	}
 	
-	public int getNext() {
+	
+	public ArrayList<Integer> GetSchedFileParsed(String SchedStringName) {
+		
+		ArrayList<Integer> SchedInt = new ArrayList<Integer>();
+        String ordre[]=SchedStringName.split("\n");  //On sÃ©pare la chaine par chaque \n
+        for (int i = 0; i < ordre.length; i++)   { //Tant qu'on arrive pas au bout de la chaine					//RÃ©initialisation du buffer pour chaque processus
+
+           	SchedInt.add(Integer.parseInt(ordre[i])); //Une fois le numÃ©ro du processus rÃ©cupÃ©rÃ© sous
+           													//forme de String on le cast en int
+        }
+
+        return SchedInt; //On retourne l'ArrayList d'entier nous permettant de programmer la simulation
+    }	
+	
+	
+	
+	public int getNext() throws SchedulerException {
 		
 		
 		Process procs[] = simulation.getProcesses();
 		boolean allDone = true;
 		
-		// On vérifie qu'il reste des proccesus à faire avancé
+		// On vï¿½rifie qu'il reste des proccesus ï¿½ faire avancï¿½
 		for(int i=0; i < procs.length; ++i) {
 			if(!procs[i].isDone()) {
 				allDone = false;
@@ -43,26 +64,38 @@ public class Scheduler extends Tools{
 		
 		int next = -1;
 		
-		// Dans le cas ou la simulation est aléatoire : 
+		// Dans le cas ou la simulation est alï¿½atoire : 
 		if(simulation.getSchedulerType().equals("random")) {
 			
-			next = this.random.nextInt(procs.length); // On génère un entier aléatoire (entre 0 et nbProc)
+			next = this.random.nextInt(procs.length); // On gï¿½nï¿½re un entier alï¿½atoire (entre 0 et nbProc)
 			
-			while (procs[next].isDone()) { // Si le processus que l'on a pioché a terminé, 
+			while (procs[next].isDone()) { // Si le processus que l'on a piochï¿½ a terminï¿½, 
 				if(simulation.getSchedulerType().equals("random")) {
 					next = this.random.nextInt(procs.length); //On en repioche 1
 				}
 			}
 		}
 		
-		System.out.println( "No de step effectué : " + simulation.getExecutionOrderHistory().size());
+		System.out.println( "No de step effectuï¿½ : " + simulation.getExecutionOrderHistory().size());
 
 		
 		// Dans le cas ou on suit un fichier : 
 		if(simulation.getSchedulerType().equals("with file")) {
-			
+			if(simulation.getExecutionOrderHistory().size()>=(this.ScheduleFileParsed.size()-1)) {
+				throw new SchedulerException("Fin de l'ordonnanceur dÃ©jÃ  atteinte");
+			}
+			else {
+				next = this.ScheduleFileParsed.get(simulation.getExecutionOrderHistory().size());
+				if(next>simulation.getNumberOfProcesses()) {
+					throw new SchedulerException("NumÃ©ro de processus non existant dans cette simulation");
+				}
+				if(procs[next].isDone()) {
+					throw new SchedulerException("Processus dÃ©jÃ  fini, ordonnanceur erronÃ©");
+					//Processeur Ã  faire avancer dÃ©jÃ  terminÃ©, scheduleur erronÃ©
+				}			
+			}
 			// TODO renvoyer le bon int, throw les bonnes exeptions
-			// simulation.getExecutionOrderHistory().size() permet d'avoir le nombre de step qui a été effectué. 
+			// simulation.getExecutionOrderHistory().size() permet d'avoir le nombre de step qui a ï¿½tï¿½ effectuï¿½. 
 
 			
 			
