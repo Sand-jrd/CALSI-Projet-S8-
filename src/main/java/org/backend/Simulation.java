@@ -17,24 +17,24 @@ import bsh.EvalError;
  *
  */
 public class Simulation extends Tools{
-	
+
 	// Simulation initialization parameters 
-	
+
 	//Same as simulationBuilder
-	private String sourceCodeFileName;
-	private int numberOfProcesses;
-	private String schedulerType;
-	private String SchedString;
-	
-	//Les paramètres de la simulation 
-	private Process processes[];
-	private Scheduler scheduler;
-	private PreTreatment preTreatment;
-	private ArrayList<Integer> executionOrderHistory;
+	protected String sourceCodeFileName;
+	protected int numberOfProcesses;
+	protected String schedulerType;
+	protected String SchedString;
+
+	//Les paramï¿½tres de la simulation
+	protected Process processes[];
+	protected Scheduler scheduler;
+	protected PreTreatment preTreatment;
+	protected ArrayList<Integer> executionOrderHistory;
 
 	//Builder classique
 	public Simulation(SimulationBuilder simulationBuilder) throws BackEndException {
-		
+
 		this.sourceCodeFileName = simulationBuilder.sourceCodeFileName;
 		this.numberOfProcesses = simulationBuilder.numberOfProcesses;
 		this.schedulerType = simulationBuilder.schedulerType;
@@ -47,7 +47,7 @@ public class Simulation extends Tools{
 
 	//Builder Quand on fait une copie d'une autre simu (pour History)
 	public Simulation(Simulation simulationOld){
-		
+
 		//this.infos = new Infos(simulationOld.getInfos());
 
 		// Simulation initialization parameters
@@ -59,19 +59,19 @@ public class Simulation extends Tools{
 		for(int i = 0;i<numberOfProcesses;i++) {
 			this.processes[i] = new Process(simulationOld.getProcesse(i));
 		}
-		
+
 		this.scheduler = simulationOld.getScheduler();
 		this.preTreatment = new PreTreatment(simulationOld.getPreTreatment());
 		this.executionOrderHistory = (ArrayList<Integer>)((simulationOld.getExecutionOrderHistory()).clone());
-		
+
 	}
-	
-	//Pour changer de Scheduler mais c'est pas encore implémenté. 
+
+	//Pour changer de Scheduler mais c'est pas encore implï¿½mentï¿½.
 	public void changeScheduler(String newSchedulerType) {
 		// TODO
 	}
 
-	
+
 	/**
 	 * Crashes specified process
 	 * @param processId of the process to crash
@@ -86,50 +86,69 @@ public class Simulation extends Tools{
 
 	/**
 	 * Execute one step of one process, chosen by the scheduler.
-	 * 
+	 *
 	 * @throws BadSourceCodeException if there is a problem with the source code
 	 *                                executed during that step
 	 */
 	public void nextStep() throws BadSourceCodeException {
-		int i = scheduler.getNext();
-		nextStep(i);
+		try {
+			int i = scheduler.getNext();
+			nextStep(i);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	public void nextStepAtomique() throws BadSourceCodeException {
-		int i = scheduler.getNext();
+		int i;
 		
-		nextStep(i);
+		try {
+			
+			i = scheduler.getNext();
+			// La valeur de retour de nextStep est vrai si l'opï¿½ration est atomique ou si le processus est terminer. Donc, tant que l'opï¿½ration n'est pas atomique, on est bloquer dans le while.
+			while(!nextStep(i)) {
+				System.out.println("C'est pas atomique, on continu");
+			}
+			
+		}catch(SchedulerException e){
+			e.printStackTrace();
+			customeAlertTool("Error with the Sheduler, check your shed file");
+		}
+	
 	}
+
 
 	/**
 	 * Execute one step of the specified process.
-	 * 
+	 *
 	 * @param processId the id of the specified process
 	 * @throws BadSourceCodeException if there is a problem with the source code
 	 *                                executed during that step
 	 */
-	public void nextStep(int processId) throws BadSourceCodeException {
+	public boolean nextStep(int processId) throws BadSourceCodeException {
+		boolean res = true;
 		try {
-			processes[processId].oneStep();
+			res = processes[processId].oneStep();
 		} catch (EvalError e) {
 			e.printStackTrace();
 			customeAlertTool(e.getMessage());
 			throw new BadSourceCodeException("EvalError when executing next step ");
 		}
 		executionOrderHistory.add(processId);
-		System.out.println("On a ajouté "+processId);
-		
+		System.out.println("Le processus " + processId + "avance d'une ligne.");
+		return res;
+
 	}
 
-	private void initSimulation() throws BackEndException {
-		
-		//Lecture de source.txt (Le où est enregistrer le fichier qu'on à ouvert)
+	protected void initSimulation() throws BackEndException {
+
+		//Lecture de source.txt (Le oï¿½ est enregistrer le fichier qu'on ï¿½ ouvert)
 		String sourceCode = readSourceCode();
-		
+
 		//Parcage du code
 		this.preTreatment = new PreTreatment(sourceCode, numberOfProcesses);
 
-		//Inisialisation des variables Shared et Local dans l'interpréteur
+		//Inisialisation des variables Shared et Local dans l'interprï¿½teur
 		Process.setSharedVars(preTreatment);
 
 		//Choix du type de Scheduler (Randome, Step_By_Step ect..)
@@ -139,14 +158,14 @@ public class Simulation extends Tools{
 		initProcesses();
 	}
 
-	private void initProcesses() throws BackEndException {
+	protected void initProcesses() throws BackEndException {
 		processes = new Process[numberOfProcesses];
 		for (int i = 0; i < numberOfProcesses; i++) {
 			processes[i] = new Process(i,numberOfProcesses, preTreatment);
 		}
 	}
 
-	private String readSourceCode() throws BackEndException {
+	protected String readSourceCode() throws BackEndException {
 		try {
 			return Tools.getContentOfFile(sourceCodeFileName);
 		} catch (FileNotFoundException e) {
@@ -157,10 +176,10 @@ public class Simulation extends Tools{
 			throw new RipException("IO error while attempting to read from source code file.");
 		}
 	}
-	
+
 	/**
 	 * Get the id of the last process that was executed.
-	 * 
+	 *
 	 * @return an int corresponding to the id of the last executed process
 	 */
 	public int getIdOfLastExecutedProcess() {
@@ -176,7 +195,7 @@ public class Simulation extends Tools{
 	/**
 	 * Get the line of the last executed pre-treated line of code. For debugging
 	 * purposes, not intended to be displayed to the user.
-	 * 
+	 *
 	 * @return a string of the executed line
 	 */
 	public String getExecutedPreTreatedLine() {
@@ -187,20 +206,20 @@ public class Simulation extends Tools{
 
 	/**
 	 * Get info about the shared variables.
-	 * 
+	 *
 	 * @return infos about the shared variables.
 	 */
 	public Variable[] getSharedVariables() {
-		
+
 		return Process.getSharedVars();
-		
+
 	}
-	
+
 	/**
 	 * Get infos about the local variables of the specified process
 	 * @param processId the id of the specified process
 	 * @return infos about the local variables
-	 * @throws RipException 
+	 * @throws RipException
 	 */
 	public Variable[] getLocalVariables(int processId) throws RipException {
 		return getProcess(processId).getLocalVars();
@@ -213,7 +232,7 @@ public class Simulation extends Tools{
 
 	/**
 	 * Check whether the simulation is finished (ie that all processes are done)
-	 * 
+	 *
 	 * @return true if done, false if not
 	 */
 	public boolean simulationIsDone() {
@@ -226,9 +245,9 @@ public class Simulation extends Tools{
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Check if the specified process has terminated. 
+	 * Check if the specified process has terminated.
 	 * @param processId the id of the process to be checked for termination
 	 * @return true if terminated, false otherwise
 	 * @throws RipException if the process id specified does not correspond to a process
@@ -236,9 +255,9 @@ public class Simulation extends Tools{
 	public boolean processIsDone(int processId) throws RipException {
 		return getProcess(processId).isDone();
 	}
-	
+
 	/**
-	 * Check if the specified process has crashed. 
+	 * Check if the specified process has crashed.
 	 * @param processId the id of the process to be checked for termination
 	 * @return true if terminated, false otherwise
 	 * @throws RipException if the process id specified does not correspond to a process
@@ -246,12 +265,12 @@ public class Simulation extends Tools{
 	public boolean processIsCrashed(int processId) throws RipException {
 		return getProcess(processId).isCrashed();
 	}
-	
+
 	/**
-	 * Get a list of original source code line numbers, corresponding to the lines executed 
+	 * Get a list of original source code line numbers, corresponding to the lines executed
 	 * during the last step of the specified process
 	 * @param processId of the process in question
-	 * @return an list of the original source code line numbers, corresponding to the lines executed 
+	 * @return an list of the original source code line numbers, corresponding to the lines executed
 	 * during the last step of the specified process
 	 * @throws RipException if the process id specified does not correspond to a process
 	 */
@@ -259,12 +278,12 @@ public class Simulation extends Tools{
 		Process process = getProcess(processId);
 		return process.getOriginalSourceLinesExecutedDuringLastStep();
 	}
-	
+
 	public String getNewSourceCode() throws BackEndException {
 		PreTreatment preTreatment = this.getPreTreatment();
 		return preTreatment.getNewSourceCode();
 	}
-	
+
 	public Process getProcess(int processId) throws RipException {
 		Process processes[] = this.getProcesses();
 		if (processId >= processes.length) {
@@ -274,58 +293,58 @@ public class Simulation extends Tools{
 	}
 
 	// -- Getters -- //
-	
+
 	public String getSourceCodeFileName() {
 		return sourceCodeFileName;
 	}
-	
+
 	public int  getNumberOfProcesses() {
 		return numberOfProcesses;
 	}
-	
+
 	public String  getSchedulerType() {
 		return schedulerType;
 	}
-	
+
 	public Process[] getProcesses() {
 		return processes;
 	}
-	
+
 	public Process getProcesse(int i) {
 		return processes[i];
 	}
-	
+
 	public Scheduler getScheduler() {
 		return scheduler;
 	}
-	
+
 	public String getSchedString() {
 		return SchedString;
 	}
-	
+
 	public PreTreatment getPreTreatment() {
 		return preTreatment;
 	}
-	
+
 	public ArrayList<Integer> getExecutionOrderHistory() {
 		return executionOrderHistory;
 	}
 
 	public void setProcess(Process[] processes) {
 		this.processes = processes;
-		
+
 	}
-	
+
 	public ArrayList<Blocks> getBlockStruct() {
 		return this.preTreatment.getBlockStruct();
 	}
-	
+
 	/**
 	 * Get an Infos instance, which has several method giving various information on
 	 * the current and past state of the simulation. Mainly for use by the GUI/front
 	 * end, and intended as the only interface between the front end and back end
 	 * data.
-	 * 
+	 *
 	 * @return the infos
 	 */
 

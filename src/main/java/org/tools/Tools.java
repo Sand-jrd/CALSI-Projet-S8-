@@ -21,7 +21,7 @@ public class Tools implements Cloneable {
 	    return contentBuilder.toString();
 	}
 	
-	//La fonction qui r?initialise l'execution
+	// Créaction d'une fenêtre d'alerte
 	public void customeAlertTool(String alertText) {
 
 	 Alert alert = new Alert(AlertType.INFORMATION);
@@ -33,5 +33,19 @@ public class Tools implements Cloneable {
         alert.showAndWait();
 	        
 	}
+	
+	// Permet de vérifier si une ligne de code réfère bien à un certaine object
+	public static boolean lineReallyContainObject (String codeLine, String objName) {
+		// TODO Vérifier que codeLine contient objName, et que les caractère avant et après ne sont ni un nombre ni une lettre (majucule incluse). 
+		int pos = codeLine.indexOf(objName);
+		if(pos>0 && (Character.isLetter(codeLine.charAt(pos-1)) || Character.isDigit(codeLine.charAt(pos-1)))) {
+			return false;
+		}
+		if(pos+objName.length()<codeLine.length() && (Character.isLetter(codeLine.charAt(pos+objName.length())) || Character.isDigit(codeLine.charAt(pos+objName.length())))) {
+			return false;
+		}
+		return true;
+	}
+	
 	
 }

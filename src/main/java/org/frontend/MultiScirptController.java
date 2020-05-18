@@ -1,31 +1,36 @@
 package org.frontend;
 
-import java.io.*;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import java.text.DecimalFormat;
 import javafx.stage.FileChooser;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.control.Spinner;
 import javafx.scene.text.FontWeight;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.Spinner;
+import javafx.scene.Node;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 
 import javafx.scene.paint.*;
 import javafx.scene.canvas.*;
@@ -39,7 +44,7 @@ import java.util.Arrays;
 import javax.swing.KeyStroke;
 
 import org.backend.PreTreatment;
-import org.backend.Simulation;
+import org.backend.SimulationMS;
 import org.backend.SimulationBuilder;
 import org.backend.parceTools.blockType.Blocks;
 import org.backend.varStorage.Variable;
@@ -47,7 +52,6 @@ import org.backend.exceptions.*;
 import org.backend.History;
 
 import java.io.*;
-import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -63,11 +67,10 @@ import javafx.scene.control.Alert.AlertType;
  *
  */
 
+public class MultiScirptController {
 
-public class FXMLController {
 
-
-	//-------------- Veleurs par default dans "Shared Variable" et "Local Variable" ---------//
+//-------------- Veleurs par default dans "Shared Variable" et "Local Variable" ---------//
 	ObservableList<String> content1 = FXCollections.observableArrayList(
 			"e", "d","f","g","h","i","j","k","l");
 	ObservableList<String> content2 = FXCollections.observableArrayList(
@@ -94,11 +97,33 @@ public class FXMLController {
 	@FXML
 	private Button EditShed;
 	@FXML
+	private Button LoadBut;
+	@FXML
+	private Button LoadBut1;
+	@FXML
+	private Button LoadBut2;
+	@FXML
+	private Button LoadBut3;
+	@FXML
+	private Button LoadBut4;
+	@FXML
+	private Button SaveBut;
+	@FXML
+	private Button SaveBut1;
+	@FXML
+	private Button SaveBut2;
+	@FXML
+	private Button SaveBut3;
+	@FXML
+	private Button SaveBut4;
+	@FXML
 	private Label SchedName;
 	@FXML
 	private Button buttonProcessCrash;
 	@FXML
-	private ListView<String> listView1;   //Mdr on laisse pas de nom comme ?a ptn
+	private Button MultiScirptMode;
+	@FXML
+	private ListView<String> listView1;   //Mdr on laisse pas de nom comme ï¿½a ptn
 	@FXML
 	private ListView<String> listView2;
 	@FXML
@@ -120,12 +145,28 @@ public class FXMLController {
 
 	@FXML
 	private Slider sliderSpeed;
-
+	
 	@FXML
 	private TextArea textAreaOriginalCode;
+	@FXML
+	private TextArea textAreaOriginalCode1;
+	@FXML
+	private TextArea textAreaOriginalCode2;
+	@FXML
+	private TextArea textAreaOriginalCode3;
+	@FXML
+	private TextArea textAreaOriginalCode4;
 
 	@FXML
 	private TextArea textAreaParsedCode;
+	@FXML
+	private TextArea textAreaParsedCode1;
+	@FXML
+	private TextArea textAreaParsedCode2;
+	@FXML
+	private TextArea textAreaParsedCode3;
+	@FXML
+	private TextArea textAreaParsedCode4;
 
 	@FXML
 	private TextFlow lineProc;
@@ -135,29 +176,67 @@ public class FXMLController {
 
 	@FXML
 	private Spinner textFieldNumberOfProcessesRandom;
+	
+	@FXML
+	private Spinner textFieldNumberOfProcessesRandom1;
 
 	@FXML
+	private Spinner textFieldNumberOfProcessesRandom2;
+	
+	@FXML
+	private Spinner textFieldNumberOfProcessesRandom3;
+	
+	@FXML
+	private Spinner textFieldNumberOfProcessesRandom4;
+	
+	@FXML
+	private Spinner NbScript;
+	
+	@FXML
 	private GridPane Animation;
+	@FXML
+	private GridPane Animation1;
+	@FXML
+	private GridPane Animation2;
+	@FXML
+	private GridPane Animation4;
+	@FXML
+	private GridPane Animation3;
 
 	@FXML
 	private GridPane numCod;
-
+	@FXML
+	private GridPane numCod1;
+	@FXML
+	private GridPane numCod2;
+	@FXML
+	private GridPane numCod3;
+	@FXML
+	private GridPane numCod4;
+	
 	@FXML
 	private TextField textFieldNumberOfSteps;
 
-	 @FXML
-	 private HBox lineProcCanvas;
+	@FXML
+	private ToggleButton atomic;
+	
+	@FXML
+	private ToggleButton linebyline;
 
-	 //private HBox initialisedProc;
+	 @FXML
+	 private Canvas lineProcCanvas;
+
+	 private TextField initialisationBlock;
+	 private TextFlow initialisedProc;
 
 	//---------------------------- VARIABLES GLOBALES --------------------------------------//
 
 	boolean auto = false;
 	private static DecimalFormat df = new DecimalFormat("0.0");
 	private String code=" ";
-	private ArrayList<String> codeLines = new ArrayList<String>();
 	private String fichiercode="";
 	private String cordo="";
+	private int NbSciptActif =1;
 	private int numberOfProcesses;
 	private Timeline timeline;
 	private double s=50.00;
@@ -168,12 +247,20 @@ public class FXMLController {
 
 	private int [] processline;
 	private SimulationBuilder simulationBuilder;
-	private Simulation simulation;
-	private int endOfInitBlock;
+	private SimulationMS simulation;
 	private boolean ignorAlert;
 	private	History history;
 	private GraphicsContext gc;
-
+	
+	//Set des Listes d'élément
+	ArrayList<Spinner> listSpinner = new ArrayList<Spinner>(5);
+	ArrayList<String> codes = new ArrayList<String>(5);
+	
+	ArrayList<Button> LoadButs = new ArrayList<Button>(5);
+	ArrayList<Button> SaveButs = new ArrayList<Button>(5);
+	ArrayList<TextArea> OriginalCodes = new ArrayList<TextArea>(5);
+	ArrayList<GridPane> numCodS = new ArrayList<GridPane>(5);
+	ArrayList<GridPane> AnimationS = new ArrayList<GridPane>(5);
 
 	//---------------------------------------------------------------------------------------------------------------------------//
 	//---------------------------- FONCTIONS d'ACTION QUAND ON CLIQUE SUR UN BOUTON  --------------------------------------------//
@@ -198,7 +285,45 @@ public class FXMLController {
 		listView3.setItems(content3);
 		listView4.setItems(content4);
 		textAreaOriginalCode.setText(code);
-
+		
+		//Init des Listes 
+		
+		listSpinner.add(textFieldNumberOfProcessesRandom);
+		listSpinner.add(textFieldNumberOfProcessesRandom1);
+		listSpinner.add(textFieldNumberOfProcessesRandom2);
+		listSpinner.add(textFieldNumberOfProcessesRandom3);
+		listSpinner.add(textFieldNumberOfProcessesRandom4);
+		
+		OriginalCodes.add(textAreaOriginalCode);
+		OriginalCodes.add(textAreaOriginalCode1);
+		OriginalCodes.add(textAreaOriginalCode2);
+		OriginalCodes.add(textAreaOriginalCode3);
+		OriginalCodes.add(textAreaOriginalCode4);
+		
+		LoadButs.add(LoadBut);
+		LoadButs.add(LoadBut1);
+		LoadButs.add(LoadBut2);
+		LoadButs.add(LoadBut3);
+		LoadButs.add(LoadBut4);
+		
+		SaveButs.add(SaveBut);
+		SaveButs.add(SaveBut1);
+		SaveButs.add(SaveBut2);
+		SaveButs.add(SaveBut3);
+		SaveButs.add(SaveBut4);
+		
+		numCodS.add(numCod);
+		numCodS.add(numCod1);
+		numCodS.add(numCod2);
+		numCodS.add(numCod3);
+		numCodS.add(numCod4);
+		
+		AnimationS.add(Animation);
+		AnimationS.add(Animation1);
+		AnimationS.add(Animation2);
+		AnimationS.add(Animation3);
+		AnimationS.add(Animation4);
+		
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------//
@@ -207,34 +332,26 @@ public class FXMLController {
 	//-> FILE <-//
 
 	// Bouton "OPEN"
-	public void openFile() {
-		System.out.print("File will be open"+"\n");
+	public void openFile(ActionEvent event) {
+		
+		Button source = (Button) event.getSource();
+		int scriptID = LoadButs.indexOf(source);
 
 		FileChooser fileChooser = new FileChooser();
 		File selectedFile = fileChooser.showOpenDialog(null);
-		System.out.print("File selected is : "+ selectedFile + "\n");
+
 		if (selectedFile != null) {
-			System.out.print("selectedFile n'est pas null\n");
 			fichiercode= selectedFile.getAbsolutePath();
 			try (BufferedReader reader = new BufferedReader(new FileReader(new File(fichiercode)))) {
-				System.out.print("Reading code \n");
+
 				String line;
 				code="";
-
-				while ((line = reader.readLine()) != null) {
-					codeLines.add(line);
-					code = code + line + "\n";
-					System.out.print(code + "\n");
-				}
+				while ((line = reader.readLine()) != null)
+					code=code+line+"\n";
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-			Animation.getChildren().clear();
-			lineProcCanvas.getChildren().clear();
-			numCod.getChildren().clear();
-			textAreaOriginalCode.setVisible(true);
-			textAreaOriginalCode.setText(code);
+			OriginalCodes.get(scriptID).setText(code);
 		}
 		else {
 			System.out.print("cancel"+"\n");
@@ -242,11 +359,14 @@ public class FXMLController {
 	}
 
 	// Bouton "SAVE"
-	public void saveFile() {
+	public void saveFile(ActionEvent event) {
 
+		Button source =(Button) event.getSource();
+		int scriptID = LoadButs.indexOf(source);
+		
 	    FileChooser fileChooser = new FileChooser();
 	    File selectedFile = fileChooser.showSaveDialog(null);
-	    code=textAreaOriginalCode.getText();
+	    code=OriginalCodes.get(scriptID).getText();
 
 		try (FileWriter fw = new FileWriter(selectedFile.getAbsolutePath())){
 			BufferedWriter bw = new BufferedWriter(fw);
@@ -265,13 +385,13 @@ public class FXMLController {
 	public void openSched() {
 		System.out.print("File will be open"+"\n");
 
-		// Fen?tre qui permet de naviger dans les fichiers et faire ouvrir
+		// Fenï¿½tre qui permet de naviger dans les fichiers et faire ouvrir
 		FileChooser fileChooser = new FileChooser();
 		File selectedFile = fileChooser.showOpenDialog(null);
 
 		// LECTURE DU FICHIER
 		if (selectedFile != null) {
-			fichierShed= selectedFile.getAbsolutePath(); //R?cup?ration du chemain absolu
+			fichierShed= selectedFile.getAbsolutePath(); //Rï¿½cupï¿½ration du chemain absolu
 			try (BufferedReader reader = new BufferedReader(new FileReader(new File(fichierShed)))) {
 
 				String line;
@@ -280,8 +400,8 @@ public class FXMLController {
 				//On lit ligne par ligne, ici.
 				while ((line = reader.readLine()) != null) {
 
-					// On concact?ne les lignes pour les enregsitrer dans un long string.
-					//Si tu p?f?re une liste ou autre chose tu peu changer ?a.
+					// On concactï¿½ne les lignes pour les enregsitrer dans un long string.
+					//Si tu pï¿½fï¿½re une liste ou autre chose tu peu changer ï¿½a.
 					ShedString=ShedString+line+"\n";
 				}
 
@@ -353,13 +473,13 @@ public class FXMLController {
 	}
 
 	// Bouton HowToLaunchYourSimulation
-	public void help2() {
+	public void help2(){
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("HowToLaunchYourSimulation");
         alert.setHeaderText(null);
         alert.setContentText("How To Launch Your Simulation.\r\n" +
         		"\r\n" +
-        		"To launch the execution, first load (or write) your algorithm on the tab \"Original Code\". To load your algorithm, use the tab \"File->Open...\"\r\n" +
+        		"To launch the execution, first loaSaveButr write) your algorithm on the tab \"Original Code\". To load your algorithm, use the tab \"File->Open...\"\r\n" +
         		"Make sure this file respect the rules describe in HowToWriteYourCode. \r\n" +
         		"Then you have to choose your scheduler policy with \"Scheduling Policy\". You have the choice between \"Random, StepByStep and with File\".\r\n" +
         		"Unless you choose \"With file\", you have then to specify the number of process in your simulation in \"Number of processes\" at the right of the Window. \r\n" +
@@ -513,62 +633,57 @@ public class FXMLController {
 		}
 
 	//---------------------------------------------------------------------------------------------------------------------------//
-						//---------- BARRE DE MENU_2 (New execution et tous se qu'il y a deri?re) ----------//
+						//---------- BARRE DE MENU_2 (New execution et tous se qu'il y a deriï¿½re) ----------//
 
 	// -- Bouton "NEW EXECUTION" --  //
 	public void newExecution() throws BackEndException {
+
 		flushall();
-		System.out.print("New Execution button clicked \n");
 		ignorAlert = false;
 
 		simulationBuilder = new SimulationBuilder();
-
-		//Print du r?pertoire courant
+		NbSciptActif = ((Spinner<Integer>)NbScript).getValue();
+		//Print du rï¿½pertoire courant
 		String currentDir = System.getProperty("user.dir");
-        System.out.println("Current dir using System:" +currentDir);
+        //System.out.println("Current dir using System:" +currentDir);
 
+		//Saving des sources
+		saveInSourceFiles();
 		//Path to test/sources.txt
 		String sourcecode = currentDir + "\\src\\main\\resources\\org\\Algorithmes\\source.txt";
-		System.out.println("Path to source code :" +sourcecode);
 
 		// On copie le code du 'shell' dans sources.txt
 		code=textAreaOriginalCode.getText();
 
 		try (FileWriter fw = new FileWriter(sourcecode)){
 			BufferedWriter bw = new BufferedWriter(fw);
-			bw.flush();
 			bw.write(code);
+			bw.flush();
 			bw.close();
-			System.out.print("This is the text saved in source.txt" + code +"\n");
 			System.out.print("saved\n");
 		}catch (IOException e) {
-			System.out.print("Error wrinting in source.txt" + e + "\n");
 			//customeAlert("Vous n'avez aucun code !");
 		}
-		
+
 		try {
-		//Simulation et r?cup?rations des infos de la simulation
+		//Simulation et rï¿½cupï¿½rations des infos de la simulation
 		String schedChoice = choiceBoxScheduling.getValue().toLowerCase();
-		System.out.print("Start simulation\n");
+
 		simulation = simulationBuilder
 				.withSourceCodeFromFile(sourcecode)
-				.withNumberOfProcesses(((Spinner<Integer>)textFieldNumberOfProcessesRandom).getValue())
+				.withNumberOfProcesses(spinnerSumm())
+				.withprocessPartition(spinnerGetPartition()) 
 				.withScheduler(schedChoice,ShedString)
-				.build(); //Cr?ation de la simulation
-		System.out.print("Finishing simulation \n");
-		System.out.print(simulation.simulationIsDone());
+				.withNumberOfSciptActif(NbSciptActif)
+				.buildMS(); //Crï¿½ation de la simulation
 
-		endOfInitBlock = simulation.getPreTreatment().getEndOfInitBlocks();
-		System.out.println("End of init block is : " + endOfInitBlock);
-
-		//Nouvelle m?thode, tous enregistrer dans History
+		//Nouvelle mï¿½thode, tous enregistrer dans History
 		history = new History();
 
 		//Updates de l'affichage
-
 		setThenumberToTheCode();
 
-		initalizeProcess(((Spinner<Integer>)textFieldNumberOfProcessesRandom).getValue());  //La fonction qui initialise le truc ? gauche (avec les lignes)
+		initalizeProcess();  //La fonction qui initialise le truc ï¿½ gauche (avec les lignes)
 		updateChoiceBoxLocalVariables();
 		updateChoiceBoxStepByStep();
 		updateChoiceBoxProcessToCrash();
@@ -577,9 +692,8 @@ public class FXMLController {
 
 		}catch (Exception e) {
 			System.out.print(e);
-			System.out.print("Error in parsing code \n");
 			customeAlert("Echec de l'execution");
-			//flushall();
+			flushall();
 		}
 
 	}
@@ -591,7 +705,7 @@ public class FXMLController {
 
 	// -- Bouton "SPEED" -- //
 
-	//Quand on ?crit dans le texte
+	//Quand on ï¿½crit dans le texte
 	public void speedtex() {
 		sliderSpeed.setValue(Double.valueOf(textFieldSpeed.getText()) );
 	}
@@ -600,7 +714,6 @@ public class FXMLController {
 	public void slidert() {
 		s= sliderSpeed.getValue();
 		String s2= df.format(s);
-		System.out.print(s+"\n");
 		textFieldSpeed.setText(""+s2);
 	}
 
@@ -611,7 +724,6 @@ public class FXMLController {
 		System.out.println( "Process starting ...");
 		if (!auto) {
 		auto = true;
-
 		timeline = new Timeline(new KeyFrame(Duration.millis(10000/s), new EventHandler<ActionEvent>() {
 
 		    @Override
@@ -661,7 +773,7 @@ public class FXMLController {
 			int count = Integer.parseInt(textFieldNumberOfSteps.getText());
 			while (!simulation.simulationIsDone() && count>0) {
 				count -= 1;
-				controllerPlusStep(); //D?clanche i fois la fonction PlusStep ci dessous
+				controllerPlusStep(); //Dï¿½clanche i fois la fonction PlusStep ci dessous
 			}
 			if(simulation.simulationIsDone()) {
 				customeAlert("Simulation is done !");
@@ -678,16 +790,20 @@ public class FXMLController {
 
 		if(ignorAlert == false && checkCodeChange() == true) {
 			ignorAlert = true;
-	    	customeAlert("Beware ! \nYou made some modification in your code.\nThis will NOT apply for this simulation.\nStart a new execution if you want to test your new code.\nOtherwise, just ignore this message. ");
+	    	customeAlert("Beware ! \nYou made some modification in your code.\nThis will NOT apply for this simulation.\nStart a new execution if you want to test your new code.\nOtherwise, juste ignor this message. ");
 		}
 
 		try {
 		if (!simulation.simulationIsDone()) {
 
 			history.addStep(simulation,processline);
-
-			simulation.nextStep();
-
+			
+			if(linebyline.isSelected()) {
+				simulation.nextStep();
+			}
+			else {
+				simulation.nextStepAtomique();
+			}
 			ArrayList<Integer> arrayExec = simulation.getOriginalSourceLinesExecutedDuringLastStep(simulation.getIdOfLastExecutedProcess());
 
 			updateProcess(simulation.getIdOfLastExecutedProcess(),arrayExec.get(0));
@@ -716,7 +832,7 @@ public class FXMLController {
 
 		try {
 			System.out.println("Step Back");
-			simulation = history.getBackInTime(simulation);
+			//simulation = history.getBackInTime(simulation);
 			processline = history.getBackInTime(processline);
 
 			history.getBackInTime();
@@ -738,7 +854,7 @@ public class FXMLController {
 	}
 
 	//Edit shed
-	public void EditShed(){
+	public void EditShed(ActionEvent  event){
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("editShed.fxml"));
 
@@ -758,8 +874,11 @@ public class FXMLController {
 	        secondStage.setTitle("Sheduler Editor");
 	        secondStage.setScene(secondscene);
 	        controller.initialize(ShedString);
-	        secondStage.showAndWait();
 
+			((Stage)((Node)event.getSource()).getScene().getWindow()).hide();
+	        secondStage.showAndWait();
+			((Stage)((Node)event.getSource()).getScene().getWindow()).show();
+			
 	        ShedString = controller.getShed();
 
 			} catch (IOException e) {
@@ -770,7 +889,7 @@ public class FXMLController {
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------------//
-					//---------- ONLGETS (Random step_by_step crashes) ((fen?tre ? droite)) ----------//
+					//---------- ONLGETS (Random step_by_step crashes) ((fenï¿½tre ï¿½ droite)) ----------//
 
 
 	// ------- ONLGET STEp_BY_STEP ------- //
@@ -815,13 +934,18 @@ public class FXMLController {
 	}
 	}
 
+	public void switchMode(ActionEvent  event) {
+
+		((Stage)((Node)event.getSource()).getScene().getWindow()).close();
+
+	}
 
 	//---------------------------------------------------------------------------------------------------------------------------//
-											//---------- JE SUIS PAS SUR DE A QUOI ?A SERT ----------//
+											//---------- JE SUIS PAS SUR DE A QUOI ï¿½A SERT ----------//
 
 
 	public void updateChoiceBoxLocalVariables() {
-		System.out.println( "updateChoiceBoxLocalVariables");
+		//System.out.println( "updateChoiceBoxLocalVariables");
 		choiceBoxLocalVariables.getItems().clear();
 		for (int i = 0; i < numberOfProcesses; i++) {
 			choiceBoxLocalVariables.getItems().add("P"+ Integer.toString(i));
@@ -830,7 +954,7 @@ public class FXMLController {
 	}
 
 	public void updateChoiceBoxStepByStep() {
-		System.out.println( "updateChoiceBoxStepByStep");
+		//System.out.println( "updateChoiceBoxStepByStep");
 		choiceBoxStepByStep.getItems().clear();
 		for (int i = 0; i < numberOfProcesses; i++) {
 			choiceBoxStepByStep.getItems().add("P"+ Integer.toString(i));
@@ -839,7 +963,7 @@ public class FXMLController {
 	}
 
 	public void updateChoiceBoxProcessToCrash() {
-		System.out.println( "updateChoiceBoxProcessToCrash");
+		//System.out.println( "updateChoiceBoxProcessToCrash");
 		choiceBoxProcessToCrash.getItems().clear();
 		for (int i = 0; i < numberOfProcesses; i++) {
 			choiceBoxProcessToCrash.getItems().add("P"+ Integer.toString(i));
@@ -848,7 +972,7 @@ public class FXMLController {
 	}
 
 	public void choiceordon() {
-		System.out.println( "choiceordon ?wtf");
+		//System.out.println( "choiceordon ?wtf");
 		cordo=choiceBoxScheduling.getValue();
 		System.out.print(cordo+"\n");
 	}
@@ -883,7 +1007,6 @@ public class FXMLController {
 		String currentProcess = choiceBoxLocalVariables.getSelectionModel().getSelectedItem();
 
 		int currentProcessId = Character.getNumericValue(currentProcess.charAt(1));
-		System.out.println("chosen process " + Integer.toString(currentProcessId));
 		Variable[] variableInfo;
 		try {
 			variableInfo = simulation.getLocalVariables(currentProcessId);
@@ -899,7 +1022,7 @@ public class FXMLController {
 				break;
 			}
 			else {
-				System.out.println("    " + variableInfo[i].getName() + " " + variableInfo[i].getValue());
+				//System.out.println("    " + variableInfo[i].getName() + " " + variableInfo[i].getValue());
 				content1.addAll(variableInfo[i].getName());
 				content2.addAll(variableInfo[i].getValue());
 			}
@@ -910,147 +1033,75 @@ public class FXMLController {
 													//  -- FONCTIONS TOOLS -- //
 
 
+	public void saveInSourceFiles() {
+		
+		int i = 0;
+    	String currentDir = System.getProperty("user.dir");
+		String sourcecode = currentDir + "\\src\\main\\resources\\org\\Algorithmes\\source.txt";
+		codes.clear();
+		for(TextArea TextCode : OriginalCodes) {
+		
+			// On copie le code du 'shell' dans sources.txt
+			codes.add(TextCode.getText());
+		
+			try (FileWriter fw = new FileWriter(sourcecode)){
+				BufferedWriter bw = new BufferedWriter(fw);
+				bw.write(code);
+				bw.flush();
+				bw.close();
+			}catch (IOException e) {
+				//customeAlert("Vous n'avez aucun code !");
+			}
+			i++;
+			sourcecode = currentDir + "\\src\\main\\resources\\org\\Algorithmes\\source"+i+".txt";
+		}
+	}
+
 	//Compteur de lignes d'un code
 	private static int countLines(String str){
-		   String[] tmp = str.split("\r\n|\r|\n");
-		   return  tmp.length;
-	}
-
-	// METHODES D'INITIALISATION DE L'ANIMATION
-
-	public void initGrid(PreTreatment preTreatment) {
-
-		// Permet de vider la grille tout en gardant les lignes visibles
-		/*Animation.setGridLinesVisible(false);
-		Animation.getColumnConstraints().clear();
-		Animation.getRowConstraints().clear();
-		Animation.getChildren().clear();
-		Animation.setGridLinesVisible(true);*/
-
-		Animation.getChildren().clear();
-		Animation.getRowConstraints().clear();
-		Animation.getColumnConstraints().clear();
-
-		int endOfInitBlocks = preTreatment.getEndOfInitBlocks();
-		ArrayList<Blocks> blocksList = preTreatment.getBlocksConversion().getBlockStruct();
-		System.out.println("The last line of initialisation blocks is : " + endOfInitBlocks + "\n");
-
-		/* Creation de la grille */
-
-			// Ajout de la premiere colonne
-		ColumnConstraints numberColumn = new ColumnConstraints();
-		numberColumn.setPercentWidth(40);
-		Animation.getColumnConstraints().add(numberColumn);
-
-			// Ajout des colonnes dediees a l'affichage des processus
-		for (int i=0;i<numberOfProcesses;i++){
-			ColumnConstraints column = new ColumnConstraints();
-			column.setPercentWidth(100 / numberOfProcesses);
-			Animation.getColumnConstraints().add(column);
-		}
-
-		/* Numerotation des lignes dans la grille */
-
-		for (int j = 0; j<endOfInitBlocks; j++){
-			Label label = new Label();
-			RowConstraints rowInit = new RowConstraints();
-			rowInit.setMinHeight(10);
-			Animation.getRowConstraints().add(rowInit);
-			Animation.addRow(j, label);
-
-			// Animation.add(new Label(j+")"),0,j);
-		}
-		for (int i = endOfInitBlocks; i < countLines(code); i++) {
-			//int lineGrid = i-endOfInitBlocks;
-			RowConstraints rowCode = new RowConstraints();
-			rowCode.setMinHeight(25);
-			Animation.getRowConstraints().add(rowCode);
-			Animation.add(new Label(i+")"),0,i);
-
-		}
-
-		/* Affichage des if/while/for dans la premiere colonne */
-	    for (int x = 0 ; x < blocksList.size() ; x++){
-	    	Blocks block = blocksList.get(x);
-	    	String type = block.getType();
-	    	int startBlockLine = block.getIdStart();
-	    	// int startBlockGrid = startBlockLine - endOfInitBlocks;
-	    	Animation.add(new Label(startBlockLine+")"+type), 0, startBlockLine);
-		}
-
-
-		System.out.print("Grid is ready !\n");
-	}
-	public void initBlock(){
-		// Placement des processus dans le block d'initialisation
-		//initialisedProc = new HBox();
-		System.out.print("Initialising block");
-		lineProcCanvas.getChildren().clear();
-		lineProcCanvas.getChildren().add(new Label("Init"));
-		for(int i=0;i<numberOfProcesses; i++){
-			StackPane proc = new StackPane();
-			proc.getChildren().addAll(new Circle(10, Color.web("#8599ad")), new Label("P" + i));
-			//addTooltip(proc, i);
-			lineProcCanvas.getChildren().add(proc);
-		}
-	}
-
-	public void refreshInitBlock() throws RipException {
-		System.out.print("Refreshing initialisation block \n");
-		lineProcCanvas.getChildren().clear();
-
-		for (int i=0;i<numberOfProcesses;i++){
-			if (processline[i]<endOfInitBlock){
-				StackPane pane = processStatus(i,numberOfProcesses);
-				lineProcCanvas.getChildren().add(pane);
-			}
-		}
-	}
-
-	//La fonction qui r?initialise l'execution
-	public void initalizeProcess(int nbrp) throws RipException{
-
-		//Initialisation des parametres de l'animation
-		numberOfProcesses=nbrp;
-		processline= new int[nbrp];
-		Arrays.fill(processline, 0);
-
-		// Initialisation de la grille
-		preTreatment = simulation.getPreTreatment();
-		initGrid(preTreatment);
-
-		// Initialisation du block
-		System.out.print("Preparing the initialisation block... \n");
-		initBlock();
-
-
-		refreshInitBlock();
-		//updateProcess(0,0);
-	}
-
-
-	public void switchMode(ActionEvent  event) {
-
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("multiScipt.fxml"));
-        Parent secondroot;
-        try {
-		secondroot = loader.load();
-        Scene secondscene = new Scene(secondroot);
-        secondscene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
-        MultiScirptController controller = loader.getController();
-        Stage secondStage = new Stage();
-        secondStage.setTitle("Multi-Script Editor");
-        secondStage.setScene(secondscene);
-		((Stage)((Node)event.getSource()).getScene().getWindow()).hide();
-        secondStage.showAndWait();
-		((Stage)((Node)event.getSource()).getScene().getWindow()).show();
-		} catch (IOException e) {
-			// Auto-generated catch block
-			e.printStackTrace();
-		}
+		   String[] lines = str.split("\r\n|\r|\n");
+		   return  lines.length;
 	}
 	
-	//La fonction qui r?initialise l'execution
+	public void initGrid(int sciptID) {
+
+		AnimationS.get(sciptID).getChildren().clear();
+
+		//preTreatment = new PreTreatment(code, numberOfProcesses);
+		//ArrayList<Blocks> blocksList = preTreatment.getBlocksConversion().getBlockStruct();
+		//int endOfInit = preTreatment.getEndOfInitBlocks();
+
+	    for (int y = 0 ; y < countLines(codes.get(sciptID))  ; y++) {
+	    	(AnimationS.get(sciptID)).add(new Label(y+")"),0,y);
+		}
+
+		/* On fait apparaÃ®tre les if/while/for dans la grille 
+	    for (int x = 0 ; x < blocksList.size() ; x++){
+	    	//Blocks block = blocksList.get(x);
+	    	//String type = block.getType();
+	    	//int startLine = block.getTruelineStart();
+	    	Animation.add(new Label(startLine+")"+type), 0, startLine);
+		}
+		 */
+	}
+
+	//La fonction qui rï¿½initialise l'execution
+	public void initalizeProcess() throws RipException{
+
+		for (int i = 0; i < NbSciptActif; i++) {			
+			initGrid(i);
+			
+			//Initialisation animation texte
+			numberOfProcesses=spinnerSumm();
+			processline= new int[spinnerSumm()];
+			Arrays.fill(processline, 0);
+			updateProcess(0,0);
+			
+		}
+
+	}
+
+	//La fonction qui rï¿½initialise l'execution
 	public void customeAlert(String alertText) {
 
 	 Alert alert = new Alert(AlertType.INFORMATION);
@@ -1063,7 +1114,7 @@ public class FXMLController {
 
 	}
 
-	// Vide toute les initialisation, les variable de l'app sont comme si elle venait juste de d?marrer.
+	// Vide toute les initialisation, les variable de l'app sont comme si elle venait juste de dï¿½marrer.
 	public void flushall() {
 		processline = null;
 		simulationBuilder = null;
@@ -1073,7 +1124,7 @@ public class FXMLController {
 		listView2.setItems(content2);
 		listView3.setItems(content3);
 		listView4.setItems(content4);
-		System.out.print(simulation = null);
+		//System.out.print(simulation = null);
 		lineProc.getChildren().clear();
 
 	}
@@ -1098,7 +1149,7 @@ public class FXMLController {
 
 	}
 
-	// Pour v?rifi? si le code ? ?t? modifi? ou pas
+	// Pour vï¿½rifiï¿½ si le code ï¿½ ï¿½tï¿½ modifiï¿½ ou pas
 	public boolean checkCodeChange() {
 		if(textAreaOriginalCode.getText().equals(code)) {
 			return false;
@@ -1134,168 +1185,126 @@ public class FXMLController {
 			// Auto-generated catch block
 			e.printStackTrace();
 		}
-        //Load le splitter (Si "test it!" a ?t? actionn?, r?initialise tous sinon )
+        //Load le splitter (Si "test it!" a ï¿½tï¿½ actionnï¿½, rï¿½initialise tous sinon )
         flushall();
         loadFromTeaching();
 	}
-
-	private void setThenumberToTheCode() {
-		numCod.getChildren().clear();
-	    for (int y = 0 ; y < countLines(code) ; y++) {
-	    	//System.out.println(y);
-			Text line = new Text(y+".");  //On crï¿½e un Object "TEXTE" (un string avec des info sur le font)
-			line.setStyle("-fx-font-family: 'Arial'   -fx-font-size: 12.7;\r\n" +
-							"   -fx-fill: #bebfc2;");
-	    	numCod.add(line,0,y);
+	
+	private int spinnerSumm() {
+		
+		int sum=0;
+		
+		for(Spinner spin : listSpinner)
+		{
+			sum = sum + ((Spinner<Integer>)spin).getValue();
 		}
+		
+		return sum;
 	}
 	
-	/*
+	private ArrayList<Integer> spinnerGetPartition() {
+		
+		ArrayList<Integer> processPartition = new ArrayList<Integer>();
+		
+		for(Spinner spin : listSpinner)
+		{
+			processPartition.add(((Spinner<Integer>)spin).getValue());
+		}
+		
+		return processPartition;
+	}
+		
 	private void setThenumberToTheCode() {
-		/* Met le code sous forme de grille avec
-		premiere colonne : le numero de ligne
-		deuxieme colonne : la ligne de code
 
-		Le block d'initialisation est separe du reste du code
-		La partie texte n'est plus accessible car rendue invisible pour l'utilisateur
-		 
-
-		// Nettoyage de la grille numCod
-		numCod.getChildren().clear();
-		numCod.getColumnConstraints().clear();
-		numCod.getRowConstraints().clear();
-
-		// Ajout de la premiere colonne
-		ColumnConstraints numberColumn = new ColumnConstraints();
-		numberColumn.setPercentWidth(35);
-		numCod.getColumnConstraints().add(numberColumn);
-
-		// Ajout de la deuxieme colonne
-		ColumnConstraints column = new ColumnConstraints();
-		column.setPercentWidth(100);
-		numCod.getColumnConstraints().add(column);
-
-		// Ajout des lignes
-
-	    for (int y = 0 ; y < countLines(code) ; y++) {
-
-	    	System.out.println(y);
-	    	Text lineCode = new Text(codeLines.get(y));
-			lineCode.setStyle("    -fx-font-size: 12.7;\r\n" +
-					"   -fx-fill: #bebfc2;");
-			Text lineNumber = new Text(y+".");
-			lineNumber.setStyle("    -fx-font-size: 12.7;\r\n" +
-							"   -fx-fill: #bebfc2;");
-
-
-			if (y < endOfInitBlock ){
-				RowConstraints initRows = new RowConstraints();
-				initRows.setMinHeight(10);
-				numCod.getRowConstraints().add(initRows);
-				numCod.add(lineNumber,0,y);
-				numCod.add(lineCode, 1, y);
+		for (int i = 0; i < numberOfProcesses; i++) {
+			numCodS.get(i).getChildren().clear();
+	
+		    for (int y = 0 ; y < countLines(codes.get(i)) ; y++) {
+		    	//System.out.println(y);
+				Text line = new Text(y+".");  //On crï¿½e un Object "TEXTE" (un string avec des info sur le font)
+				line.setStyle("    -fx-font-size: 12.7;\r\n" +
+								"   -fx-fill: #bebfc2;");
+				numCodS.get(i).add(line,0,y);
+	
 			}
-			else {
-				RowConstraints codeRows = new RowConstraints();
-				codeRows.setMinHeight(25);
-				numCod.getRowConstraints().add(codeRows);
-				numCod.add(lineNumber,0,y);
-				numCod.add(lineCode, 1, y);
-			}
-
-		}
-	}
-		*/
-
-	// METHODES POUR AFFICHAGE DES PROCESSUS
-
-	public void removeProcFromCell(GridPane grid, int row, int column){
-		/* Arguments : grille, indice de la ligne, indice de la colonne
-		Supprime l'element d'une case de la grille.
-		NB : on peut aussi essayer la methode Node.setVisible()
-		 */
-		ObservableList<Node> children = grid.getChildren();
-		for(Node node : children) {
-			if (node instanceof StackPane && grid.getRowIndex(node) == row && grid.getColumnIndex(node) == column) {
-				StackPane procToRemove = new StackPane(node);
-				grid.getChildren().remove(procToRemove);
-				//procToRemove.setVisible(false);
-				break;
-			}
-		}
-	}
-
-	public void addProcToCell(GridPane grid, int row, int proc, int nump) throws RipException{
-		/* Arguments : grille, indice de la ligne, numero du processus, nombre de processus
-		Ajoute le processus dans une case donnï¿½es, selon son ï¿½tat
-		*/
-
-		removeProcFromCell(grid, row-1, proc + 1);
-		StackPane pane = processStatus(proc, nump);
-		Animation.add(pane, proc + 1,row);
-
-	}
-
-	public StackPane processStatus(int proc, int nump) throws RipException {
-
-		StackPane pane = new StackPane();
-
-		if (simulation.processIsCrashed(proc)) {
-			pane.getChildren().addAll(new Circle(10, Color.RED), new Label("P" + proc));
-		} else if (simulation.processIsDone(proc)) {
-			pane.getChildren().addAll(new Circle(10, Color.BLUE), new Label("P" + proc));
-		} else if (proc == nump) {
-			pane.getChildren().addAll(new Circle(10, Color.GREEN), new Label("P" + proc));
-		} else {
-			pane.getChildren().addAll(new Circle(10, Color.web("#8599ad")), new Label("P" + proc));
-		}
-
-		addTooltip(pane, proc);
-		return pane;
+	   }
 	}
 
 	//ANIMATION AVEC LA GRILLE
 	public void updateProcess(int nump,int linep) throws RipException{
-		// nump : number of process
-		// linep : line of process
 
+		int scptID = foundsctpIdwithNump(nump);
+		
+		//ArrayList<Blocks> BlockStruct = simulation.getBlockStruct(); // Ici, la strucure que j'ai crï¿½e. cf le docs ou j'explique se qu'il y a dedans (y'as pas les infos pour l'ï¿½tat des processus, juste les info sur comment est le code)
+        initGrid(scptID);
+        
+		int procStart=0;
+		
+		for (int k = 0; k < scptID ; k++) {
+		{
+			procStart = procStart + ((Spinner<Integer>)listSpinner.get(k)).getValue();
+		}
+		
         processline[nump]=linep;
-		int startGridLine = endOfInitBlock;
-		System.out.println("The grid will start at line : "+startGridLine +"\n");
+        int nbperline;
 
-		for (int l = 0; l < countLines(code) ; l++) {
-			for (int i = 0; i < numberOfProcesses; i++) {
+		// La textForProcess c'est l'id de la balise FXML dans laquelle on va mettre l'animation. Pour l'instant c'est un texte
+		for (int l = 0; l < countLines(codes.get(scptID)) ; l++) {
+			nbperline = 1;
+			for (int i = procStart; i < ((Spinner<Integer>)listSpinner.get(scptID)).getValue(); i++) {
+				if (l==processline[i]) {
 
-					if (l == processline[i] && l>= startGridLine) {
-						// Le processus n'est plus dans la phase d'initialisation
-
-						// On retire le processus de la ligne d'initialisation au moment ou il en sort
-						if(l == startGridLine ){
-							refreshInitBlock();
-							StackPane proc = processStatus(i, nump);
-							Animation.add(proc, i+1, startGridLine);
-						}
-						else {
-							addProcToCell(Animation, l, i, nump);
-						}
+					if(simulation.processIsCrashed(i)) {
+						StackPane proc = new StackPane();
+						proc.getChildren().addAll(new Circle(10,Color.RED), new Label("P"+i));
+						addTooltip(proc,i);
+						AnimationS.get(scptID).add(proc,nbperline,l);
 					}
-					else if(l == processline[i] && l< startGridLine){
-						// Le processus est dans sa phase d'initialisation
-						//addProcToCell(Animation, 0, i, nump);
-
-						refreshInitBlock();
-
+					else if(simulation.processIsDone(i)) {
+						StackPane proc = new StackPane();
+						proc.getChildren().addAll(new Circle(10,Color.BLUE), new Label("P"+i));
+						addTooltip(proc,i);
+						AnimationS.get(scptID).add(proc,nbperline,l);
 					}
+					else if(i==nump) {
+						StackPane proc = new StackPane();
+						proc.getChildren().addAll(new Circle(10,Color.GREEN), new Label("P"+i));
+						addTooltip(proc,i);
+						AnimationS.get(scptID).add(proc,nbperline,l);
+					}
+					else {
+						StackPane proc = new StackPane();
+						proc.getChildren().addAll(new Circle(10,Color.web("#8599ad")), new Label("P"+i));
+						addTooltip(proc,i);
+						AnimationS.get(scptID).add(proc,nbperline,l);
+					}
+					nbperline++;
+				}
 			}
 		}
 
-		//Animation.setGridLinesVisible(true);
+		AnimationS.get(scptID).setGridLinesVisible(true);
+		}
 	}
 
-
+	public int foundsctpIdwithNump(int nump) {
+	
+			int sum = 0;
+			int scptID =0;
+			for(Spinner spin : listSpinner)
+			{
+				sum = sum + ((Spinner<Integer>)spin).getValue();
+				if(sum>=nump) {
+					return scptID;
+				}
+				scptID++;
+			}
+			return 0;
+		}
+		
 	public void addTooltip(StackPane proc, int currentProcessId) {
 
-		//On r?cup?res lse donn?e
+		//On rï¿½cupï¿½res lse donnï¿½e
 
 		Variable[] variableInfo;
 		String str = "";
@@ -1314,7 +1323,7 @@ public class FXMLController {
 				break;
 			}
 			else {
-				System.out.println("    " + variableInfo[i].getName() + " " + variableInfo[i].getValue());
+				//System.out.println("    " + variableInfo[i].getName() + " " + variableInfo[i].getValue());
 				str = str + variableInfo[i].getName() + " = ";
 				str = str + variableInfo[i].getValue() + "\n";
 			}
@@ -1327,51 +1336,4 @@ public class FXMLController {
 		Tooltip.install(proc,tool);
 
 	}
-
-
-	// ANIMATION EN TXT
-	public void updateProcessTXT(int nump,int linep) throws RipException{
-
-		//ArrayList<Blocks> BlockStruct = simulation.getBlockStruct(); // Ici, la strucure que j'ai cr?e. cf le docs ou j'explique se qu'il y a dedans (y'as pas les infos pour l'?tat des processus, juste les info sur comment est le code)
-
-        lineProc.getChildren().clear();
-
-        processline[nump]=linep;
-
-		// La textForProcess c'est l'id de la balise FXML dans laquelle on va mettre l'animation. Pour l'instant c'est un texte
-		// Il faudra adapter le code ET le FXML pour que ? la place d'un texte, on est une grille.
-
-		for (int l = 0; l < countLines(code) ; l++) {
-			Text textForProcess2 = new Text(Integer.toString(l)+")");  //On cr?e un Object "TEXTE" (un string avec des info sur le font)
-			textForProcess2.setFont(Font.font("System", 18.9));
-			textForProcess2.setStyle("-fx-font-weight: normal");
-			textForProcess2.setFill(Color.BLACK);
-			lineProc.getChildren().add(textForProcess2);
-			for (int i = 0; i < numberOfProcesses; i++) {
-				if (l==processline[i]) {
-					Text textForProcess = new Text("P"+Integer.toString(i)+",");
-					textForProcess.setFont(Font.font("System", 18.9));
-					textForProcess.setStyle("-fx-font-weight: normal");
-					if(simulation.processIsDone(i)) {
-						textForProcess.setFill(Color.BLUE);
-					}
-					else if(simulation.processIsCrashed(i)) {
-						textForProcess.setFill(Color.RED);
-					}
-					else if(i==nump) {
-						textForProcess.setStyle("-fx-font-weight: bold");
-					}
-					else {
-						textForProcess.setFill(Color.BLACK);
-					}
-					lineProc.getChildren().add(textForProcess);
-				}
-			}
-
-			Text textForProcess = new Text("\n");
-			textForProcess.setFont(Font.font("System", 18.9));
-			lineProc.getChildren().add(textForProcess); // Et la on met l'object texte que l'on viens de cr?e dans la balise "textForProcess"
-		}
-	}
-
 }

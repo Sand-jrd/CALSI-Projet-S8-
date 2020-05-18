@@ -7,15 +7,43 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.TextFlow?>
 
 <!-- APP -->
 
-<VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="719.0" minWidth="1080.0" prefHeight="719.0" prefWidth="1204.0" stylesheets="@styles.css" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frontend.FXMLController">
+<VBox fx:id="mainNode" fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="719.0" minWidth="1080.0" prefHeight="719.0" prefWidth="1204.0" stylesheets="@styles.css" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frontend.FXMLController">
   <children>
 
                 <!-- ___________________________________________ Barre de Menu (File Edit Help teaching) _________________________________________________________________________________-->
 
-                <MenuBar fx:id="menuBar" prefHeight="25.0" prefWidth="1256.0">
+                <MenuBar fx:id="menuBar" prefHeight="26.0" prefWidth="1204.0">
 
                   <!-- _______ FILE ________ -->
       <menus>
@@ -67,17 +95,20 @@
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="37.0" minWidth="1080.0" HBox.hgrow="ALWAYS">
 
                      <children>
-            <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="100.0" prefHeight="38.0" prefWidth="1205.0" HBox.hgrow="ALWAYS">
+            <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="100.0" prefHeight="39.0" prefWidth="1224.0" HBox.hgrow="ALWAYS">
                <children>
                   <Button fx:id="buttonNewExecution" layoutX="14.0" layoutY="6.0" mnemonicParsing="false" onAction="#newExecution" prefHeight="25.0" prefWidth="96.0" text="New Execution">
                      <tooltip>
                         <Tooltip ShowDelay="300ms" text="Run the code and debug the shared variable access" />
                      </tooltip></Button>
-                  <TextField fx:id="textFieldNumberOfProcessesRandom" layoutX="259.0" layoutY="8.0" prefHeight="25.0" prefWidth="49.0" text="5">
-                     <tooltip>
-                        <Tooltip ShowDelay="300ms" text="Number of processes that will run the code" />
-                     </tooltip></TextField>
                   <Label layoutX="136.0" layoutY="12.0" prefHeight="17.0" prefWidth="123.0" text="Number of processes :" />
+                  <ToggleButton fx:id="atomic" layoutX="462.0" layoutY="8.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="By Atomic line">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="ToggleChoice" />
+                     </toggleGroup>
+                  </ToggleButton>
+                  <ToggleButton fx:id="linebyline" layoutX="384.0" layoutY="8.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="79.0" selected="true" text="Line by line" toggleGroup="$ToggleChoice" />
+                  <Spinner fx:id="textFieldNumberOfProcessesRandom" editable="true" initialValue="5" layoutX="257.0" layoutY="8.0" max="20" min="1" prefHeight="25.0" prefWidth="60.0" />
                </children>
             </Pane>
             <Pane minWidth="100.0" prefHeight="40.0" prefWidth="1280.0">
@@ -150,11 +181,13 @@
                         <content>
                           <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="621.0" prefWidth="345.0" style="-fx-background-color: #282c34;">
                                  <children>
-                                    <TextArea fx:id="textAreaOriginalCode" layoutY="1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="619.0" prefWidth="674.0" style="-fx-background-color: #282c34;">
+                                    <TextArea fx:id="textAreaOriginalCode" layoutY="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="619.0" prefWidth="674.0" style="-fx-background-color: #282c34;">
                                        <padding>
                                           <Insets left="10.0" />
                                        </padding></TextArea>
+
                                     <GridPane fx:id="numCod" layoutX="1.0" layoutY="46.0" prefHeight="577.0" prefWidth="11.0" style="-fx-background-color: #282c34;" stylesheets="@styles.css">
+
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
                                       </columnConstraints>
@@ -191,7 +224,7 @@
                <children>
                   <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="110.0" prefHeight="689.0" prefWidth="314.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="155.0" prefWidth="317.0" VBox.vgrow="ALWAYS">
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="145.0" prefWidth="317.0" VBox.vgrow="ALWAYS">
                            <children>
                               <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="164.0" prefWidth="317.0" tabClosingPolicy="UNAVAILABLE">
                                 <tabs>
@@ -199,7 +232,7 @@
                                               <!-- _______ Onglet Step by Step ________ -->
                                   <Tab text="Step by Step">
                                     <content>
-                                      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="143.0" prefWidth="317.0">
+                                      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="93.0" prefWidth="317.0">
                                              <children>
                                                <Button fx:id="buttonPlusStep" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#controllerPlusStep" text="+ step" />
                                                <Button fx:id="buttonMinusStep" layoutX="70.0" layoutY="14.0" mnemonicParsing="false" onAction="#controllerMinusStep" text="- step" />
@@ -277,23 +310,24 @@
 
 
                                     <!-- _______ Tableaux Shared Variables et Local Variables ________ -->
-                        <VBox layoutY="209.0" prefHeight="440.0" prefWidth="314.0" VBox.vgrow="ALWAYS">
+                        <VBox layoutY="166.0" prefHeight="477.0" prefWidth="314.0" VBox.vgrow="ALWAYS">
                            <children>
-                              <Pane prefHeight="491.0" prefWidth="314.0" VBox.vgrow="ALWAYS">
+                              <Pane prefHeight="417.0" prefWidth="314.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <ChoiceBox fx:id="choiceBoxLocalVariables" layoutX="8.0" layoutY="250.0" onDragDone="#updateLocalVariables" prefWidth="150.0" />
-                                    <ListView fx:id="listView1" layoutX="4.0" layoutY="286.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="137.0" prefWidth="131.0" />
-                                    <Label layoutX="4.0" layoutY="227.0" text="Local Variables">
+                                    <ChoiceBox fx:id="choiceBoxLocalVariables" layoutX="8.0" layoutY="237.0" onDragDone="#updateLocalVariables" prefWidth="150.0" />
+                                    <ListView fx:id="listView1" layoutX="4.0" layoutY="278.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="137.0" prefWidth="131.0" />
+                                    <Label layoutX="4.0" layoutY="220.0" text="Local Variables">
                                        <tooltip>
                                           <Tooltip ShowDelay="300ms" text="The local variables of each process will be displayed here" />
                                        </tooltip></Label>
-                                    <ListView fx:id="listView2" layoutX="135.0" layoutY="286.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="137.0" prefWidth="131.0" />
-                                    <ListView fx:id="listView3" layoutX="4.0" layoutY="39.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="178.0" prefWidth="131.0" />
-                                    <ListView fx:id="listView4" layoutX="135.0" layoutY="39.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="178.0" prefWidth="131.0" />
-                                    <Label layoutX="9.0" layoutY="14.0" text="Shared Variables" textFill="#280e0e">
+                                    <ListView fx:id="listView2" layoutX="135.0" layoutY="278.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="137.0" prefWidth="131.0" />
+                                    <ListView fx:id="listView3" layoutX="4.0" layoutY="31.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="178.0" prefWidth="131.0" />
+                                    <ListView fx:id="listView4" layoutX="135.0" layoutY="31.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="178.0" prefWidth="131.0" />
+                                    <Label layoutX="4.0" layoutY="6.0" text="Shared Variables" textFill="#280e0e">
                                        <tooltip>
                                           <Tooltip ShowDelay="300ms" text="All the shared variables will be visible here" />
                                        </tooltip></Label>
+                                    <Button fx:id="MultiScirptMode" layoutX="224.0" layoutY="444.0" mnemonicParsing="false" onAction="#switchMode" style="-fx-background-color: #960018;" text="Switch Mode" textFill="#f2f2f2" />
                                  </children>
                               </Pane>
                            </children>

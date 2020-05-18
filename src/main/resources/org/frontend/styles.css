@@ -17,6 +17,13 @@ MenuBar {
 
 #textAreaOriginalCode{
      -fx-control-inner-background: #282c34;
+     -fx-text-fill: #bebfc2;
+     -fx-font-family: "Arial";
+     -fx-font-size: 12.7;	
+}
+
+.textAreaOriginalCodeClass{
+     -fx-control-inner-background: #282c34;
     -fx-text-fill: #bebfc2;
 }
 
@@ -26,6 +33,11 @@ MenuBar {
 }
 
 #numCod{
+     -fx-control-inner-background: #282c34;
+    -fx-text-fill: #bebfc2;
+}
+
+.numCodClass{
      -fx-control-inner-background: #282c34;
     -fx-text-fill: #bebfc2;
 }
