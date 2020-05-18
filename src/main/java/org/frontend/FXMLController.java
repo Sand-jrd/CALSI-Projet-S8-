@@ -227,6 +227,11 @@ public class FXMLController {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+
+			Animation.getChildren().clear();
+			lineProcCanvas.getChildren().clear();
+			numCod.getChildren().clear();
+			textAreaOriginalCode.setVisible(true);
 			textAreaOriginalCode.setText(code);
 		}
 		else {
@@ -920,7 +925,7 @@ public class FXMLController {
 
 			// Ajout de la premiere colonne
 		ColumnConstraints numberColumn = new ColumnConstraints();
-		numberColumn.setPercentWidth(35);
+		numberColumn.setPercentWidth(40);
 		Animation.getColumnConstraints().add(numberColumn);
 
 			// Ajout des colonnes dediees a l'affichage des processus
