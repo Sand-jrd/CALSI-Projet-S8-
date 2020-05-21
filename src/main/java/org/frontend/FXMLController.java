@@ -918,7 +918,7 @@ public class FXMLController {
 
 	// METHODES D'INITIALISATION DE L'ANIMATION
 
-	public void initGrid(PreTreatment preTreatment) {
+	public void initGrid() {
 
 		// Permet de vider la grille tout en gardant les lignes visibles
 		/*Animation.setGridLinesVisible(false);
@@ -981,6 +981,7 @@ public class FXMLController {
 
 		System.out.print("Grid is ready !\n");
 	}
+
 	public void initBlock(){
 		// Placement des processus dans le block d'initialisation
 		//initialisedProc = new HBox();
@@ -995,19 +996,9 @@ public class FXMLController {
 		}
 	}
 
-	public void refreshInitBlock() throws RipException {
-		System.out.print("Refreshing initialisation block \n");
-		lineProcCanvas.getChildren().clear();
 
-		for (int i=0;i<numberOfProcesses;i++){
-			if (processline[i]<endOfInitBlock){
-				StackPane pane = processStatus(i,numberOfProcesses);
-				lineProcCanvas.getChildren().add(pane);
-			}
-		}
-	}
 
-	//La fonction qui r?initialise l'execution
+	//La fonction qui reinitialise l'execution
 	public void initalizeProcess(int nbrp) throws RipException{
 
 		//Initialisation des parametres de l'animation
@@ -1017,7 +1008,7 @@ public class FXMLController {
 
 		// Initialisation de la grille
 		preTreatment = simulation.getPreTreatment();
-		initGrid(preTreatment);
+		initGrid();
 
 		// Initialisation du block
 		System.out.print("Preparing the initialisation block... \n");
@@ -1139,18 +1130,18 @@ public class FXMLController {
         loadFromTeaching();
 	}
 
-	private void setThenumberToTheCode() {
+	/*private void setThenumberToTheCode() {
 		numCod.getChildren().clear();
 	    for (int y = 0 ; y < countLines(code) ; y++) {
 	    	//System.out.println(y);
-			Text line = new Text(y+".");  //On cr�e un Object "TEXTE" (un string avec des info sur le font)
+			Text line = new Text(y+".");  //On cree un Object "TEXTE" (un string avec des info sur le font)
 			line.setStyle("-fx-font-family: 'Arial'   -fx-font-size: 12.7;\r\n" +
 							"   -fx-fill: #bebfc2;");
 	    	numCod.add(line,0,y);
 		}
 	}
-	
-	/*
+	*/
+
 	private void setThenumberToTheCode() {
 		/* Met le code sous forme de grille avec
 		premiere colonne : le numero de ligne
@@ -1159,7 +1150,10 @@ public class FXMLController {
 		Le block d'initialisation est separe du reste du code
 		La partie texte n'est plus accessible car rendue invisible pour l'utilisateur
 		 
+		*/
 
+		// retrait de la zone textAreaOriginalCode
+		textAreaOriginalCode.setVisible(false);
 		// Nettoyage de la grille numCod
 		numCod.getChildren().clear();
 		numCod.getColumnConstraints().clear();
@@ -1205,9 +1199,58 @@ public class FXMLController {
 
 		}
 	}
-		*/
+
 
 	// METHODES POUR AFFICHAGE DES PROCESSUS
+
+	public void refreshInitBlock() throws RipException {
+		System.out.print("Refreshing initialisation block \n");
+		lineProcCanvas.getChildren().clear();
+
+		for (int i=0;i<numberOfProcesses;i++){
+			if (processline[i]<endOfInitBlock){
+				StackPane pane = processStatus(i,numberOfProcesses);
+				lineProcCanvas.getChildren().add(pane);
+				addTooltip(pane, i);
+			}
+		}
+	}
+
+	public void refreshGrid(int nump) throws RipException {
+
+		Animation.getChildren().clear();
+		initGrid();
+
+		for (int l = 0; l < countLines(code) ; l++) {
+			for (int i = 0; i < numberOfProcesses; i++) {
+
+				if (l == processline[i] && l>= endOfInitBlock) {
+					// Le processus n'est plus dans la phase d'initialisation
+
+					// On retire le processus de la ligne d'initialisation au moment ou il en sort
+					if(l == endOfInitBlock ){
+						refreshInitBlock();
+						StackPane proc = processStatus(i, nump);
+						Animation.add(proc, i+1, endOfInitBlock);
+					}
+					else {
+						StackPane proc = processStatus(i, nump);
+						Animation.add(proc, i+1, l);
+						//addProcToCell(Animation, l, i, nump);
+					}
+				}
+				else if(l == processline[i] && l< endOfInitBlock){
+					// Le processus est dans sa phase d'initialisation
+					//addProcToCell(Animation, 0, i, nump);
+
+					refreshInitBlock();
+
+				}
+			}
+		}
+
+	}
+
 
 	public void removeProcFromCell(GridPane grid, int row, int column){
 		/* Arguments : grille, indice de la ligne, indice de la colonne
@@ -1235,7 +1278,6 @@ public class FXMLController {
 		Animation.add(pane, proc + 1,row);
 
 	}
-
 	public StackPane processStatus(int proc, int nump) throws RipException {
 
 		StackPane pane = new StackPane();
@@ -1253,45 +1295,6 @@ public class FXMLController {
 		addTooltip(pane, proc);
 		return pane;
 	}
-
-	//ANIMATION AVEC LA GRILLE
-	public void updateProcess(int nump,int linep) throws RipException{
-		// nump : number of process
-		// linep : line of process
-
-        processline[nump]=linep;
-		int startGridLine = endOfInitBlock;
-		System.out.println("The grid will start at line : "+startGridLine +"\n");
-
-		for (int l = 0; l < countLines(code) ; l++) {
-			for (int i = 0; i < numberOfProcesses; i++) {
-
-					if (l == processline[i] && l>= startGridLine) {
-						// Le processus n'est plus dans la phase d'initialisation
-
-						// On retire le processus de la ligne d'initialisation au moment ou il en sort
-						if(l == startGridLine ){
-							refreshInitBlock();
-							StackPane proc = processStatus(i, nump);
-							Animation.add(proc, i+1, startGridLine);
-						}
-						else {
-							addProcToCell(Animation, l, i, nump);
-						}
-					}
-					else if(l == processline[i] && l< startGridLine){
-						// Le processus est dans sa phase d'initialisation
-						//addProcToCell(Animation, 0, i, nump);
-
-						refreshInitBlock();
-
-					}
-			}
-		}
-
-		//Animation.setGridLinesVisible(true);
-	}
-
 
 	public void addTooltip(StackPane proc, int currentProcessId) {
 
@@ -1326,6 +1329,49 @@ public class FXMLController {
 		tool.setShowDelay(new Duration(100));
 		Tooltip.install(proc,tool);
 
+	}
+
+	//ANIMATION AVEC LA GRILLE
+	public void updateProcess(int nump,int linep) throws RipException{
+		// nump : number of process
+		// linep : line of process
+
+        processline[nump]=linep;
+		int startGridLine = endOfInitBlock;
+		System.out.println("The grid will start at line : "+startGridLine +"\n");
+
+		for (int l = 0; l < countLines(code) ; l++) {
+			for (int i = 0; i < numberOfProcesses; i++) {
+
+					if (l == processline[i] && l>= startGridLine) {
+						// Le processus n'est plus dans la phase d'initialisation
+
+						// On retire le processus de la ligne d'initialisation au moment ou il en sort
+						if(l == startGridLine ){
+							refreshInitBlock();
+							refreshGrid(nump);
+							/*
+							StackPane proc = processStatus(i, nump);
+							Animation.add(proc, i+1, startGridLine);
+							 */
+						}
+						else {
+							//addProcToCell(Animation, l, i, nump);
+							refreshGrid(nump);
+						}
+					}
+					/*
+					else if(l == processline[i] && l< startGridLine){
+						// Le processus est dans sa phase d'initialisation
+						//addProcToCell(Animation, 0, i, nump);
+
+						refreshInitBlock();
+
+					} */
+			}
+		}
+
+		//Animation.setGridLinesVisible(true);
 	}
 
 
