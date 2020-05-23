@@ -1,22 +1,21 @@
 import java.lang.Math; 
 import java.lang.String;
 // Shared variables declaration
-Boolean porte;
-Integer idRegister;
+Boolean[] Flag;
+Integer[] Turns;
 // Shared variables initialization
-idRegister = -1;
-porte = true;
+Turns = new Integer[4];
+Flag = new Boolean[4];
 // Local variables declaration
-Integer direction;
-// Splitter Algorithm
-idRegister = index;
-if(porte == false){
-	direction = 1;
-}else{
-	porte = false;
-	if(idRegister == i){
-		direction = 0;
-	}else{
-		direction = 2;
-	}
+Integer end;
+// Bakery Algorithm
+end = 0;
+Turns[i] = max(i);
+Flag[i] = false;
+for(int j=1; j<4; j++){
+if(Flag[j] = false){
+	
 }
+}
+
+

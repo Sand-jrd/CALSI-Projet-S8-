@@ -1,23 +1,32 @@
-import java.lang.Math; 
+ import java.lang.Math; 
 // Shared variables declaration
-Integer turn;
+Integer[] myTurn ;
 Boolean[] flag;
 // Shared variables initialization
-turn = new Integer(0);
+myTurn = new Integer[np];
 flag = new Boolean[np];
-Arrays.fill(flag , false);
+Arrays.fill(flag , true);
+Arrays.fill(myTurn , 0);
 // Local variables declaration
 int j;
-Boolean a;
-int b;
-// Algorithm
-j = (index+1) % 2;
-flag[index] = true;
-turn = j;
-a = flag[j];
-b = turn;
-while ( a == true && b == j ) {
-a = flag[j];
-b = turn;
+int p1;
+int p2;
+// Algorithm to attribu Mutext
+flag[index] = false;
+myTurn[index] = max(MyTurn) +1;
+for(j=0;j<np;j++){
+	while(flag[j] = down){
+		//wait
+	}
+	//Calculate priority
+	p1 = myTurn[index];
+	p2 = myTurn[j];
+	while(myTurn[j] ==0 && p1>p2){
+		//wait
+	}
 }
 flag[index] = false;
+//Critical section
+// Relase Mutex
+myTurn[index] = 0;
+

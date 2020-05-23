@@ -379,9 +379,16 @@ public class BlocksConversion extends Tools{
 		lines.add(inst2);
 		lines.set(inst1.id, inst1);
 		lines.set(endLineGoto.id, endLineGoto);
-
+		
 		code.add(startLine + 1, startLineGoto.id);
 		code.add(endLine + 1, inst2.id);
+		
+		for (int i = 0; i < code.size(); ++i) {
+			lines.get(i).showContent();
+			System.out.println("Code : " + code.get(i));
+		}
+
+
 
 	}
 	
