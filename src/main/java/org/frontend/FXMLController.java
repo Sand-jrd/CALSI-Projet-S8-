@@ -164,7 +164,7 @@ public class FXMLController {
 	private PreTreatment preTreatment;
 
 	private String fichierShed=""; // Chemain absolu du fichier
-	private String ShedString="";  // Contenu du fichier.
+	private String SchedString="";  // Contenu du fichier.
 
 	private int [] processline;
 	private SimulationBuilder simulationBuilder;
@@ -271,18 +271,18 @@ public class FXMLController {
 
 		// LECTURE DU FICHIER
 		if (selectedFile != null) {
-			fichierShed= selectedFile.getAbsolutePath(); //R?cup?ration du chemain absolu
+			fichierShed= selectedFile.getAbsolutePath(); //Recuperation du chemin// in absolu
 			try (BufferedReader reader = new BufferedReader(new FileReader(new File(fichierShed)))) {
 
 				String line;
-				ShedString="";
+				SchedString="";
 
 				//On lit ligne par ligne, ici.
 				while ((line = reader.readLine()) != null) {
 
 					// On concact?ne les lignes pour les enregsitrer dans un long string.
 					//Si tu p?f?re une liste ou autre chose tu peu changer ?a.
-					ShedString=ShedString+line+"\n";
+					SchedString=SchedString+line+"\n";
 				}
 
 			// Truc pour le font.
@@ -317,7 +317,7 @@ public class FXMLController {
 
 		try (FileWriter fw = new FileWriter(selectedFile.getAbsolutePath())){
 			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(ShedString);
+			bw.write(SchedString);
 			bw.flush();
 			bw.close();
 			System.out.print("saved\n");
@@ -433,10 +433,10 @@ public class FXMLController {
         alert.showAndWait();
 	}
 
-	// Bouton samleScheduler
+	// Bouton sampleScheduler
 	public void help5(){
         Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("samleScheduler");
+        alert.setTitle("sampleScheduler");
         alert.setHeaderText(null);
 
         Image image = new Image("file:Images/1.png", true);
@@ -553,7 +553,7 @@ public class FXMLController {
 		simulation = simulationBuilder
 				.withSourceCodeFromFile(sourcecode)
 				.withNumberOfProcesses(((Spinner<Integer>)textFieldNumberOfProcessesRandom).getValue())
-				.withScheduler(schedChoice,ShedString)
+				.withScheduler(schedChoice,SchedString)
 				.build(); //Cr?ation de la simulation
 		System.out.print("Finishing simulation \n");
 		System.out.print(simulation.simulationIsDone());
@@ -650,7 +650,7 @@ public class FXMLController {
 			}
 		}
 		else {
-			customeAlert("No auto-simaltion is in process");
+			customeAlert("No auto-simulation is in process");
 		}
 	}
 
@@ -704,7 +704,7 @@ public class FXMLController {
 		    	customeAlert("You must start a new execution");
 	    	}
 	    	else {
-	    	customeAlert("An unknown probleme have occured, try to restart your app");
+	    	customeAlert("An unknown problem has occured, try to restart your app");
 	        System.out.println(e);
 	    	}
 	    }
@@ -755,12 +755,12 @@ public class FXMLController {
 
 
 	        Stage secondStage = new Stage();
-	        secondStage.setTitle("Sheduler Editor");
+	        secondStage.setTitle("Scheduler Editor");
 	        secondStage.setScene(secondscene);
-	        controller.initialize(ShedString);
+	        controller.initialize(SchedString);
 	        secondStage.showAndWait();
 
-	        ShedString = controller.getShed();
+	        SchedString = controller.getShed();
 
 			} catch (IOException e) {
 				// Auto-generated catch block
@@ -918,7 +918,7 @@ public class FXMLController {
 
 	// METHODES D'INITIALISATION DE L'ANIMATION
 
-	public void initGrid(PreTreatment preTreatment) {
+	public void initGrid() {
 
 		// Permet de vider la grille tout en gardant les lignes visibles
 		/*Animation.setGridLinesVisible(false);
@@ -933,7 +933,6 @@ public class FXMLController {
 
 		int endOfInitBlocks = preTreatment.getEndOfInitBlocks();
 		ArrayList<Blocks> blocksList = preTreatment.getBlocksConversion().getBlockStruct();
-		System.out.println("The last line of initialisation blocks is : " + endOfInitBlocks + "\n");
 
 		/* Creation de la grille */
 
@@ -958,10 +957,8 @@ public class FXMLController {
 			Animation.getRowConstraints().add(rowInit);
 			Animation.addRow(j, label);
 
-			// Animation.add(new Label(j+")"),0,j);
 		}
 		for (int i = endOfInitBlocks; i < countLines(code); i++) {
-			//int lineGrid = i-endOfInitBlocks;
 			RowConstraints rowCode = new RowConstraints();
 			rowCode.setMinHeight(25);
 			Animation.getRowConstraints().add(rowCode);
@@ -974,40 +971,28 @@ public class FXMLController {
 	    	Blocks block = blocksList.get(x);
 	    	String type = block.getType();
 	    	int startBlockLine = block.getIdStart();
-	    	// int startBlockGrid = startBlockLine - endOfInitBlocks;
 	    	Animation.add(new Label(startBlockLine+")"+type), 0, startBlockLine);
 		}
 
 
 		System.out.print("Grid is ready !\n");
 	}
+
 	public void initBlock(){
 		// Placement des processus dans le block d'initialisation
-		//initialisedProc = new HBox();
-		System.out.print("Initialising block");
+		System.out.print("Initialising init block");
 		lineProcCanvas.getChildren().clear();
 		lineProcCanvas.getChildren().add(new Label("Init"));
 		for(int i=0;i<numberOfProcesses; i++){
 			StackPane proc = new StackPane();
 			proc.getChildren().addAll(new Circle(10, Color.web("#8599ad")), new Label("P" + i));
-			//addTooltip(proc, i);
 			lineProcCanvas.getChildren().add(proc);
 		}
 	}
 
-	public void refreshInitBlock() throws RipException {
-		System.out.print("Refreshing initialisation block \n");
-		lineProcCanvas.getChildren().clear();
 
-		for (int i=0;i<numberOfProcesses;i++){
-			if (processline[i]<endOfInitBlock){
-				StackPane pane = processStatus(i,numberOfProcesses);
-				lineProcCanvas.getChildren().add(pane);
-			}
-		}
-	}
 
-	//La fonction qui r?initialise l'execution
+	//La fonction qui reinitialise l'execution
 	public void initalizeProcess(int nbrp) throws RipException{
 
 		//Initialisation des parametres de l'animation
@@ -1017,7 +1002,7 @@ public class FXMLController {
 
 		// Initialisation de la grille
 		preTreatment = simulation.getPreTreatment();
-		initGrid(preTreatment);
+		initGrid();
 
 		// Initialisation du block
 		System.out.print("Preparing the initialisation block... \n");
@@ -1139,27 +1124,30 @@ public class FXMLController {
         loadFromTeaching();
 	}
 
-	private void setThenumberToTheCode() {
+	/*private void setThenumberToTheCode() {
 		numCod.getChildren().clear();
 	    for (int y = 0 ; y < countLines(code) ; y++) {
 	    	//System.out.println(y);
-			Text line = new Text(y+".");  //On cr�e un Object "TEXTE" (un string avec des info sur le font)
+			Text line = new Text(y+".");  //On cree un Object "TEXTE" (un string avec des info sur le font)
 			line.setStyle("-fx-font-family: 'Arial'   -fx-font-size: 12.7;\r\n" +
 							"   -fx-fill: #bebfc2;");
 	    	numCod.add(line,0,y);
 		}
 	}
-	
-	/*
+	*/
+
 	private void setThenumberToTheCode() {
-		/* Met le code sous forme de grille avec
+		/* Met le code texte sous forme de grille avec
 		premiere colonne : le numero de ligne
 		deuxieme colonne : la ligne de code
 
 		Le block d'initialisation est separe du reste du code
 		La partie texte n'est plus accessible car rendue invisible pour l'utilisateur
 		 
+		*/
 
+		// retrait de la zone textAreaOriginalCode
+		textAreaOriginalCode.setVisible(false);
 		// Nettoyage de la grille numCod
 		numCod.getChildren().clear();
 		numCod.getColumnConstraints().clear();
@@ -1205,9 +1193,59 @@ public class FXMLController {
 
 		}
 	}
-		*/
+
 
 	// METHODES POUR AFFICHAGE DES PROCESSUS
+
+	public void refreshInitBlock() throws RipException {
+		// Met a jour le block d'initialisation de l'animation
+		System.out.print("Refreshing initialisation block \n");
+		lineProcCanvas.getChildren().clear();
+
+		for (int i=0;i<numberOfProcesses;i++){
+			if (processline[i]<endOfInitBlock){
+				StackPane pane = processStatus(i,numberOfProcesses);
+				lineProcCanvas.getChildren().add(pane);
+				addTooltip(pane, i);
+			}
+		}
+	}
+
+	public void refreshGrid(int nump) throws RipException {
+		// Met a jour la grille de l'animation
+		Animation.getChildren().clear();
+		initGrid();
+
+		for (int l = 0; l < countLines(code) ; l++) {
+			for (int i = 0; i < numberOfProcesses; i++) {
+
+				if (l == processline[i] && l>= endOfInitBlock) {
+					// Le processus n'est plus dans la phase d'initialisation
+
+					// On retire le processus de la ligne d'initialisation au moment ou il en sort
+					if(l == endOfInitBlock ){
+						refreshInitBlock();
+						StackPane proc = processStatus(i, nump);
+						Animation.add(proc, i+1, endOfInitBlock);
+					}
+					else {
+						StackPane proc = processStatus(i, nump);
+						Animation.add(proc, i+1, l);
+						//addProcToCell(Animation, l, i, nump);
+					}
+				}
+				else if(l == processline[i] && l< endOfInitBlock){
+					// Le processus est dans sa phase d'initialisation
+					//addProcToCell(Animation, 0, i, nump);
+
+					refreshInitBlock();
+
+				}
+			}
+		}
+
+	}
+
 
 	public void removeProcFromCell(GridPane grid, int row, int column){
 		/* Arguments : grille, indice de la ligne, indice de la colonne
@@ -1235,9 +1273,9 @@ public class FXMLController {
 		Animation.add(pane, proc + 1,row);
 
 	}
-
 	public StackPane processStatus(int proc, int nump) throws RipException {
-
+		// Cree un stackPane en fonction de l'etat du processus
+		// Ajoute les tooltips
 		StackPane pane = new StackPane();
 
 		if (simulation.processIsCrashed(proc)) {
@@ -1253,45 +1291,6 @@ public class FXMLController {
 		addTooltip(pane, proc);
 		return pane;
 	}
-
-	//ANIMATION AVEC LA GRILLE
-	public void updateProcess(int nump,int linep) throws RipException{
-		// nump : number of process
-		// linep : line of process
-
-        processline[nump]=linep;
-		int startGridLine = endOfInitBlock;
-		System.out.println("The grid will start at line : "+startGridLine +"\n");
-
-		for (int l = 0; l < countLines(code) ; l++) {
-			for (int i = 0; i < numberOfProcesses; i++) {
-
-					if (l == processline[i] && l>= startGridLine) {
-						// Le processus n'est plus dans la phase d'initialisation
-
-						// On retire le processus de la ligne d'initialisation au moment ou il en sort
-						if(l == startGridLine ){
-							refreshInitBlock();
-							StackPane proc = processStatus(i, nump);
-							Animation.add(proc, i+1, startGridLine);
-						}
-						else {
-							addProcToCell(Animation, l, i, nump);
-						}
-					}
-					else if(l == processline[i] && l< startGridLine){
-						// Le processus est dans sa phase d'initialisation
-						//addProcToCell(Animation, 0, i, nump);
-
-						refreshInitBlock();
-
-					}
-			}
-		}
-
-		//Animation.setGridLinesVisible(true);
-	}
-
 
 	public void addTooltip(StackPane proc, int currentProcessId) {
 
@@ -1326,6 +1325,49 @@ public class FXMLController {
 		tool.setShowDelay(new Duration(100));
 		Tooltip.install(proc,tool);
 
+	}
+
+	//ANIMATION AVEC LA GRILLE
+	public void updateProcess(int nump,int linep) throws RipException{
+		// nump : number of process
+		// linep : line of process
+
+        processline[nump]=linep;
+		int startGridLine = endOfInitBlock;
+		System.out.println("The grid will start at line : "+startGridLine +"\n");
+
+		for (int l = 0; l < countLines(code) ; l++) {
+			for (int i = 0; i < numberOfProcesses; i++) {
+
+					if (l == processline[i] && l>= startGridLine) {
+						// Le processus n'est plus dans la phase d'initialisation
+
+						// On retire le processus de la ligne d'initialisation au moment ou il en sort
+						if(l == startGridLine ){
+							refreshInitBlock();
+							refreshGrid(nump);
+							/*
+							StackPane proc = processStatus(i, nump);
+							Animation.add(proc, i+1, startGridLine);
+							 */
+						}
+						else {
+							//addProcToCell(Animation, l, i, nump);
+							refreshGrid(nump);
+						}
+					}
+					/*
+					else if(l == processline[i] && l< startGridLine){
+						// Le processus est dans sa phase d'initialisation
+						//addProcToCell(Animation, 0, i, nump);
+
+						refreshInitBlock();
+
+					} */
+			}
+		}
+
+		//Animation.setGridLinesVisible(true);
 	}
 
 
