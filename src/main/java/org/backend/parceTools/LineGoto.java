@@ -11,6 +11,9 @@ import org.backend.exceptions.BackEndException;
  */
 public class LineGoto extends Line {
 	
+	String condition;   // Condition du goto
+	int toId;			// Goto to line "toId"
+	
 	public LineGoto(int id, String cond, int toid) {
 		super(id);
 		this.condition = cond;
@@ -21,13 +24,20 @@ public class LineGoto extends Line {
 	public LineGoto(int id, int mapid, String cond, int toid) {
 		super(id, mapid);
 		this.condition = cond;
-		this.toId = toid;
+		this.toId = toid;   //true line of end of block
+		
+	}
+	
+	public LineGoto(int id, int mapid, String cond, int toid,String comment) {
+		super(id, mapid, comment);
+		this.condition = cond;
+		this.toId = toid;   //true line of end of block
 		
 	}
 	
 	public void showContent() {
 		super.showContent();
-        System.out.println("Condition : "+this.condition +" toid :"+this.toId );
+        System.out.println("Condition : "+this.condition +" toTRUEid :"+ this.toId );
 	}
 	
 	/**
@@ -37,30 +47,34 @@ public class LineGoto extends Line {
 	 *  the line to be executed next.
 	 */
 	@Override
-	public String getLineCode(ArrayList<Integer> code) throws BackEndException {
-		
-		int idLine = ID_NOT_FOUND;
-		
-		if(this.toId == ID_BEGIN) {
-			idLine = 0;
-		}else if(this.toId == ID_END){
-			idLine = code.size();
-		}else {
-			for(int i = 0; i < code.size(); ++i) {
-				if(code.get(i) == this.toId) {
-					idLine = i;
-					break;
-				}
-			}			
+	public String getLineCode(ArrayList<Line> lines) throws BackEndException {
+		String com = "";
+		if (comment!="") {
+			 com = "			//" + comment +"(line"+mapId+")";
 		}
-		
-		if(idLine == ID_NOT_FOUND) {
-			throw new BackEndException("Internal Error: LineGoto.getLineCode : toId not found in code");
+		if (this.condition=="FOR") {
+			return "goto (" + "true" + ", " + (getIdFromMapId(lines,this.toId)+1) + ");"+com;
 		}
-		
-		return "goto (" + this.condition + ", " + Integer.toString(idLine) + ");";
+		return "goto (" + this.condition + ", " + getIdFromMapId(lines,this.toId) + ");"+com;
 	}
 	
-	String condition;
-	int toId;
+	@Override
+	public String getLineCodeNoComment(ArrayList<Line> lines) throws BackEndException {
+		
+		if (this.condition=="FOR") {
+			return "goto (" + "true" + ", " + (getIdFromMapId(lines,this.toId)+1) + ");";
+		}
+		return "goto (" + this.condition + ", " + getIdFromMapId(lines,this.toId) + ");";
+	}
+	
+	protected int getIdFromMapId(ArrayList<Line> lines, int toId) {
+		
+		for (int i = 0; i < lines.size(); i++) {
+			if(lines.get(i).getMapId()==toId) {
+				return i;
+			}
+		}
+		return lines.size();
+	}
+
 }

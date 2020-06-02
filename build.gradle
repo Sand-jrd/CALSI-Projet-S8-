@@ -1,5 +1,6 @@
 plugins {
   id 'application'
+  id 'distribution'
   id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
@@ -18,7 +19,7 @@ dependencies {
 
 javafx {
     version = "13"
-    modules = [ 'javafx.controls', 'javafx.fxml','javafx.base','javafx.graphics','javafx.media' ]
+    modules = [ 'javafx.controls', 'javafx.fxml','javafx.base','javafx.graphics','javafx.media','javafx.swing','javafx.web']
 }
 
 jar {
@@ -34,7 +35,9 @@ run {
     }
 }
 
+application {
+    executableDir = 'CALSI-Executable'
+}
+
 //A changer avec notre main class
 mainClassName = 'org.frontend.MainApp'
-
-version = '11.0.6'

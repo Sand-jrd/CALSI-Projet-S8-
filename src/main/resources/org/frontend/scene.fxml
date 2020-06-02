@@ -2,15 +2,38 @@
 
 <!-- INCLUDES  -->
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.TextFlow?>
 
 <!-- APP -->
 
-<VBox fx:id="mainNode" fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="719.0" minWidth="1080.0" prefHeight="719.0" prefWidth="1204.0" stylesheets="@styles.css" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frontend.FXMLController">
+<VBox fx:id="mainNode" fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="719.0" minWidth="1080.0" prefHeight="719.0" prefWidth="1204.0" stylesheets="@styles.css" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frontend.FXMLController">
   <children>
 
                 <!-- ___________________________________________ Barre de Menu (File Edit Help teaching) _________________________________________________________________________________-->
@@ -123,6 +146,13 @@
                <children>
                   <Pane maxWidth="-Infinity" minHeight="200.0" minWidth="86.0" prefHeight="600.0" prefWidth="199.0">
                      <children>
+                        <TextField fx:id="initialisationBlock" editable="false" prefHeight="11.0" prefWidth="200.0" style="-fx-background-color: #8599ad; -fx-font: bold;" text="Initialisation Block">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font>
+                        </TextField>
+                        <HBox fx:id="lineProcCanvas" layoutY="27.0" prefHeight="29.0" prefWidth="200.0" style="-fx-border-color: #8599ad; -fx-border-width: 3;" />
+                        <TextFlow fx:id="lineProc" layoutX="-1.0" layoutY="56.0" prefHeight="596.0" prefWidth="200.0" />
                         <GridPane fx:id="Animation" layoutY="63.0" prefHeight="584.0" prefWidth="200.0" style="-fx-border-color: #8599ad; -fx-border-width: 5;">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -131,13 +161,6 @@
                               <RowConstraints />
                            </rowConstraints>
                         </GridPane>
-                        <TextField fx:id="initialisationBlock" editable="false" prefHeight="11.0" prefWidth="200.0" style="-fx-background-color: #8599ad; -fx-font: bold;" text="Initialisation Block">
-                           <font>
-                              <Font name="System Bold" size="13.0" />
-                           </font>
-                        </TextField>
-                        <HBox fx:id="lineProcCanvas" layoutY="27.0" prefHeight="29.0" prefWidth="200.0" style="-fx-border-color: #8599ad; -fx-border-width: 3;" />
-                        <TextFlow fx:id="lineProc" layoutX="-1.0" layoutY="56.0" prefHeight="596.0" prefWidth="200.0" />
                      </children>
                   </Pane>
                </children>
@@ -158,7 +181,7 @@
                                           <Insets left="10.0" />
                                        </padding></TextArea>
 
-                                    <GridPane fx:id="numCod" layoutX="1.0" layoutY="46.0" prefHeight="577.0" prefWidth="11.0" style="-fx-background-color: #282c34;" stylesheets="@styles.css">
+                                    <GridPane fx:id="numCod" layoutX="1.0" layoutY="6.0" prefHeight="621.0" prefWidth="11.0" style="-fx-background-color: #282c34;" stylesheets="@styles.css">
 
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />

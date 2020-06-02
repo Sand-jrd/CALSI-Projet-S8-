@@ -34,7 +34,7 @@ public class Process extends Tools{
 	public Process(int index,int numberOfProcesses, PreTreatment preTreatment) throws BackEndException {
 		this.inter = new Interpreter();
 		
-		/*
+		
 		BshClassManager manag  = inter.getClassManager();
 		
 		//On ajoute le package Object à ClassPath pour qu'il puisse être importer: 
@@ -49,7 +49,7 @@ public class Process extends Tools{
 	    } catch (Exception e) {
 	        throw new RuntimeException(e);
 	    }
-		*/
+		
 		// Reserved variables index et numberOfProcesses
 		try {
 			this.inter.set("index", index);
@@ -137,7 +137,9 @@ public class Process extends Tools{
 		}
 		originalSourceLinesExecutedDuringLastStep.clear();
 		originalSourceLinesExecutedDuringLastStep.add(preTreatment.getOriginalLineNumber(currentLine));
-
+		
+		System.out.println("Ce proc est à l'étape " + currentLine + "Qui correpond à la ligne "+ preTreatment.getOriginalLineNumber(currentLine) + "du code original");
+		
 		// The shared variables in the interpreter (which might have been modified in an other process since) are 
 		// updated from the array of shared variables.
 		

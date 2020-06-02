@@ -1,6 +1,8 @@
 package org.backend.parceTools;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 import org.backend.exceptions.BackEndException;
 import org.backend.parceTools.blockType.*;
@@ -40,9 +42,8 @@ public class BlocksConversion extends Tools{
 		this.code = blocksConversionOld.getCode();
 	}
 
-
 	public int getNumberOfLines() {
-		return code.size();
+		return lines.size();
 	}
 
 	public int originalLineNumber(int lineNumber) throws IndexOutOfBoundsException {
@@ -51,8 +52,7 @@ public class BlocksConversion extends Tools{
 			throw new IndexOutOfBoundsException();
 		}
 
-		int lineId = this.code.get(lineNumber);
-		Line line = this.lines.get(lineId);
+		Line line = this.lines.get(lineNumber);
 		return line.mapId;
 	}
 
@@ -61,21 +61,9 @@ public class BlocksConversion extends Tools{
 
 		for (int i = 0; i < this.lines.size(); i++) {
 			Line l = this.lines.get(i);
-			result = result + Integer.toString(i) + ") " + l.getLineCode(code) + "\n";
+			result = result + Integer.toString(i) + ") " + l.getLineCode(lines) + "\n";
 		}
 		return result;
-	}
-	
-	public String[] getNewSourceCodeAsArray() throws BackEndException {
-		System.out.println("lines size getNewSourceCodeAsArray: " + code.size());
-		String[] newSourceCode = new String[code.size()];
-		
-		for (int i = 0; i < this.code.size(); i++) {
-			Line line = this.lines.get(code.get(i));
-			newSourceCode[i] = line.getLineCode(code);
-		}
-	
-		return newSourceCode;
 	}
 	
 	public String[] getNewSourceCodeArray() throws BackEndException {
@@ -84,7 +72,7 @@ public class BlocksConversion extends Tools{
 
 		for(int i=0; i<this.lines.size(); i++) {
 			Line l = this.lines.get(i);
-			result[i] = l.getLineCode(this.code);
+			result[i] = l.getLineCodeNoComment(lines);
 		}
 		return result;
 	}
@@ -101,16 +89,20 @@ public class BlocksConversion extends Tools{
 		this.code.clear();
 
 		for (int i = 0; i < sourceCode.length; ++i) {
-			this.lines.add(i, new LineString(i, sourceCode[i]));
+			this.lines.add(i,new LineString(i,i, sourceCode[i]));
 			this.code.add(i, Integer.valueOf(i));
 		}
 		
 		int jump = 0;
 		
+		// Return the first block it find
 		block = getFirstBlockString();
 
-		while (block != "none") {
+		while (block != "none") { 
+			
+			// Treat the block
 			int line = getFirstBlockLine();
+			
 			switch (block) {
 			case "while":
 				jump = jump + preTreatWhile(line);
@@ -125,20 +117,19 @@ public class BlocksConversion extends Tools{
 				jump = jump +preTreatDoWhile(line);
 				break;
 			}
+			restorTrueParceCodeId();
 			block = getFirstBlockString();
-			
+
+			//Continu 
 		}
 		
-		
+		restorTrueParceCodeId();
 		//Do usefull prints
-		
 		/*
-		for (int i = 0; i < code.size(); ++i) {
+		for (int i = 0; i < lines.size(); ++i) {
 			lines.get(i).showContent();
-			System.out.println("Code : " + code.get(i));
 		}
 		*/
-		
 	}
 
 	/**
@@ -148,11 +139,11 @@ public class BlocksConversion extends Tools{
 	private int getFirstBlockLine() throws BackEndException {
 		String blockString;
 
-		for (int i = 0; i < code.size(); ++i) {
+		for (int i = 0; i < lines.size(); ++i) {
 
-			blockString = containBlock(lines.get(code.get(i)).getLineCode(code));
+			blockString = containBlock(lines.get(i).getLineCodeNoComment(lines));
 			if (blockString != "") {
-				return i;
+				return lines.get(i).getId();
 			}
 		}
 		return -1;
@@ -165,9 +156,9 @@ public class BlocksConversion extends Tools{
 	private String getFirstBlockString() throws BackEndException {
 		String blockString;
 
-		for (int i = 0; i < code.size(); ++i) {
+		for (int i = 0; i < lines.size(); ++i) {
 
-			blockString = containBlock(lines.get(i).getLineCode(code));
+			blockString = containBlock(lines.get(i).getLineCodeNoComment(lines));
 			if (blockString != "") {
 				return blockString;
 			}
@@ -190,16 +181,19 @@ public class BlocksConversion extends Tools{
 		int p = 1;
 		int i;
 		for (i = start+1; i < lines.size() ;i++ ) {
-			String line = lines.get(i).getLineCode(code);
-			//System.out.println("La ligne est " + line);
+			String line = lines.get(i).getLineCode(lines);
+			System.out.println("Id("+ i +") La ligne est :" + line + "et p = "+p);
 			if (line.contains("}")) {
 				p--;
+				System.out.println("La ligne } trouvé, p= "+p);
 				if(p == 0) {
 					return i;
 				}
 			}
-			if (line.contains("{"))
+			else if (line.contains("{")) {
+				System.out.println("La ligne { trouvé p= " + p);
 				p++;
+			}
 		}
 		return -1;
 	}
@@ -221,30 +215,31 @@ public class BlocksConversion extends Tools{
 		
 		int whileLine = line;
 		int closeLine = getBlockEnd(whileLine);
+		int whileLineTrue = lines.get(whileLine).getMapId();
+		int closeLineTrue = lines.get(closeLine).getMapId();
 		
-		BlockStruct.add(new Blocks("while",whileLine,closeLine));
+
 		
-		String whileLineString = lines.get(code.get(whileLine)).getLineCode(code);
+		String whileLineString = lines.get(whileLine).getLineCode(lines);
 		String cond = whileLineString.substring(whileLineString.indexOf('(') + 1, whileLineString.lastIndexOf(')'));
-		
-		int startToId = closeLine + 1 < code.size() ? code.get(closeLine + 1) : Line.ID_END;
-		int closeToId = code.get(whileLine);
 		
 		ArrayList<String> conds = dividConds(cond);
 		int nbConds = conds.size()-1;
 
-		String notCond = "!(" + conds.get(0) + ")"; 
-		lines.set(code.get(whileLine), new LineGoto(code.get(whileLine), notCond, startToId));
-
-		for(int i = 1;i<=nbConds;i++) {
-			notCond = "!(" + conds.get(i) + ")"; 
-			//this.code.add(code.get(whileLine+i), code.get(whileLine+i));
-			lines.add(code.get(whileLine+i), new LineGoto(code.get(whileLine+i),whileLine, notCond, startToId));
+		if(nbConds> 1) {
+			System.out.println("Conds "+nbConds+": " + conds.get(nbConds));
+			for(int i = 0;i<=nbConds-1;i++) {
+				lines.add(whileLine+i, new LineString(whileLine+i,whileLineTrue, conds.get(i), "While"));
+			}
 		}
-
-		BlockStruct.add(new Blocks("While",startToId,closeToId+nbConds));
-		lines.set(code.get(closeLine+nbConds), new LineGoto(code.get(closeLine+nbConds), "true", closeToId));
-
+		System.out.println("Goto cond"+nbConds+": " + conds.get(nbConds));
+		String notCond = "!(" + conds.get(nbConds) + ")"; 
+		lines.set(whileLine+nbConds, new LineGoto(whileLine+nbConds,whileLineTrue, notCond,closeLineTrue+1 , "While"));
+		
+		lines.set(closeLine+nbConds, new LineGoto(closeLine+nbConds,closeLineTrue, "true", whileLineTrue,"End of while"));
+		
+		BlockStruct.add(new Blocks("while",whileLineTrue,closeLineTrue));
+		
 		return nbConds-1;
 	}
 
@@ -254,62 +249,63 @@ public class BlocksConversion extends Tools{
 	 
 		//On regarde si il y a un else
 		if(getBlockEnd(getBlockEnd(ifLine)) > 0) {
+			
 			int elseLine = getBlockEnd(ifLine);
 			int closeLine = getBlockEnd(elseLine);
-			int ifLineId = code.get(ifLine);
-			int elseLineId = code.get(elseLine);
-
-			BlockStruct.add(new Blocks("if",ifLine,elseLine));
-			BlockStruct.add(new Blocks("else",elseLine,closeLine));
+			int ifLineTrue = lines.get(ifLine).getMapId();
+			int elseLineTrue = lines.get(elseLine).getMapId();
+			int closeLineTrue = lines.get(closeLine).getMapId();
 			
-			String ifLineString = lines.get(ifLineId).getLineCode(code);
+			String ifLineString = lines.get(ifLine).getLineCode(lines);
 			String cond = ifLineString.substring(ifLineString.indexOf('(') + 1, ifLineString.lastIndexOf(')'));
 			//String notCond = "!(" + cond + ")";
 			
 			//code.remove(closeLine);
-			lines.set(closeLine, new LineString(closeLine, closeLine, ""));
-			
-			int ifToId = elseLine + 1 < code.size() ? code.get(elseLine + 1) : Line.ID_END;
-			int elseToId = closeLine < code.size() ? code.get(closeLine) : Line.ID_END;
+			lines.set(closeLine, new LineString(closeLine, closeLineTrue,"","End of else"));
 			
 			ArrayList<String> conds = dividConds(cond);
 			int nbConds = conds.size()-1;
-
-			String notCond = "!(" + conds.get(0) + ")"; 
-			lines.set(ifLineId, new LineGoto(ifLineId, notCond, ifToId));
 			
-			for(int i = 1;i<=nbConds;i++) {
-				notCond = "!(" + conds.get(i) + ")"; 
-				lines.add(code.get(ifLine+i), new LineGoto(code.get(ifLine+i), notCond, elseLine+nbConds));
+			
+			if(nbConds> 1) {
+				for(int i = 0;i<=nbConds-1;i++) {
+					lines.add(ifLine+i, new LineString(ifLine+i,ifLineTrue, conds.get(i), "if"));
+				}
 			}
-			lines.set(elseLineId+nbConds, new LineGoto(code.get(elseLine+nbConds), "true", elseLineId+nbConds+1));
+			String notCond = "!(" + conds.get(nbConds) + ")"; 
+			lines.set(ifLine+nbConds, new LineGoto(ifLine+nbConds,ifLineTrue, notCond,elseLineTrue , "if"));
+			
+			lines.set(elseLine+nbConds, new LineGoto(elseLine+nbConds,elseLineTrue, "true", elseLineTrue+1,"Else"));
+			
+			BlockStruct.add(new Blocks("if",ifLineTrue,elseLineTrue));
+			BlockStruct.add(new Blocks("else",elseLineTrue,closeLineTrue));
+			
 			return nbConds-1;
 		}
 		//Sinon, c'est un if tous seul. 
 		else {
 			int closeLine = getBlockEnd(ifLine);
-			int ifLineId = code.get(ifLine);
-
-			BlockStruct.add(new Blocks("if",ifLine,closeLine));
+			int ifLineTrue = lines.get(ifLine).getMapId();
+			int closeLineTrue = lines.get(closeLine).getMapId();
 			
-			String ifLineString = lines.get(ifLineId).getLineCode(code);
+			String ifLineString = lines.get(ifLine).getLineCode(lines);
 			String cond = ifLineString.substring(ifLineString.indexOf('(') + 1, ifLineString.lastIndexOf(')'));
 			
-			lines.set(closeLine, new LineString(closeLine, closeLine, ""));
-			
-			int ifToId = closeLine + 1 < code.size() ? code.get(closeLine + 1) : Line.ID_END;
+			lines.add(closeLine, new LineGoto(closeLine,closeLineTrue, "true", closeLineTrue+1));
 			
 			ArrayList<String> conds = dividConds(cond);
 			int nbConds = conds.size()-1;
 
 			String notCond = "!(" + conds.get(0) + ")"; 
-			lines.set(ifLineId, new LineGoto(ifLineId, notCond, ifToId));
+			lines.set(ifLine, new LineGoto(ifLine,ifLineTrue, notCond, closeLineTrue+1));
 			
 			for(int i = 1;i<=nbConds;i++) {
 				notCond = "!(" + conds.get(i) + ")"; 
-				lines.add(code.get(ifLine+i), new LineGoto(code.get(ifLine+i), notCond, closeLine+nbConds));
+				lines.add(ifLine+i, new LineGoto(ifLine+i,ifLineTrue, notCond, closeLineTrue+1));
 			}
+			BlockStruct.add(new Blocks("if",ifLineTrue,closeLineTrue));
 			return nbConds-1;
+			
 		}
 		
 	}
@@ -318,35 +314,29 @@ public class BlocksConversion extends Tools{
 
 		int startLine = line;
 		int closeLine = getBlockEnd(startLine);
+		int startLineTrue = lines.get(startLine).getMapId();
+		int closeLineTrue = lines.get(closeLine).getMapId();
 
-		BlockStruct.add(new Blocks("do",startLine,closeLine));
+		BlockStruct.add(new Blocks("do",startLineTrue,closeLineTrue));
 		
-		String whileLineString = lines.get(code.get(closeLine)).getLineCode(code);
+		lines.set(startLine, new LineGoto(startLine,startLineTrue, "true", startLineTrue+1,"Do start line"));
+		
+		String whileLineString = lines.get(closeLine).getLineCode(lines);
 		String cond = whileLineString.substring(whileLineString.indexOf('(') + 1, whileLineString.lastIndexOf(')'));
-
-		int startLineId = code.get(startLine);
-		int closeLineId = code.get(closeLine);
-		int afterDoId = code.get(startLine + 1);
-
+		
 		ArrayList<String> conds = dividConds(cond);
 		int nbConds = conds.size()-1;
 		
 		String notCond = "!(" + conds.get(0) + ")"; 
-		lines.set(closeLineId, new LineGoto(closeLineId, conds.get(0), startLineId));
-
+		lines.set(closeLine, new LineGoto(closeLine,closeLineTrue, conds.get(0), startLineTrue,"Dowhile condition"));
 		for(int i = 1;i<=nbConds;i++) {
 			
-			lines.add(closeLineId+i, new LineGoto(closeLineId+i,closeLine, conds.get(i), startLineId));
+			lines.add(closeLine+i, new LineGoto(closeLine+i,closeLineTrue, conds.get(i), startLineTrue,"Dowhile condition"));
 			
 		}
 		
-		//code.remove(startLine);
-		
-		Line lineAfterDo = lines.get(afterDoId);
-		lineAfterDo.id = startLineId;
 
-		lines.set(startLineId, lineAfterDo);
-		code.set(startLine, startLineId);
+		
 		return 0;
 	}
 
@@ -354,14 +344,10 @@ public class BlocksConversion extends Tools{
 
 		int startLine = line;
 		int endLine = getBlockEnd(startLine);
+		int startLineTrue = lines.get(startLine).getMapId();
+		int endLineTrue = lines.get(endLine).getMapId();
 
-		BlockStruct.add(new Blocks("for",startLine,endLine));
-		
-		int startLineId = code.get(startLine);
-		int endLineId = code.get(endLine);
-		int afterEndId = endLine + 1 < code.size() ? code.get(endLine + 1) : Line.ID_END;
-
-		String forLineString = lines.get(code.get(startLine)).getLineCode(code);
+		String forLineString = lines.get(startLine).getLineCode(lines);
 		String innerFor = forLineString.substring(forLineString.indexOf('(') + 1, forLineString.lastIndexOf(')'));
 		String[] forThings = innerFor.split(";");
 
@@ -370,25 +356,12 @@ public class BlocksConversion extends Tools{
 		String i2 = forThings[2].strip();
 		String notCond = "!(" + cond + ")";
 
-		Line inst1 = new LineString(startLineId, i1);
-		Line startLineGoto = new LineGoto(lines.size(), notCond, afterEndId);
-		Line inst2 = new LineString(lines.size() + 1, i2);
-		Line endLineGoto = new LineGoto(endLineId, "true", startLineGoto.id);
-
-		lines.add(startLineGoto);
-		lines.add(inst2);
-		lines.set(inst1.id, inst1);
-		lines.set(endLineGoto.id, endLineGoto);
+		lines.set(startLine, new LineString(startLine,startLineTrue, i1+";","for init"));
+		lines.add(startLine+1, new LineGoto(startLine+1,startLineTrue, notCond, endLineTrue+1,"for condition"));
+		lines.add(endLine+1, new LineString(endLine+1,endLineTrue, i2+";","for increntation"));
+		lines.set(endLine+2, new LineGoto(endLine+2,endLineTrue, "FOR", startLineTrue,"for end"));
 		
-		code.add(startLine + 1, startLineGoto.id);
-		code.add(endLine + 1, inst2.id);
-		
-		for (int i = 0; i < code.size(); ++i) {
-			lines.get(i).showContent();
-			System.out.println("Code : " + code.get(i));
-		}
-
-
+		BlockStruct.add(new Blocks("for",startLineTrue,endLineTrue));
 
 	}
 	
@@ -401,45 +374,121 @@ public class BlocksConversion extends Tools{
 		
 		int indexEt;
 		int indexOu;
+		int condCount = 0;
 
 
 			indexEt = gluedConds.indexOf("&&");
 			if(indexEt==-1) {
-				indexEt = gluedConds.length()-1;
+				indexEt = gluedConds.length();
 			}
 			
 			indexOu = gluedConds.indexOf("||");
 			if(indexOu==-1) {
-				indexOu = gluedConds.length()-1;
+				indexOu = gluedConds.length();
 			}
 		
 		//Cette condition est vérifié ssi indexOu=IndexEt=End. Soit on a attient la fin
 		while(indexOu!=indexEt){
 			
 			if(indexOu>indexEt) {
-				//System.out.print(gluedConds.substring(0,indexEt));
-				conds.add(gluedConds.substring(0,indexEt));
+				
+				conds.add("cond"+condCount+"=("+gluedConds.substring(0,indexEt)+");");
 				gluedConds = gluedConds.substring(indexEt+2,gluedConds.length());
-				//System.out.print(gluedConds);
+				condCount++;
+			
 			}
 			else {
-				conds.add(gluedConds.substring(1,indexOu));
+				
+				conds.add("cond"+condCount+"=("+gluedConds.substring(1,indexOu)+");");
 				gluedConds = gluedConds.substring(indexOu+2,gluedConds.length());
+				condCount++;
 			}
 			
 			indexEt = gluedConds.indexOf("&&");
 			if(indexEt==-1) {
-				indexEt = gluedConds.length()-1;
+				indexEt = gluedConds.length();
 			}
 			
 			indexOu = gluedConds.indexOf("||");
 			if(indexOu==-1) {
-				indexOu = gluedConds.length()-1;
+				indexOu = gluedConds.length();
 			}
 			
 		}
-		conds.add(gluedConds);
+		
+		conds.add("cond"+condCount+"=("+gluedConds+")");
+		
+		if(conds.size()>1) {
+			condCount = 1;
+			String lineConds = "";
+			System.out.println("First cond : " + conds.get(0));
+			if(cond.charAt(0) == '(') {
+				lineConds = lineConds + "(";
+				lineConds = lineConds +  "cond0";
+			}
+			else {
+				lineConds = lineConds +  "cond0";
+			}
+
+			Integer[] nextchar = {0,0,0,0};
+			
+			nextchar[0] = cond.indexOf("&") > 0 ? cond.indexOf("&") : cond.length();
+			nextchar[1] = cond.indexOf("|") > 0 ? cond.indexOf("|") : cond.length();
+			nextchar[2] = cond.indexOf("(") > 0 ? cond.indexOf("(") : cond.length();
+			nextchar[3] = cond.indexOf(")") > 0 ? cond.indexOf(")") : cond.length();
+			
+			int i = Collections.min(Arrays.asList(nextchar));
+			System.out.println("start at i "+i+"till length "+cond.length());
+			while(i<cond.length() && i!=-1) {
+				System.out.println("cond stat: " + cond);
+				if(cond.charAt(i) == '&') {
+					lineConds = lineConds + " && ";
+					i = i+2;
+				}
+				if(cond.charAt(i) == '|') {
+					lineConds = lineConds + " || ";
+					i = i+2;
+				}
+				if(cond.charAt(i) == '(') {
+					lineConds = lineConds + "(";
+					i++;
+				}
+				if(cond.charAt(i) == ')') {
+					lineConds = lineConds + ")";
+					i++;
+				}
+				else {
+					lineConds = lineConds + "cond"+condCount;
+					condCount++;
+					String subs = cond.substring(i);
+					nextchar[0] = subs.indexOf("&") > 0 ? subs.indexOf("&") : cond.length();
+					nextchar[1] = subs.indexOf("|") > 0 ? subs.indexOf("|") : cond.length();
+					nextchar[2] = subs.indexOf("(") > 0 ? subs.indexOf("(") : cond.length();
+					nextchar[3] = subs.indexOf(")") > 0 ? subs.indexOf(")") : cond.length();
+					int min = Collections.min(Arrays.asList(nextchar));
+					if(min == -1) {
+						break;
+					}
+					else {
+						i = i + min;
+					}
+				}
+			}
+			conds.add(lineConds);
+			
+		}
+		else {
+			conds.set(0, cond);
+		}
 		return conds;
+
+	}
+	
+	void restorTrueParceCodeId() {
+		
+		for (int i = 0; i < lines.size(); ++i) {
+			lines.get(i).setId(i);
+		}
 	}
 	
 	// -- Getters -- //

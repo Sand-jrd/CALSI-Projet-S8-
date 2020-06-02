@@ -5,27 +5,28 @@ Boolean[] flag;
 // Shared variables initialization
 myTurn = new Integer[np];
 flag = new Boolean[np];
-Arrays.fill(flag , true);
+Arrays.fill(flag , false);
 Arrays.fill(myTurn , 0);
 // Local variables declaration
 int j;
 int p1;
 int p2;
 // Algorithm to attribu Mutext
+flag[index] = true;
+myTurn[index] = max(myTurn,np) +1;
 flag[index] = false;
-myTurn[index] = max(MyTurn) +1;
 for(j=0;j<np;j++){
-	while(flag[j] = down){
+	while(flag[j] = false){
 		//wait
 	}
 	//Calculate priority
 	p1 = myTurn[index];
 	p2 = myTurn[j];
-	while(myTurn[j] ==0 && p1>p2){
+	Boolean priority = (p1>p2) || (p1==p2 && index>j);
+	while( myTurn[j] ==0 || priority ){
 		//wait
 	}
 }
-flag[index] = false;
 //Critical section
 // Relase Mutex
 myTurn[index] = 0;

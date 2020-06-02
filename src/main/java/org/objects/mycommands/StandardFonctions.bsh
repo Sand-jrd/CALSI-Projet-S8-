@@ -1,3 +1,27 @@
-helloWorld() { 
-	print("Hello World!"); 
+//Customs functions :
+
+Integer max(Integer[] list,int size) { 
+	
+	int maxx = list[1];
+	int i = 1;
+	for(i=1;i<size;i++){
+		if(list[i]>maxx){
+			maxx=list[i];
+		}
+	}
+	
+	return maxx;
+}
+
+Integer min(Integer[] list,int size) { 
+	
+	int minn = list[1];
+	int i = 1;
+	for(i=1;i<size;i++){
+		if(list[i]<minn){
+			maxx=list[i];
+		}
+	}
+	
+	return minn;
 }

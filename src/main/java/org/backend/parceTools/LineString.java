@@ -11,6 +11,8 @@ import org.backend.exceptions.BackEndException;
  */
 public class LineString extends Line {
 	
+	String code; // String code line
+	
 	public LineString(int id, String code) {
 		super(id);
 		this.code = code;
@@ -20,6 +22,13 @@ public class LineString extends Line {
 		super(id,mapid);
 		this.code = code;
 	}
+	
+	public LineString(int id,int mapid, String code,String comment) {
+		super(id,mapid,comment);
+		this.code = code;
+	}
+	
+
 	public void showContent() {
 		super.showContent();
         System.out.println("code: '"+this.code +"'" );
@@ -27,10 +36,17 @@ public class LineString extends Line {
 
 
 	@Override
-	public String getLineCode(ArrayList<Integer> code) throws BackEndException {
-		return this.code;
+	public String getLineCode(ArrayList<Line> lines) throws BackEndException {
+		String com = "";
+		if (comment!="") {
+			 com = "			//" + comment +"(line"+mapId+")";
+		}
+		return this.code+com;
 	}
 	
-	
-	String code;
+	@Override
+	public String getLineCodeNoComment(ArrayList<Line> lines) throws BackEndException {
+		return this.code;
+	}
+
 }

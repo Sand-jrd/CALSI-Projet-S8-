@@ -1,21 +1,23 @@
 import java.lang.Math; 
-import java.lang.String;
 // Shared variables declaration
-Boolean[] Flag;
-Integer[] Turns;
+Integer[] myTurn ;
+Boolean[] flag;
 // Shared variables initialization
-Turns = new Integer[4];
-Flag = new Boolean[4];
+myTurn = new Integer[np];
+flag = new Boolean[np];
+Arrays.fill(flag , true);
+Arrays.fill(myTurn , 0);
 // Local variables declaration
-Integer end;
-// Bakery Algorithm
-end = 0;
-Turns[i] = max(i);
-Flag[i] = false;
-for(int j=1; j<4; j++){
-if(Flag[j] = false){
-	
+int j;
+// Algorithm
+j = (index+1) % 2;
+flag[index] = false;
+myTurn = max(MyTurn) +1;
+for(j){
+a = flag[j];
+b = turn;
 }
-}
+flag[index] = false;
+
 
 

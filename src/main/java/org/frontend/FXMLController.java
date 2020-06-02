@@ -944,20 +944,22 @@ public class FXMLController {
 			// Ajout des colonnes dediees a l'affichage des processus
 		for (int i=0;i<numberOfProcesses;i++){
 			ColumnConstraints column = new ColumnConstraints();
-			column.setPercentWidth(100 / numberOfProcesses);
+			column.setPercentWidth((100 / numberOfProcesses));
 			Animation.getColumnConstraints().add(column);
 		}
 
 		/* Numerotation des lignes dans la grille */
 
+		
 		for (int j = 0; j<endOfInitBlocks; j++){
 			Label label = new Label();
 			RowConstraints rowInit = new RowConstraints();
-			rowInit.setMinHeight(10);
+			rowInit.setMaxHeight(0);
 			Animation.getRowConstraints().add(rowInit);
 			Animation.addRow(j, label);
-
 		}
+		
+		
 		for (int i = endOfInitBlocks; i < countLines(code); i++) {
 			RowConstraints rowCode = new RowConstraints();
 			rowCode.setMinHeight(25);
@@ -975,7 +977,7 @@ public class FXMLController {
 		}
 
 
-		System.out.print("Grid is ready !\n");
+		//System.out.print("Grid is ready !\n");
 	}
 
 	public void initBlock(){
@@ -1124,7 +1126,7 @@ public class FXMLController {
         loadFromTeaching();
 	}
 
-	/*private void setThenumberToTheCode() {
+	private void setThenumberToTheCode() {
 		numCod.getChildren().clear();
 	    for (int y = 0 ; y < countLines(code) ; y++) {
 	    	//System.out.println(y);
@@ -1134,17 +1136,17 @@ public class FXMLController {
 	    	numCod.add(line,0,y);
 		}
 	}
-	*/
+	
 
-	private void setThenumberToTheCode() {
-		/* Met le code texte sous forme de grille avec
-		premiere colonne : le numero de ligne
-		deuxieme colonne : la ligne de code
+	/*private void setThenumberToTheCode() {
+		//Met le code texte sous forme de grille avec
+		//premiere colonne : le numero de ligne
+		//deuxieme colonne : la ligne de code
 
-		Le block d'initialisation est separe du reste du code
-		La partie texte n'est plus accessible car rendue invisible pour l'utilisateur
+		//Le block d'initialisation est separe du reste du code
+		//La partie texte n'est plus accessible car rendue invisible pour l'utilisateur
 		 
-		*/
+		
 
 		// retrait de la zone textAreaOriginalCode
 		textAreaOriginalCode.setVisible(false);
@@ -1193,20 +1195,21 @@ public class FXMLController {
 
 		}
 	}
+*/
 
 
 	// METHODES POUR AFFICHAGE DES PROCESSUS
 
 	public void refreshInitBlock() throws RipException {
 		// Met a jour le block d'initialisation de l'animation
-		System.out.print("Refreshing initialisation block \n");
+		//System.out.print("Refreshing initialisation block \n");
 		lineProcCanvas.getChildren().clear();
 
 		for (int i=0;i<numberOfProcesses;i++){
 			if (processline[i]<endOfInitBlock){
 				StackPane pane = processStatus(i,numberOfProcesses);
 				lineProcCanvas.getChildren().add(pane);
-				addTooltip(pane, i);
+
 			}
 		}
 	}
@@ -1278,6 +1281,7 @@ public class FXMLController {
 		// Ajoute les tooltips
 		StackPane pane = new StackPane();
 
+
 		if (simulation.processIsCrashed(proc)) {
 			pane.getChildren().addAll(new Circle(10, Color.RED), new Label("P" + proc));
 		} else if (simulation.processIsDone(proc)) {
@@ -1313,7 +1317,7 @@ public class FXMLController {
 				break;
 			}
 			else {
-				System.out.println("    " + variableInfo[i].getName() + " " + variableInfo[i].getValue());
+				//System.out.println("    " + variableInfo[i].getName() + " " + variableInfo[i].getValue());
 				str = str + variableInfo[i].getName() + " = ";
 				str = str + variableInfo[i].getValue() + "\n";
 			}
